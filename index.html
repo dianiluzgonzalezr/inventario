@@ -81,12 +81,12 @@
                         <input type="date" id="ped-fecha" class="p-2 border rounded-lg" required>
                     </div>
 
-                    <!-- Buscador y Selección de Tarifa -->
+                    <!-- Buscador y Selección de Tarifa con Precio Manual -->
                     <div class="border p-4 rounded-lg bg-gray-50 space-y-3">
-                        <h3 class="font-semibold text-sm text-gray-700">Agregar Productos con Tipo de Precio</h3>
+                        <h3 class="font-semibold text-sm text-gray-700">Buscador y Selección de Productos</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="sm:col-span-2 relative">
-                                <input type="text" id="buscador-productos" placeholder="🔍 Buscar producto en inventario..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
+                                <input type="text" id="buscador-productos" placeholder="🔍 Buscar producto por nombre o ref..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
                                 <div id="sugerencias-box" class="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
                             </div>
                             <select id="item-tipo-precio" onchange="actualizarPrecioSeleccionado()" class="p-2 border rounded-lg bg-white text-sm font-semibold text-indigo-700">
@@ -96,10 +96,11 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2">
                             <input type="text" id="item-nombre-libre" placeholder="Nombre del producto" class="p-2 border rounded-lg bg-gray-100">
-                            <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2 border rounded-lg">
+                            <input type="number" id="item-precio" placeholder="Precio Unitario (Editable) ($)" class="p-2 border rounded-lg bg-amber-50 font-bold text-indigo-700">
                             <div class="flex items-center justify-between gap-2">
+                                <input type="number" id="item-cantidad" placeholder="Cant" value="1" min="1" class="p-2 border rounded-lg w-20">
                                 <label class="flex items-center text-xs gap-1 cursor-pointer">
-                                    <input type="checkbox" id="item-descuenta" checked> Descontar Stock
+                                    <input type="checkbox" id="item-descuenta" checked> Stock
                                 </label>
                                 <button type="button" onclick="agregarItemAlCarrito()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-emerald-700">Añadir</button>
                             </div>
@@ -113,7 +114,7 @@
                                 <tr class="border-b bg-gray-100">
                                     <th class="p-2">Producto</th>
                                     <th class="p-2">Cant</th>
-                                    <th class="p-2">Precio U.</th>
+                                    <th class="p-2">Precio U. (Editable)</th>
                                     <th class="p-2">Subtotal</th>
                                     <th class="p-2">Acción</th>
                                 </tr>
@@ -184,25 +185,28 @@
                     <input type="number" id="prod-precio-detal" placeholder="Precio al Detal ($)" required class="p-2 border rounded-lg">
                     <input type="number" id="prod-precio-mayorista" placeholder="Precio Mayorista ($)" required class="p-2 border rounded-lg">
                     <input type="number" id="prod-costo" placeholder="Costo estimado / Insumo ($)" class="p-2 border rounded-lg">
-                    <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700">Guardar Producto</button>
+                    <select id="prod-origen" class="p-2 border rounded-lg">
+                        <option value="Nacional (Colombia)">Nacional (Colombia)</option>
+                        <option value="Internacional">Internacional</option>
+                    </select>
+                    <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 sm:col-span-3">Guardar Producto</button>
                 </form>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">Inventario Actual & Tarifas</h2>
-                    <input type="text" id="buscador-inv" placeholder="🔍 Buscar producto..." oninput="cargarInventarioTabla()" class="p-2 border rounded-lg text-sm w-64">
+                    <h2 class="text-lg font-bold">Inventario Actual, Buscador & Edición</h2>
+                    <input type="text" id="buscador-inv" placeholder="🔍 Buscar producto en inventario..." oninput="cargarInventarioTabla()" class="p-2 border rounded-lg text-sm w-72">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b text-sm text-gray-600 bg-gray-50">
-                                <th class="p-3">SKU / Ref</th>
+                                <th class="p-3">Ref / Origen</th>
                                 <th class="p-3">Producto</th>
                                 <th class="p-3">Stock</th>
-                                <th class="p-3">P. Detal</th>
-                                <th class="p-3">P. Mayorista</th>
-                                <th class="p-3">Acción: Sumar Stock</th>
+                                <th class="p-3">P. Detal / Mayor</th>
+                                <th class="p-3">Acciones & Editar</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-inventario" class="text-sm"></tbody>
@@ -229,6 +233,7 @@
                             <th class="p-2">Stock Restante</th>
                             <th class="p-2">P. Detal</th>
                             <th class="p-2">P. Mayorista</th>
+                            <th class="p-2">Origen</th>
                         </tr>
                     </thead>
                     <tbody id="reporte-inventario"></tbody>
@@ -245,6 +250,47 @@
             <div class="flex justify-end">
                 <button onclick="cerrarModalPagos()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar</button>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PRODUCTO -->
+    <div id="modal-editar-producto" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
+            <h3 class="text-lg font-bold text-indigo-700">Editar Producto e Inventario</h3>
+            <form id="form-editar-prod" class="space-y-3">
+                <input type="hidden" id="edit-prod-id">
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Nombre del Producto</label>
+                    <input type="text" id="edit-prod-nombre" required class="p-2 border rounded-lg w-full text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Stock</label>
+                        <input type="number" id="edit-prod-stock" required class="p-2 border rounded-lg w-full text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Origen</label>
+                        <select id="edit-prod-origen" class="p-2 border rounded-lg w-full text-sm">
+                            <option value="Nacional (Colombia)">Nacional</option>
+                            <option value="Internacional">Internacional</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Precio Detal ($)</label>
+                        <input type="number" id="edit-prod-detal" required class="p-2 border rounded-lg w-full text-sm">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Precio Mayorista ($)</label>
+                        <input type="number" id="edit-prod-mayorista" required class="p-2 border rounded-lg w-full text-sm">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="cerrarModalEditar()" class="bg-gray-400 text-white px-3 py-2 rounded-lg text-sm">Cancelar</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Guardar Cambios</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -327,7 +373,7 @@
         function agregarItemAlCarrito() {
             const nombreLibre = document.getElementById('item-nombre-libre').value.trim() || document.getElementById('buscador-productos').value.trim();
             const cantidad = parseInt(document.getElementById('item-cantidad').value) || 1;
-            const precio = parseFloat(document.getElementById('item-precio').value) || 0;
+            const precio = parseFloat(document.getElementById('item-precio').value) || 0; // Precio manual editable
             const descuenta = document.getElementById('item-descuenta').checked;
 
             if (!nombreLibre) {
@@ -347,6 +393,12 @@
             document.getElementById('buscador-productos').value = '';
             document.getElementById('item-nombre-libre').value = '';
             document.getElementById('item-precio').value = '';
+            document.getElementById('item-cantidad').value = '1';
+            renderizarCarrito();
+        }
+
+        function actualizarPrecioItemCarrito(index, nuevoPrecio) {
+            carritoItems[index].precio_unitario = parseFloat(nuevoPrecio) || 0;
             renderizarCarrito();
         }
 
@@ -362,7 +414,9 @@
                     <tr class="border-b">
                         <td class="p-2">${item.nombre_producto} ${!item.descuenta_stock ? '<span class="text-xs text-amber-600">(Sin stock)</span>' : ''}</td>
                         <td class="p-2">${item.cantidad}</td>
-                        <td class="p-2">$${item.precio_unitario.toLocaleString()}</td>
+                        <td class="p-2">
+                            <input type="number" value="${item.precio_unitario}" onchange="actualizarPrecioItemCarrito(${index}, this.value)" class="p-1 border rounded w-28 text-sm font-bold text-indigo-700 bg-amber-50">
+                        </td>
                         <td class="p-2 font-bold">$${(item.cantidad * item.precio_unitario).toLocaleString()}</td>
                         <td class="p-2"><button type="button" onclick="carritoItems.splice(${index}, 1); renderizarCarrito();" class="text-red-600 text-xs">Eliminar</button></td>
                     </tr>
@@ -588,7 +642,7 @@
             document.getElementById('modal-pagos').classList.add('hidden');
         }
 
-        // REGISTRAR PRODUCTO CON AMBAS TARIFAS
+        // REGISTRAR PRODUCTO
         document.getElementById('form-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nombre = document.getElementById('prod-nombre').value.trim();
@@ -596,6 +650,7 @@
             const precio_detal = parseFloat(document.getElementById('prod-precio-detal').value);
             const precio_mayorista = parseFloat(document.getElementById('prod-precio-mayorista').value);
             const costo = parseFloat(document.getElementById('prod-costo').value) || 0;
+            const origen = document.getElementById('prod-origen').value;
             const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
             const { error } = await supabaseClient.from('productos').insert([{ 
@@ -605,7 +660,8 @@
                 precio_detal, 
                 precio_mayorista,
                 precio_venta: precio_detal, 
-                costo 
+                costo,
+                origen
             }]);
 
             if (error) {
@@ -614,6 +670,50 @@
             }
             e.target.reset();
             alert("¡Producto guardado exitosamente!");
+            cargarDatos();
+        });
+
+        // FUNCIONES DE EDICIÓN DE PRODUCTO
+        function abrirModalEditar(id) {
+            const p = listaProductosInventario.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('edit-prod-id').value = p.id;
+            document.getElementById('edit-prod-nombre').value = p.nombre;
+            document.getElementById('edit-prod-stock').value = p.stock;
+            document.getElementById('edit-prod-origen').value = p.origen || 'Nacional (Colombia)';
+            document.getElementById('edit-prod-detal').value = p.precio_detal || p.precio_venta || 0;
+            document.getElementById('edit-prod-mayorista').value = p.precio_mayorista || 0;
+            document.getElementById('modal-editar-producto').classList.remove('hidden');
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById('modal-editar-producto').classList.add('hidden');
+        }
+
+        document.getElementById('form-editar-prod').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-prod-id').value;
+            const nombre = document.getElementById('edit-prod-nombre').value.trim();
+            const stock = parseInt(document.getElementById('edit-prod-stock').value);
+            const origen = document.getElementById('edit-prod-origen').value;
+            const precio_detal = parseFloat(document.getElementById('edit-prod-detal').value);
+            const precio_mayorista = parseFloat(document.getElementById('edit-prod-mayorista').value);
+
+            const { error } = await supabaseClient.from('productos').update({
+                nombre,
+                stock,
+                origen,
+                precio_detal,
+                precio_mayorista,
+                precio_venta: precio_detal
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al actualizar producto: " + error.message);
+                return;
+            }
+            cerrarModalEditar();
+            alert("¡Producto actualizado con éxito!");
             cargarDatos();
         });
 
@@ -651,17 +751,18 @@
 
                 let pDetal = p.precio_detal || p.precio_venta || 0;
                 let pMayor = p.precio_mayorista || 0;
+                let origenProd = p.origen || 'Nacional';
 
                 if (tbody) {
                     tbody.innerHTML += `
                         <tr class="border-b">
-                            <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}</td>
+                            <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}<br><span class="text-gray-400 font-sans">${origenProd}</span></td>
                             <td class="p-3">${p.nombre}</td>
                             <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600' : ''}">${p.stock}</td>
-                            <td class="p-3">$${Number(pDetal).toLocaleString()}</td>
-                            <td class="p-3 text-emerald-700 font-bold">$${Number(pMayor).toLocaleString()}</td>
-                            <td class="p-3">
-                                <button onclick="sumarStockProducto('${p.id}', ${p.stock})" class="text-xs bg-emerald-600 text-white px-3 py-1 rounded-lg hover:bg-emerald-700">➕ Agregar Stock</button>
+                            <td class="p-3 text-xs">Detal: $${Number(pDetal).toLocaleString()}<br><span class="text-emerald-700 font-bold">Mayor: $${Number(pMayor).toLocaleString()}</span></td>
+                            <td class="p-3 space-x-1">
+                                <button onclick="sumarStockProducto('${p.id}', ${p.stock})" class="text-xs bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700">➕ Stock</button>
+                                <button onclick="abrirModalEditar('${p.id}')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700">✏️ Editar</button>
                             </td>
                         </tr>
                     `;
@@ -674,6 +775,7 @@
                             <td class="p-2">${p.stock}</td>
                             <td class="p-2">$${Number(pDetal).toLocaleString()}</td>
                             <td class="p-2">$${Number(pMayor).toLocaleString()}</td>
+                            <td class="p-2">${origenProd}</td>
                         </tr>
                     `;
                 }
