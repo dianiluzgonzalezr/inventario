@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Integral de Pedidos e Inventario</title>
+    <title>CUPISSA - Sistema Integral Operativo y Contable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -15,723 +15,651 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
 
-    <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6">
-        <header class="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-indigo-700">📦 Gestión Integral de Pedidos e Inventario</h1>
-            <div class="flex flex-wrap gap-2 mt-3 sm:mt-0 no-print">
-                <button onclick="switchTab('dashboard')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Dashboard & Alertas</button>
-                <button onclick="switchTab('pedidos')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Pedidos & Cuentas</button>
-                <button onclick="switchTab('inventario')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Inventario & Stock</button>
-                <button onclick="switchTab('reportes')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Reportes PDF</button>
+    <!-- NAVEGACIÓN SUPERIOR -->
+    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">👑</span>
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wide">CUPISSA S.A.S.</h1>
+                    <p class="text-xs text-indigo-200">Panel Operativo, CRM & Contabilidad</p>
+                </div>
             </div>
-        </header>
+            <nav class="flex flex-wrap gap-1 sm:gap-2 text-sm">
+                <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded-lg bg-indigo-800 hover:bg-indigo-700 font-medium transition">📊 Dashboard</button>
+                <button onclick="switchTab('pedidos')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">📦 Pedidos & CRM</button>
+                <button onclick="switchTab('produccion')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">⚙️ Producción</button>
+                <button onclick="switchTab('inventario')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">📋 Inventario</button>
+                <button onclick="switchTab('contabilidad')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">💰 Caja & Contabilidad</button>
+                <button onclick="switchTab('reportes')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">📈 Reportes PDF</button>
+            </nav>
+        </div>
+    </header>
 
-        <!-- SECCIÓN: DASHBOARD -->
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+
+        <!-- ================= DASHBOARD ================= -->
         <section id="tab-dashboard" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                    <h3 class="text-sm font-semibold text-gray-500">Productos Agotados</h3>
-                    <p id="stat-agotados" class="text-2xl font-bold text-red-600">0</p>
+            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase">Ventas del Mes</h3>
+                    <p id="stat-ventas-mes" class="text-2xl font-black text-indigo-600 mt-1">$0</p>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                    <h3 class="text-sm font-semibold text-gray-500">Total por Cobrar (Créditos / Fiados)</h3>
-                    <p id="stat-por-cobrar" class="text-2xl font-bold text-amber-600">$0</p>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase">Cuentas por Cobrar</h3>
+                    <p id="stat-por-cobrar" class="text-2xl font-black text-amber-600 mt-1">$0</p>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                    <h3 class="text-sm font-semibold text-gray-500">Anticipos / Depósitos (Por devolver)</h3>
-                    <p id="stat-depositos" class="text-2xl font-bold text-blue-600">$0</p>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase">Saldo Efectivo</h3>
+                    <p id="stat-saldo-efectivo" class="text-2xl font-black text-emerald-600 mt-1">$0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase">Saldo Nequi / Bancos</h3>
+                    <p id="stat-saldo-bancos" class="text-2xl font-black text-blue-600 mt-1">$0</p>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-lg font-bold mb-4 text-indigo-800">🚨 Alertas Visuales: Pedidos Próximos o Urgentes</h2>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-bold mb-4 text-slate-800">🚨 Alertas Urgentes (Solo Pedidos Pendientes/En Proceso)</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b text-sm text-gray-600 bg-gray-50">
-                                <th class="p-3">Ref Pedido</th>
+                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
+                                <th class="p-3">Ref</th>
                                 <th class="p-3">Cliente</th>
-                                <th class="p-3">F. Agendamiento</th>
-                                <th class="p-3">F. Entrega</th>
+                                <th class="p-3">Entrega</th>
+                                <th class="p-3">Saldo Pendiente</th>
                                 <th class="p-3">Urgencia</th>
                                 <th class="p-3">Estado</th>
                             </tr>
                         </thead>
-                        <tbody id="lista-alertas-pedidos" class="text-sm"></tbody>
+                        <tbody id="tabla-alertas-dashboard" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: PEDIDOS -->
+        <!-- ================= PEDIDOS & CRM ================= -->
         <section id="tab-pedidos" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-lg font-bold mb-4 text-indigo-700">➕ Crear Nuevo Pedido / Venta</h2>
-                <form id="form-pedido" class="space-y-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-bold mb-4 text-indigo-700">➕ Crear Pedido Real / CRM</h2>
+                <form id="form-pedido-admin" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                        <input type="text" id="ped-cliente" placeholder="Nombre del Cliente" required class="p-2 border rounded-lg">
-                        <select id="ped-tipo" class="p-2 border rounded-lg">
-                            <option value="Venta Contado">Venta Contado</option>
-                            <option value="Crédito / Fiado">Crédito / Fiado</option>
-                            <option value="Alquiler">Alquiler</option>
-                        </select>
                         <div>
-                            <label class="text-xs font-semibold text-gray-500">Fecha Agendamiento</label>
-                            <input type="date" id="ped-fecha-agendamiento" class="p-2 border rounded-lg w-full" required>
+                            <label class="text-xs font-semibold text-slate-500">Nombre del Cliente *</label>
+                            <input type="text" id="cli-nombre" placeholder="Nombre completo" required class="p-2.5 border rounded-xl w-full text-sm mt-1">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-500">Fecha Entrega</label>
-                            <input type="date" id="ped-fecha-entrega" class="p-2 border rounded-lg w-full" required>
+                            <label class="text-xs font-semibold text-slate-500">Teléfono / WhatsApp *</label>
+                            <input type="text" id="cli-telefono" placeholder="3101234567" required class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Dirección</label>
+                            <input type="text" id="cli-direccion" placeholder="Calle 50 # 20-10" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Correo / CC (Opcionales)</label>
+                            <input type="text" id="cli-email-cc" placeholder="correo@mail.com / C.C." class="p-2.5 border rounded-xl w-full text-sm mt-1">
                         </div>
                     </div>
 
-                    <!-- Buscador y Selección de Tarifa con Precio Manual -->
-                    <div class="border p-4 rounded-lg bg-gray-50 space-y-3">
-                        <h3 class="font-semibold text-sm text-gray-700">Buscador y Selección de Productos</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Tipo Operación</label>
+                            <select id="ped-tipo" class="p-2.5 border rounded-xl w-full text-sm mt-1 font-semibold text-indigo-600">
+                                <option value="Venta Contado">Venta Contado</option>
+                                <option value="Crédito / Fiado">Crédito / Fiado</option>
+                                <option value="Personalizado (Sin Stock)">Personalizado (Bajo Pedido)</option>
+                                <option value="Alquiler">Alquiler de Vestuario</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Fecha Agendamiento</label>
+                            <input type="date" id="ped-fecha-agendamiento" class="p-2.5 border rounded-xl w-full text-sm mt-1" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Fecha Entrega</label>
+                            <input type="date" id="ped-fecha-entrega" class="p-2.5 border rounded-xl w-full text-sm mt-1" required>
+                        </div>
+                    </div>
+
+                    <!-- Buscador y selección de ítems -->
+                    <div class="border p-4 rounded-xl bg-slate-50 space-y-3">
+                        <h3 class="font-bold text-xs text-slate-600 uppercase">Productos (Inventario o Personalizados)</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="sm:col-span-2 relative">
-                                <input type="text" id="buscador-productos" placeholder="🔍 Buscar producto por nombre o ref..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
-                                <div id="sugerencias-box" class="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
+                                <input type="text" id="buscador-prod-pedido" placeholder="🔍 Buscar producto en inventario..." oninput="filtrarInvPedido()" class="p-2.5 border rounded-xl w-full bg-white text-sm">
+                                <div id="sugerencias-inv-box" class="absolute z-10 w-full bg-white border rounded-xl shadow-xl mt-1 max-h-48 overflow-y-auto hidden"></div>
                             </div>
-                            <select id="item-tipo-precio" onchange="actualizarPrecioSeleccionado()" class="p-2 border rounded-lg bg-white text-sm font-semibold text-indigo-700">
-                                <option value="detal">Precio Al Detal</option>
+                            <select id="select-tipo-precio" onchange="actualizarPrecioItem()" class="p-2.5 border rounded-xl bg-white text-sm font-semibold">
+                                <option value="detal">Precio Detal</option>
                                 <option value="mayorista">Precio Mayorista</option>
                             </select>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2">
-                            <input type="text" id="item-nombre-libre" placeholder="Nombre del producto" class="p-2 border rounded-lg bg-gray-100">
-                            <input type="number" id="item-precio" placeholder="Precio Unitario (Editable) ($)" class="p-2 border rounded-lg bg-amber-50 font-bold text-indigo-700">
-                            <div class="flex items-center justify-between gap-2">
-                                <input type="number" id="item-cantidad" placeholder="Cant" value="1" min="1" class="p-2 border rounded-lg w-20">
-                                <label class="flex items-center text-xs gap-1 cursor-pointer">
-                                    <input type="checkbox" id="item-descuenta" checked> Stock
-                                </label>
-                                <button type="button" onclick="agregarItemAlCarrito()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-emerald-700">Añadir</button>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+                            <input type="text" id="item-nombre" placeholder="Nombre del producto / ítem" class="p-2.5 border rounded-xl bg-white text-sm sm:col-span-2">
+                            <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2.5 border rounded-xl bg-amber-50 font-bold text-indigo-700 text-sm">
+                            <div class="flex items-center gap-2">
+                                <input type="number" id="item-cantidad" value="1" min="1" class="p-2.5 border rounded-xl w-20 text-sm text-center">
+                                <button type="button" onclick="agregarItemPedidoAdmin()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold w-full">Añadir</button>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <h4 class="font-semibold text-sm mb-2">Productos en este pedido:</h4>
-                        <table class="w-full text-left border-collapse text-sm mb-3">
+                        <h4 class="font-bold text-sm mb-2 text-slate-700">Ítems en este pedido:</h4>
+                        <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="border-b bg-gray-100">
-                                    <th class="p-2">Producto</th>
-                                    <th class="p-2">Cant</th>
-                                    <th class="p-2">Precio U. (Editable)</th>
-                                    <th class="p-2">Subtotal</th>
-                                    <th class="p-2">Acción</th>
+                                <tr class="border-b bg-slate-100 text-xs text-slate-500">
+                                    <th class="p-2">Ítem</th><th class="p-2">Cant</th><th class="p-2">Precio U.</th><th class="p-2">Subtotal</th><th class="p-2">Acción</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabla-carrito">
-                                <tr><td colspan="5" class="p-3 text-center text-gray-400">No hay productos agregados aún.</td></tr>
+                            <tbody id="tabla-carrito-admin">
+                                <tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">No hay ítems agregados.</td></tr>
                             </tbody>
                         </table>
-                        <!-- TOTAL VISIBLE ANTES DE GUARDAR -->
-                        <div class="flex justify-end items-center bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                            <span class="text-base font-bold text-indigo-900 mr-4">Total del Pedido:</span>
-                            <span id="label-total-carrito" class="text-xl font-extrabold text-indigo-700">$0</span>
-                        </div>
                     </div>
 
-                    <!-- Configuración de Pagos y Métodos -->
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 border-t pt-4">
+                    <!-- Costos y Finanzas del Pedido -->
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 border-t pt-4">
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Anticipo / Pago Inicial ($)</label>
-                            <input type="number" id="ped-pago-inicial" value="0" class="p-2 border rounded-lg w-full">
+                            <label class="text-xs font-semibold text-slate-500">Costo Producción Manual ($)</label>
+                            <input type="number" id="ped-costo-manual" value="0" placeholder="Ej: Insumos específicos" class="p-2.5 border rounded-xl w-full text-sm mt-1">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Método de Pago Inicial</label>
-                            <select id="ped-metodo-pago" class="p-2 border rounded-lg w-full text-sm">
+                            <label class="text-xs font-semibold text-slate-500">Domicilio / Envío ($)</label>
+                            <input type="number" id="ped-domicilio" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Anticipo / Abono Inicial ($)</label>
+                            <input type="number" id="ped-anticipo" value="0" class="p-2.5 border rounded-xl w-full text-sm mt-1 font-bold text-emerald-600">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-500">Método de Pago</label>
+                            <select id="ped-metodo" class="p-2.5 border rounded-xl w-full text-sm mt-1">
                                 <option value="Efectivo">Efectivo</option>
-                                <option value="Transferencia">Transferencia</option>
-                                <option value="Otro">Otro</option>
+                                <option value="Nequi">Nequi</option>
+                                <option value="Bre-B">Bre-B</option>
+                                <option value="Bancolombia">Bancolombia</option>
+                                <option value="Addi">Addi</option>
+                                <option value="Wompi">Wompi</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Depósito / Garantía ($)</label>
-                            <input type="number" id="ped-deposito" value="0" class="p-2 border rounded-lg w-full">
+                            <label class="text-xs font-semibold text-slate-500">Garantía / Depósito ($)</label>
+                            <input type="number" id="ped-garantia" value="0" class="p-2.5 border rounded-xl w-full text-sm mt-1">
                         </div>
-                        <div class="flex items-end">
-                            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 w-full font-bold">Guardar Pedido</button>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-indigo-50 p-4 rounded-xl">
+                        <div>
+                            <p class="text-xs text-indigo-700 font-semibold">TOTAL PEDIDO: <span id="lbl-total-admin" class="text-xl font-black">$0</span></p>
+                            <p class="text-xs text-amber-700 font-semibold">SALDO PENDIENTE: <span id="lbl-saldo-admin" class="text-base font-bold">$0</span></p>
                         </div>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow transition">💾 Guardar Pedido Definitivo</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Listado General de Pedidos -->
-            <div class="bg-white p-6 rounded-xl shadow">
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
-                    <h2 class="text-lg font-bold">Listado General de Pedidos</h2>
-                    <input type="text" id="buscador-pedidos-tabla" placeholder="🔍 Buscar por cliente o ref..." oninput="cargarPedidos()" class="p-2 border rounded-lg text-sm w-full sm:w-72">
+            <!-- Listado General y Historial del Cliente CRM -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <h2 class="text-lg font-bold text-slate-800">Listado General & Historial de Clientes</h2>
+                    <input type="text" id="buscador-pedidos-gral" placeholder="🔍 Buscar por cliente, teléfono o ref..." oninput="cargarPedidosAdmin()" class="p-2.5 border rounded-xl text-sm w-full sm:w-80">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b text-sm text-gray-600 bg-gray-50">
-                                <th class="p-3">Ref</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Fechas (Agend. / Entrega)</th>
-                                <th class="p-3">Total / Saldo</th>
-                                <th class="p-3">Garantía</th>
-                                <th class="p-3">Estado</th>
-                                <th class="p-3">Acciones & Gestión</th>
+                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
+                                <th class="p-3">Ref / Fechas</th>
+                                <th class="p-3">Cliente & Contacto</th>
+                                <th class="p-3">Operación / Estado</th>
+                                <th class="p-3">Financiero</th>
+                                <th class="p-3">Acciones & Edición</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-pedidos-general" class="text-sm"></tbody>
+                        <tbody id="tabla-pedidos-gral" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: INVENTARIO & STOCK -->
-        <section id="tab-inventario" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-lg font-bold mb-4">Registrar Nuevo Producto o Insumo</h2>
-                <form id="form-producto" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <input type="text" id="prod-nombre" placeholder="Nombre del producto" required class="p-2 border rounded-lg">
-                    <input type="number" id="prod-stock" placeholder="Stock inicial" required class="p-2 border rounded-lg">
-                    <input type="number" id="prod-precio-detal" placeholder="Precio al Detal ($)" required class="p-2 border rounded-lg">
-                    <input type="number" id="prod-precio-mayorista" placeholder="Precio Mayorista ($)" required class="p-2 border rounded-lg">
-                    <input type="number" id="prod-costo" placeholder="Costo estimado / Insumo ($)" class="p-2 border rounded-lg">
-                    <select id="prod-origen" class="p-2 border rounded-lg">
-                        <option value="Nacional (Colombia)">Nacional (Colombia)</option>
-                        <option value="Internacional">Internacional</option>
-                    </select>
-                    <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 sm:col-span-3">Guardar Producto</button>
-                </form>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">Inventario Actual, Buscador & Edición</h2>
-                    <input type="text" id="buscador-inv" placeholder="🔍 Buscar producto en inventario..." oninput="cargarInventarioTabla()" class="p-2 border rounded-lg text-sm w-72">
+        <!-- ================= PRODUCCIÓN ================= -->
+        <section id="tab-produccion" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <h2 class="text-lg font-bold text-indigo-700">⚙️ Producción (Solo Pedidos Pendientes / En Proceso)</h2>
+                    <input type="text" id="buscador-produccion" placeholder="🔍 Buscar por cliente o ref..." oninput="cargarProduccion()" class="p-2.5 border rounded-xl text-sm w-80">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b text-sm text-gray-600 bg-gray-50">
+                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
+                                <th class="p-3">Ref Pedido</th>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Fecha Entrega</th>
+                                <th class="p-3">Tipo Operación</th>
+                                <th class="p-3">Estado Actual</th>
+                                <th class="p-3">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-produccion" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= INVENTARIO ================= -->
+        <section id="tab-inventario" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <h2 class="text-lg font-bold mb-4 text-indigo-700">📦 Registrar Producto (Con/Sin Stock y Origen)</h2>
+                <form id="form-producto-admin" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <input type="text" id="prod-nombre" placeholder="Nombre del producto" required class="p-2.5 border rounded-xl text-sm">
+                    <input type="text" id="prod-mundo" placeholder="Mundo (Ej: MUNDO TEXTIL)" required class="p-2.5 border rounded-xl text-sm">
+                    <select id="prod-origen" class="p-2.5 border rounded-xl text-sm font-semibold">
+                        <option value="Colombia">Origen: Colombia</option>
+                        <option value="Venezuela">Origen: Venezuela</option>
+                        <option value="Online (Temu u otro)">Origen: Online (Temu / Otro)</option>
+                    </select>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="prod-sin-stock" class="w-4 h-4 text-indigo-600">
+                        <label for="prod-sin-stock" class="text-xs font-bold text-slate-600">Sin Stock (Servicio/Bajo Pedido)</label>
+                    </div>
+                    <input type="number" id="prod-stock" placeholder="Stock inicial" class="p-2.5 border rounded-xl text-sm">
+                    <input type="number" id="prod-detal" placeholder="Precio Detal ($)" required class="p-2.5 border rounded-xl text-sm">
+                    <input type="number" id="prod-mayor" placeholder="Precio Mayorista ($)" required class="p-2.5 border rounded-xl text-sm">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl font-bold sm:col-span-4 transition">Guardar en Catálogo</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800">Catálogo & Origen de Compra</h2>
+                    <input type="text" id="buscador-inventario" placeholder="🔍 Buscar producto..." oninput="cargarInventarioAdmin()" class="p-2.5 border rounded-xl text-sm w-80">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
                                 <th class="p-3">Ref / Origen</th>
                                 <th class="p-3">Producto</th>
-                                <th class="p-3">Stock</th>
-                                <th class="p-3">P. Detal / Mayor</th>
-                                <th class="p-3">Acciones & Editar</th>
+                                <th class="p-3">Stock / Modo</th>
+                                <th class="p-3">Precios (Detal / Mayor)</th>
+                                <th class="p-3">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-inventario" class="text-sm"></tbody>
+                        <tbody id="tabla-inventario-admin" class="text-sm"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- SECCIÓN: REPORTES PDF -->
-        <section id="tab-reportes" class="hidden space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center no-print">
-                <h2 class="text-lg font-bold">Reporte de Inventario Actual</h2>
-                <button onclick="window.print()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700">Imprimir / Descargar PDF</button>
+        <!-- ================= CONTABILIDAD & CAJA ================= -->
+        <section id="tab-contabilidad" class="hidden space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-bold mb-4 text-indigo-700">💸 Movimiento Manual (4x1000 Automático en Egresos Digitales)</h2>
+                    <form id="form-caja-manual" class="space-y-3">
+                        <select id="caja-tipo" class="p-2.5 border rounded-xl w-full text-sm font-bold">
+                            <option value="INGRESO">INGRESO Manual</option>
+                            <option value="EGRESO">EGRESO / Gasto</option>
+                        </select>
+                        <input type="text" id="caja-concepto" placeholder="Concepto (Ej: Insumos telas, Publicidad, Insumos pedido)" required class="p-2.5 border rounded-xl w-full text-sm">
+                        <input type="text" id="caja-tercero" placeholder="Tercero / Proveedor" class="p-2.5 border rounded-xl w-full text-sm">
+                        <select id="caja-metodo" class="p-2.5 border rounded-xl w-full text-sm">
+                            <option value="Efectivo">Efectivo (Sin 4x1000)</option>
+                            <option value="Nequi">Nequi (Aplica 4x1000 en Egresos)</option>
+                            <option value="Bre-B">Bre-B (Aplica 4x1000 en Egresos)</option>
+                            <option value="Bancolombia">Bancolombia (Aplica 4x1000 en Egresos)</option>
+                            <option value="Addi">Addi (Aplica 4x1000 en Egresos)</option>
+                            <option value="Wompi">Wompi (Aplica 4x1000 en Egresos)</option>
+                        </select>
+                        <input type="number" id="caja-valor" placeholder="Valor ($)" required class="p-2.5 border rounded-xl w-full text-sm">
+                        <textarea id="caja-desc" placeholder="Descripción adicional..." class="p-2.5 border rounded-xl w-full text-sm"></textarea>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl font-bold w-full transition">Registrar Movimiento Contable</button>
+                    </form>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    <h2 class="text-lg font-bold text-slate-800">📊 Balances de Caja & Descarga Mensual</h2>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between border-b pb-2"><span>Saldo Efectivo Actual:</span> <span id="bal-efectivo" class="font-bold text-emerald-600 text-base">$0</span></div>
+                        <div class="flex justify-between border-b pb-2"><span>Saldo Nequi / Bancos Actual:</span> <span id="bal-bancos" class="font-bold text-blue-600 text-base">$0</span></div>
+                        <div class="flex justify-between border-b pb-2"><span>Total Impuesto 4x1000 Acumulado:</span> <span id="bal-4x1000" class="font-bold text-red-600">$0</span></div>
+                    </div>
+                    <div class="pt-4 border-t">
+                        <button onclick="descargarMovimientosMes()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold w-full text-sm shadow">📥 Descargar Movimientos del Mes (CSV)</button>
+                    </div>
+                </div>
             </div>
 
-            <div id="printable-area" class="bg-white p-8 rounded-xl shadow border">
-                <h2 class="text-xl font-bold mb-2 text-center text-indigo-700">Informe General de Inventario</h2>
-                <p class="text-center text-sm text-gray-500 mb-6" id="fecha-reporte"></p>
-                <table class="w-full text-left border-collapse mb-6 text-xs">
-                    <thead>
-                        <tr class="border-b bg-gray-100">
-                            <th class="p-2">Referencia</th>
-                            <th class="p-2">Producto</th>
-                            <th class="p-2">Stock Restante</th>
-                            <th class="p-2">P. Detal</th>
-                            <th class="p-2">P. Mayorista</th>
-                            <th class="p-2">Origen</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reporte-inventario"></tbody>
-                </table>
+            <!-- Tabla de movimientos recientes -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+                <h2 class="text-lg font-bold text-slate-800">Historial Contable y de Caja</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b bg-slate-100 text-slate-400 uppercase">
+                                <th class="p-2">Fecha</th><th class="p-2">Tipo</th><th class="p-2">Concepto / Tercero</th><th class="p-2">Método</th><th class="p-2">Valor</th><th class="p-2">4x1000</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-caja-historial"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
-    </div>
 
-    <!-- MODAL HISTORIAL DE PAGOS / ABONOS -->
-    <div id="modal-pagos" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
-            <h3 class="text-lg font-bold text-indigo-700">Historial de Pagos, Abonos y Devoluciones</h3>
-            <div id="contenido-historial-pagos" class="max-h-60 overflow-y-auto space-y-2 text-sm border p-3 rounded-lg"></div>
-            <div class="flex justify-end">
-                <button onclick="cerrarModalPagos()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar</button>
+        <!-- ================= REPORTES PDF ================= -->
+        <section id="tab-reportes" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center no-print">
+                <h2 class="text-lg font-bold">Reporte Gerencial Consolidado</h2>
+                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow transition">🖨 Imprimir / Descargar PDF</button>
             </div>
-        </div>
-    </div>
+            <div id="printable-area" class="bg-white p-8 rounded-2xl shadow-sm border space-y-6">
+                <div class="text-center border-b pb-4">
+                    <h2 class="text-2xl font-black text-indigo-700">CUPISSA S.A.S. - INFORME EJECUTIVO Y CONTABLE</h2>
+                    <p class="text-xs text-slate-400 mt-1" id="fecha-reporte-pdf"></p>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs border-b pb-4">
+                    <div><strong>Ventas del Mes:</strong> <br><span id="rep-ventas" class="text-sm font-bold text-indigo-600">$0</span></div>
+                    <div><strong>Cuentas por Cobrar:</strong> <br><span id="rep-cobrar" class="text-sm font-bold text-amber-600">$0</span></div>
+                    <div><strong>Caja Efectivo:</strong> <br><span id="rep-efectivo" class="text-sm font-bold text-emerald-600">$0</span></div>
+                    <div><strong>Caja Nequi/Bancos:</strong> <br><span id="rep-bancos" class="text-sm font-bold text-blue-600">$0</span></div>
+                </div>
 
-    <!-- MODAL EDITAR PRODUCTO -->
-    <div id="modal-editar-producto" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-md w-full p-6 space-y-4 shadow-xl">
-            <h3 class="text-lg font-bold text-indigo-700">Editar Producto e Inventario</h3>
-            <form id="form-editar-prod" class="space-y-3">
-                <input type="hidden" id="edit-prod-id">
                 <div>
-                    <label class="text-xs font-semibold text-gray-600">Nombre del Producto</label>
-                    <input type="text" id="edit-prod-nombre" required class="p-2 border rounded-lg w-full text-sm">
+                    <h3 class="font-bold text-sm text-slate-700 mb-2">Estado de Inventario y Origen</h3>
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b bg-slate-100"><th class="p-2">Ref</th><th class="p-2">Producto</th><th class="p-2">Origen</th><th class="p-2">Stock</th><th class="p-2">Precio Detal</th></tr>
+                        </thead>
+                        <tbody id="tabla-reporte-inv"></tbody>
+                    </table>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Stock</label>
-                        <input type="number" id="edit-prod-stock" required class="p-2 border rounded-lg w-full text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Origen</label>
-                        <select id="edit-prod-origen" class="p-2 border rounded-lg w-full text-sm">
-                            <option value="Nacional (Colombia)">Nacional</option>
-                            <option value="Internacional">Internacional</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Precio Detal ($)</label>
-                        <input type="number" id="edit-prod-detal" required class="p-2 border rounded-lg w-full text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Precio Mayorista ($)</label>
-                        <input type="number" id="edit-prod-mayorista" required class="p-2 border rounded-lg w-full text-sm">
-                    </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="cerrarModalEditar()" class="bg-gray-400 text-white px-3 py-2 rounded-lg text-sm">Cancelar</button>
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
+            </div>
+        </section>
+
+    </main>
 
     <!-- MODAL EDITAR PEDIDO -->
-    <div id="modal-editar-pedido" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl max-w-xl w-full p-6 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
-            <h3 class="text-lg font-bold text-indigo-700">Editar Pedido</h3>
-            <form id="form-editar-pedido" class="space-y-3">
+    <div id="modal-editar-pedido" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-black text-indigo-700">✏️ Editar Pedido / Estado</h3>
+            <form id="form-editar-pedido" class="space-y-3 text-sm">
                 <input type="hidden" id="edit-ped-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Tipo Operación</label>
-                        <select id="edit-ped-tipo" class="p-2 border rounded-lg w-full text-sm">
-                            <option value="Venta Contado">Venta Contado</option>
-                            <option value="Crédito / Fiado">Crédito / Fiado</option>
-                            <option value="Alquiler">Alquiler</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Estado del Pedido</label>
-                        <select id="edit-ped-estado" class="p-2 border rounded-lg w-full text-sm">
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Fabricando">Fabricando</option>
-                            <option value="Entregado">Entregado</option>
-                            <option value="Finalizado">Finalizado</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Fecha Agendamiento</label>
-                        <input type="date" id="edit-ped-agendamiento" class="p-2 border rounded-lg w-full text-sm" required>
-                    </div>
-                    <div>
-                        <label class="text-xs font-semibold text-gray-600">Fecha Entrega</label>
-                        <input type="date" id="edit-ped-entrega" class="p-2 border rounded-lg w-full text-sm" required>
-                    </div>
-                </div>
                 <div>
-                    <label class="text-xs font-semibold text-gray-600">Depósito / Garantía ($)</label>
-                    <input type="number" id="edit-ped-deposito" class="p-2 border rounded-lg w-full text-sm">
+                    <label class="font-semibold text-slate-600">Estado del Pedido</label>
+                    <select id="edit-ped-estado" class="p-2.5 border rounded-xl w-full font-bold">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Fabricando">Fabricando</option>
+                        <option value="Entregado">Entregado</option>
+                        <option value="Finalizado">Finalizado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
                 </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="text-xs font-semibold">Fecha Agendamiento</label><input type="date" id="edit-ped-agendamiento" class="p-2 border rounded-xl w-full"></div>
+                    <div><label class="text-xs font-semibold">Fecha Entrega</label><input type="date" id="edit-ped-entrega" class="p-2 border rounded-xl w-full"></div>
+                </div>
+                <div><label class="text-xs font-semibold">Costo Producción Manual ($)</label><input type="number" id="edit-ped-costo" class="p-2 border rounded-xl w-full"></div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="cerrarModalEditarPedido()" class="bg-gray-400 text-white px-3 py-2 rounded-lg text-sm">Cancelar</button>
-                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Actualizar Fechas y Datos</button>
+                    <button type="button" onclick="cerrarModalEditarPedido()" class="px-4 py-2 bg-slate-300 rounded-xl">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 text-white font-bold rounded-xl">Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- SCRIPT JS FUNCIONAL CON SUPABASE -->
     <script>
         const SUPABASE_URL = 'https://njwiobfjtmwsxyigxgrp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qd2lvYmZqdG13c3h5aWd4Z3JwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4OTkxNjYsImV4cCI6MjEwNjQ3NTE2Nn0.YISPVeUpk-gAImCRkr1TmFfP6fX6Mps7HPJ3MXfVkYI';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let carritoItems = [];
-        let listaProductosInventario = [];
-        let productoSeleccionadoObj = null;
+        let carritoAdmin = [];
+        let productosCache = [];
+        let productoSeleccionadoCache = null;
 
         function switchTab(tab) {
-            ['dashboard', 'pedidos', 'inventario', 'reportes'].forEach(t => {
+            ['dashboard', 'pedidos', 'produccion', 'inventario', 'contabilidad', 'reportes'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
             });
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
-            cargarDatos();
+            cargarDatosGlobales();
         }
 
-        async function cargarDatos() {
-            await cargarInventarioSelector();
-            await cargarInventarioTabla();
-            await cargarPedidos();
-            document.getElementById('fecha-reporte').innerText = `Fecha de emisión: ${new Date().toLocaleDateString()}`;
-        }
-
-        async function cargarInventarioSelector() {
+        async function cargarDatosGlobales() {
             const { data } = await supabaseClient.from('productos').select('*');
-            listaProductosInventario = data || [];
+            productosCache = data || [];
+            await cargarInventarioAdmin();
+            await cargarPedidosAdmin();
+            await cargarProduccion();
+            await cargarContabilidad();
         }
 
-        function filtrarProductosInventario() {
-            const query = document.getElementById('buscador-productos').value.toLowerCase();
-            const box = document.getElementById('sugerencias-box');
-            if (!query) {
-                box.classList.add('hidden');
-                return;
-            }
-            const filtrados = listaProductosInventario.filter(p => p.nombre.toLowerCase().includes(query) || p.referencia.toLowerCase().includes(query));
-            if (filtrados.length === 0) {
-                box.innerHTML = `<div class="p-2 text-xs text-gray-500">No hay coincidencias. Escribe un nombre libre abajo.</div>`;
-                box.classList.remove('hidden');
-                return;
-            }
+        // ================= PEDIDOS & CRM =================
+        function filtrarInvPedido() {
+            const q = document.getElementById('buscador-prod-pedido').value.toLowerCase();
+            const box = document.getElementById('sugerencias-inv-box');
+            if (!q) { box.classList.add('hidden'); return; }
+            const filtrados = productosCache.filter(p => p.nombre.toLowerCase().includes(q) || p.referencia.toLowerCase().includes(q));
             box.innerHTML = '';
             filtrados.forEach(p => {
                 box.innerHTML += `
-                    <div onclick="seleccionarProductoDeBusqueda('${p.id}')" class="p-2 hover:bg-indigo-50 cursor-pointer text-xs border-b flex justify-between">
-                        <span><strong>[${p.referencia}]</strong> ${p.nombre}</span>
-                        <span class="text-indigo-600 font-bold">Stock: ${p.stock} | Detal: $${p.precio_detal || p.precio_venta} | Mayor: $${p.precio_mayorista || 0}</span>
+                    <div onclick='seleccionarItemInventarioAdmin(${JSON.stringify(p)})' class="p-2 hover:bg-indigo-50 cursor-pointer text-xs border-b flex justify-between">
+                        <span><strong>[${p.referencia}]</strong> ${p.nombre} (${p.origen_compra})</span>
+                        <span class="text-indigo-600 font-bold">${p.sin_stock ? 'Sin Stock' : 'Stock: ' + p.stock} | Detal: $${(p.precio_detal || 0).toLocaleString()}</span>
                     </div>
                 `;
             });
             box.classList.remove('hidden');
         }
 
-        function seleccionarProductoDeBusqueda(id) {
-            const prod = listaProductosInventario.find(p => p.id === id);
-            if (prod) {
-                productoSeleccionadoObj = prod;
-                document.getElementById('buscador-productos').value = `${prod.referencia} - ${prod.nombre}`;
-                document.getElementById('item-nombre-libre').value = prod.nombre;
-                actualizarPrecioSeleccionado();
-                document.getElementById('item-descuenta').checked = true;
-                document.getElementById('sugerencias-box').classList.add('hidden');
-            }
+        function seleccionarItemInventarioAdmin(prod) {
+            productoSeleccionadoCache = prod;
+            document.getElementById('buscador-prod-pedido').value = `${prod.referencia} - ${prod.nombre}`;
+            document.getElementById('item-nombre').value = prod.nombre;
+            actualizarPrecioItem();
+            document.getElementById('sugerencias-inv-box').classList.add('hidden');
         }
 
-        function actualizarPrecioSeleccionado() {
-            if (!productoSeleccionadoObj) return;
-            const tipoTarifa = document.getElementById('item-tipo-precio').value;
-            if (tipoTarifa === 'mayorista') {
-                document.getElementById('item-precio').value = productoSeleccionadoObj.precio_mayorista || 0;
-            } else {
-                document.getElementById('item-precio').value = productoSeleccionadoObj.precio_detal || productoSeleccionadoObj.precio_venta || 0;
-            }
+        function actualizarPrecioItem() {
+            if (!productoSeleccionadoCache) return;
+            const tipo = document.getElementById('select-tipo-precio').value;
+            document.getElementById('item-precio').value = tipo === 'mayorista' ? (productoSeleccionadoCache.precio_mayorista || 0) : (productoSeleccionadoCache.precio_detal || 0);
         }
 
-        function agregarItemAlCarrito() {
-            const nombreLibre = document.getElementById('item-nombre-libre').value.trim() || document.getElementById('buscador-productos').value.trim();
+        function agregarItemPedidoAdmin() {
+            const nombre = document.getElementById('item-nombre').value.trim();
             const cantidad = parseInt(document.getElementById('item-cantidad').value) || 1;
             const precio = parseFloat(document.getElementById('item-precio').value) || 0;
-            const descuenta = document.getElementById('item-descuenta').checked;
+            if (!nombre) { alert("Ingresa o selecciona un producto."); return; }
 
-            if (!nombreLibre) {
-                alert("Selecciona o escribe un producto.");
-                return;
-            }
-
-            carritoItems.push({
-                producto_id: productoSeleccionadoObj ? productoSeleccionadoObj.id : null,
-                nombre_producto: nombreLibre,
-                cantidad,
-                precio_unitario: precio,
-                descuenta_stock: descuenta
+            carritoAdmin.push({
+                producto_id: productoSeleccionadoCache ? productoSeleccionadoCache.id : null,
+                nombre, cantidad, precio
             });
 
-            productoSeleccionadoObj = null;
-            document.getElementById('buscador-productos').value = '';
-            document.getElementById('item-nombre-libre').value = '';
+            productoSeleccionadoCache = null;
+            document.getElementById('buscador-prod-pedido').value = '';
+            document.getElementById('item-nombre').value = '';
             document.getElementById('item-precio').value = '';
-            document.getElementById('item-cantidad').value = '1';
-            renderizarCarrito();
+            renderizarCarritoAdmin();
         }
 
-        function actualizarPrecioItemCarrito(index, nuevoPrecio) {
-            carritoItems[index].precio_unitario = parseFloat(nuevoPrecio) || 0;
-            renderizarCarrito();
-        }
-
-        function renderizarCarrito() {
-            const tbody = document.getElementById('tabla-carrito');
-            let totalGeneral = 0;
-
-            if (carritoItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-gray-400">No hay productos agregados aún.</td></tr>`;
-                document.getElementById('label-total-carrito').innerText = `$0`;
+        function renderizarCarritoAdmin() {
+            const tbody = document.getElementById('tabla-carrito-admin');
+            if (carritoAdmin.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">No hay ítems agregados.</td></tr>`;
+                calcularTotalAdmin();
                 return;
             }
             tbody.innerHTML = '';
-            carritoItems.forEach((item, index) => {
-                let subtotal = item.cantidad * item.precio_unitario;
-                totalGeneral += subtotal;
+            carritoAdmin.forEach((i, idx) => {
                 tbody.innerHTML += `
                     <tr class="border-b">
-                        <td class="p-2">${item.nombre_producto} ${!item.descuenta_stock ? '<span class="text-xs text-amber-600">(Sin stock)</span>' : ''}</td>
-                        <td class="p-2">${item.cantidad}</td>
-                        <td class="p-2">
-                            <input type="number" value="${item.precio_unitario}" onchange="actualizarPrecioItemCarrito(${index}, this.value)" class="p-1 border rounded w-28 text-sm font-bold text-indigo-700 bg-amber-50">
-                        </td>
-                        <td class="p-2 font-bold">$${subtotal.toLocaleString()}</td>
-                        <td class="p-2"><button type="button" onclick="carritoItems.splice(${index}, 1); renderizarCarrito();" class="text-red-600 text-xs">Eliminar</button></td>
+                        <td class="p-2 font-semibold">${i.nombre}</td>
+                        <td class="p-2">${i.cantidad}</td>
+                        <td class="p-2">$${i.precio.toLocaleString()}</td>
+                        <td class="p-2 font-bold">$${(i.cantidad * i.precio).toLocaleString()}</td>
+                        <td class="p-2"><button type="button" onclick="carritoAdmin.splice(${idx},1); renderizarCarritoAdmin();" class="text-red-600 text-xs">Eliminar</button></td>
                     </tr>
                 `;
             });
-            document.getElementById('label-total-carrito').innerText = `$${totalGeneral.toLocaleString()}`;
+            calcularTotalAdmin();
         }
 
-        // GUARDAR PEDIDO
-        document.getElementById('form-pedido').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (carritoItems.length === 0) {
-                alert("Agrega al menos un producto al pedido.");
-                return;
-            }
+        function calcularTotalAdmin() {
+            let subtotal = carritoAdmin.reduce((acc, i) => acc + (i.cantidad * i.precio), 0);
+            let domicilio = parseFloat(document.getElementById('ped-domicilio').value) || 0;
+            let anticipo = parseFloat(document.getElementById('ped-anticipo').value) || 0;
+            let total = subtotal + domicilio;
+            let saldo = Math.max(0, total - anticipo);
 
-            const clienteNombre = document.getElementById('ped-cliente').value.trim();
+            document.getElementById('lbl-total-admin').innerText = `$${total.toLocaleString()}`;
+            document.getElementById('lbl-saldo-admin').innerText = `$${saldo.toLocaleString()}`;
+        }
+
+        document.getElementById('form-pedido-admin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (carritoAdmin.length === 0) { alert("Agrega ítems al pedido."); return; }
+
+            const nombre = document.getElementById('cli-nombre').value.trim();
+            const telefono = document.getElementById('cli-telefono').value.trim();
+            const direccion = document.getElementById('cli-direccion').value.trim();
+            const emailCc = document.getElementById('cli-email-cc').value.trim();
             const tipoOperacion = document.getElementById('ped-tipo').value;
             const fechaAgendamiento = document.getElementById('ped-fecha-agendamiento').value;
             const fechaEntrega = document.getElementById('ped-fecha-entrega').value;
-            const pagoInicial = parseFloat(document.getElementById('ped-pago-inicial').value) || 0;
-            const metodoPago = document.getElementById('ped-metodo-pago').value;
-            const depositoGarantia = parseFloat(document.getElementById('ped-deposito').value) || 0;
+            const domicilio = parseFloat(document.getElementById('ped-domicilio').value) || 0;
+            const anticipo = parseFloat(document.getElementById('ped-anticipo').value) || 0;
+            const metodoPago = document.getElementById('ped-metodo').value;
+            const costoManual = parseFloat(document.getElementById('ped-costo-manual').value) || 0;
 
-            let totalPedido = carritoItems.reduce((acc, item) => acc + (item.cantidad * item.precio_unitario), 0);
-            let estadoPago = pagoInicial >= totalPedido ? 'Pagado' : (pagoInicial > 0 ? 'Parcial' : 'Pendiente');
-            let refPedido = 'PED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            let subtotal = carritoAdmin.reduce((acc, i) => acc + (i.cantidad * i.precio), 0);
+            let total = subtotal + domicilio;
+            let estadoPago = anticipo >= total ? 'Pagado' : (anticipo > 0 ? 'Parcial' : 'Pendiente');
+            let refPedido = 'CUP-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            // Verificación previa para evitar clientes repetidos por nombre
-            let clienteId = null;
-            const { data: clienteExistente } = await supabaseClient.from('clientes').select('id').ilike('nombre', clienteNombre).maybeSingle();
-            
-            if (clienteExistente) {
-                clienteId = clienteExistente.id;
-            } else {
-                let { data: nuevoCliente, error: errCliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
-                if (errCliente) {
-                    alert("Error al guardar cliente: " + errCliente.message);
-                    return;
-                }
-                clienteId = nuevoCliente.id;
+            // Guardar o asociar cliente CRM
+            let { data: cliente, error: errCli } = await supabaseClient.from('clientes').insert([{
+                nombre, telefono, direccion, email: emailCc
+            }]).select().single();
+
+            if (errCli) {
+                let { data: cliExist } = await supabaseClient.from('clientes').select('*').eq('telefono', telefono).single();
+                cliente = cliExist || { id: null };
             }
 
-            let { data: pedido, error: errPedido } = await supabaseClient.from('pedidos').insert([{
+            let { data: pedido, error: errPed } = await supabaseClient.from('pedidos').insert([{
                 referencia_pedido: refPedido,
-                cliente_id: clienteId,
+                cliente_id: cliente.id,
                 tipo_operacion: tipoOperacion,
-                total: totalPedido,
-                pagado: pagoInicial,
-                deposito_garantia: depositoGarantia,
+                total, pagado: anticipo, domicilio,
+                costo_produccion_manual: costoManual,
                 estado_pago: estadoPago,
                 fecha_agendamiento: fechaAgendamiento,
                 fecha_entrega: fechaEntrega,
                 estado: 'Pendiente'
             }]).select().single();
 
-            if (errPedido) {
-                alert("Error al guardar pedido: " + errPedido.message);
-                return;
-            }
+            if (errPed) { alert("Error al guardar el pedido: " + errPed.message); return; }
 
-            for (let item of carritoItems) {
+            for (let item of carritoAdmin) {
                 await supabaseClient.from('detalle_pedido').insert([{
                     pedido_id: pedido.id,
                     producto_id: item.producto_id,
-                    nombre_producto: item.nombre_producto,
+                    nombre_producto: item.nombre,
                     cantidad: item.cantidad,
-                    precio_unitario: item.precio_unitario,
-                    descuenta_stock: item.descuenta_stock
-                }]);
-
-                if (item.producto_id && item.descuenta_stock) {
-                    let prod = listaProductosInventario.find(p => p.id === item.producto_id);
-                    if (prod) {
-                        let nuevoStock = Math.max(0, prod.stock - item.cantidad);
-                        await supabaseClient.from('productos').update({ stock: nuevoStock }).eq('id', item.producto_id);
-                    }
-                }
-            }
-
-            let fechaHoraActual = new Date().toISOString();
-            if (pagoInicial > 0) {
-                await supabaseClient.from('pagos_pedidos').insert([{ 
-                    pedido_id: pedido.id, 
-                    monto: pagoInicial, 
-                    tipo_pago: `Anticipo (${metodoPago})`,
-                    fecha: fechaHoraActual
-                }]);
-            }
-            if (depositoGarantia > 0) {
-                await supabaseClient.from('pagos_pedidos').insert([{ 
-                    pedido_id: pedido.id, 
-                    monto: depositoGarantia, 
-                    tipo_pago: `Depósito Garantía (${metodoPago})`,
-                    fecha: fechaHoraActual
+                    precio_unitario: item.precio
                 }]);
             }
 
-            carritoItems = [];
-            renderizarCarrito();
-            document.getElementById('form-pedido').reset();
-            alert("¡Pedido guardado con éxito!");
-            cargarDatos();
+            if (anticipo > 0) {
+                await supabaseClient.from('pagos_pedidos').insert([{
+                    pedido_id: pedido.id, monto: anticipo, metodo_pago: metodoPago, tipo_pago: 'Anticipo'
+                }]);
+                
+                await supabaseClient.from('caja_movimientos').insert([{
+                    tipo: 'INGRESO', categoria: 'Ventas', concepto: `Anticipo Pedido ${refPedido}`,
+                    tercero: nombre, metodo_pago: metodoPago, valor: anticipo,
+                    aplica_4x1000: false, valor_4x1000: 0, pedido_id: pedido.id
+                }]);
+            }
+
+            carritoAdmin = [];
+            renderizarCarritoAdmin();
+            document.getElementById('form-pedido-admin').reset();
+            alert("¡Pedido y cliente registrados exitosamente!");
+            cargarDatosGlobales();
         });
 
-        async function cargarPedidos() {
-            const queryBusqueda = document.getElementById('buscador-pedidos-tabla')?.value.toLowerCase() || '';
-            const { data: pedidos } = await supabaseClient.from('pedidos').select('*, clientes(nombre)');
-            const tbody = document.getElementById('tabla-pedidos-general');
-            const tbodyAlertas = document.getElementById('lista-alertas-pedidos');
+        async function cargarPedidosAdmin() {
+            const queryBuscador = (document.getElementById('buscador-pedidos-gral')?.value || '').toLowerCase();
+            const { data: pedidos } = await supabaseClient.from('pedidos').select('*, clientes(nombre, telefono, direccion, email)');
+            const tbody = document.getElementById('tabla-pedidos-gral');
+            const tbodyAlertas = document.getElementById('tabla-alertas-dashboard');
             if (tbody) tbody.innerHTML = '';
             if (tbodyAlertas) tbodyAlertas.innerHTML = '';
-            
-            let totalPorCobrar = 0;
-            let totalDepositos = 0;
+
             let hoy = new Date().toISOString().split('T')[0];
+            let porCobrarTotal = 0;
 
             (pedidos || []).forEach(p => {
-                let clienteNombre = p.clientes?.nombre || 'Cliente';
-                let saldoPendiente = p.total - p.pagado;
-                if (p.estado_pago !== 'Pagado') totalPorCobrar += saldoPendiente;
-                totalDepositos += p.deposito_garantia;
+                let cli = p.clientes?.nombre || 'Cliente';
+                let telf = p.clientes?.telefono || '';
+                let saldo = p.total - p.pagado;
+                if (p.estado_pago !== 'Pagado' && p.estado !== 'Cancelado') porCobrarTotal += saldo;
 
-                let alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">A tiempo</span>`;
-                if (p.fecha_entrega) {
-                    if (p.fecha_entrega < hoy && p.estado !== 'Finalizado') {
-                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700 font-bold">⚠️ Vencido</span>`;
-                    } else if (p.fecha_entrega === hoy) {
-                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-amber-100 text-amber-800 font-bold">🔥 Hoy</span>`;
-                    }
-                }
+                // Alertas URGENTES: Excluye pedidos 'Entregado', 'Finalizado' y 'Cancelado'
+                if (tbodyAlertas && p.estado !== 'Entregado' && p.estado !== 'Finalizado' && p.estado !== 'Cancelado') {
+                    let alertaBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">A tiempo</span>`;
+                    if (p.fecha_entrega < hoy) alertaBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold">⚠️ Vencido</span>`;
+                    else if (p.fecha_entrega === hoy) alertaBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-bold">🔥 Hoy</span>`;
 
-                if (tbodyAlertas && p.estado !== 'Finalizado') {
                     tbodyAlertas.innerHTML += `
                         <tr class="border-b">
                             <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
-                            <td class="p-3">${clienteNombre}</td>
-                            <td class="p-3 text-xs">${p.fecha_agendamiento || 'Sin agendar'}</td>
-                            <td class="p-3 text-xs">${p.fecha_entrega || 'Sin fecha'}</td>
-                            <td class="p-3">${alertaHtml}</td>
-                            <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
+                            <td class="p-3">${cli}</td>
+                            <td class="p-3 text-xs">${p.fecha_entrega || '-'}</td>
+                            <td class="p-3 font-bold text-red-600">$${saldo.toLocaleString()}</td>
+                            <td class="p-3">${alertaBadge}</td>
+                            <td class="p-3"><span class="px-2 py-1 bg-slate-100 rounded text-xs font-bold">${p.estado}</span></td>
                         </tr>
                     `;
                 }
 
-                if (queryBusqueda && !clienteNombre.toLowerCase().includes(queryBusqueda) && !p.referencia_pedido.toLowerCase().includes(queryBusqueda)) return;
-
-                if (tbody) {
+                // Filtrado general CRM
+                if (tbody && (!queryBuscador || cli.toLowerCase().includes(queryBuscador) || telf.includes(queryBuscador) || p.referencia_pedido.toLowerCase().includes(queryBuscador))) {
                     tbody.innerHTML += `
                         <tr class="border-b">
-                            <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
-                            <td class="p-3">${clienteNombre}</td>
-                            <td class="p-3 text-xs">Agend: ${p.fecha_agendamiento || '-'}<br>Entrega: <span class="font-semibold">${p.fecha_entrega || '-'}</span></td>
-                            <td class="p-3 text-xs">Total: $${Number(p.total).toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldoPendiente.toLocaleString()}</span></td>
-                            <td class="p-3 font-bold text-blue-600">$${Number(p.deposito_garantia).toLocaleString()}</td>
-                            <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
-                            <td class="p-3 space-y-1">
-                                <div class="flex gap-1 flex-wrap">
-                                    <button onclick="registrarAbono('${p.id}', ${p.pagado}, ${p.total})" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded">Abonar</button>
-                                    <button onclick="gestionarDevolucionDeposito('${p.id}', ${p.deposito_garantia})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded">Devolver Depósito</button>
-                                </div>
-                                <div class="flex gap-2 pt-1">
-                                    <button onclick="abrirModalEditarPedido('${p.id}')" class="text-xs text-amber-600 font-bold hover:underline">✏️ Editar</button>
-                                    <button onclick="eliminarPedido('${p.id}')" class="text-xs text-red-600 font-bold hover:underline">🗑️ Eliminar</button>
-                                    <button onclick="verHistorialPagos('${p.id}')" class="text-xs text-indigo-700 underline">Pagos</button>
-                                </div>
+                            <td class="p-3 text-xs font-mono"><strong>${p.referencia_pedido}</strong><br>Entrega: ${p.fecha_entrega || '-'}</td>
+                            <td class="p-3 text-xs"><strong>${cli}</strong><br>📞 ${telf}<br>Dir: ${p.clientes?.direccion || 'N/A'}</td>
+                            <td class="p-3 text-xs"><span class="px-2 py-1 bg-indigo-50 text-indigo-700 rounded font-semibold">${p.tipo_operacion}</span><br>Estado: <strong>${p.estado}</strong></td>
+                            <td class="p-3 text-xs">Total: $${Number(p.total).toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldo.toLocaleString()}</span></td>
+                            <td class="p-3 space-x-1">
+                                <button onclick="abrirModalEditarPedido('${p.id}')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded font-bold">✏️ Editar</button>
+                                <button onclick="registrarAbonoAdmin('${p.id}', ${p.pagado}, ${p.total}, '${cli}')" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded font-bold">💵 Abonar</button>
                             </td>
                         </tr>
                     `;
                 }
             });
-
-            document.getElementById('stat-por-cobrar').innerText = `$${totalPorCobrar.toLocaleString()}`;
-            document.getElementById('stat-depositos').innerText = `$${totalDepositos.toLocaleString()}`;
+            document.getElementById('stat-por-cobrar').innerText = `$${porCobrarTotal.toLocaleString()}`;
+            document.getElementById('rep-cobrar').innerText = `$${porCobrarTotal.toLocaleString()}`;
         }
 
-        async function registrarAbono(pedidoId, pagadoActual, totalVenta) {
-            const montoStr = prompt("Ingrese el monto del abono:");
-            if (!montoStr) return;
-            const abono = parseFloat(montoStr);
-            const metodo = prompt("¿Método de pago? (Efectivo / Transferencia)", "Efectivo") || "Efectivo";
-            const nuevoPagado = pagadoActual + abono;
-            const nuevoEstadoPago = nuevoPagado >= totalVenta ? 'Pagado' : 'Parcial';
-            const fechaHoraActual = new Date().toISOString();
-
-            await supabaseClient.from('pedidos').update({ pagado: nuevoPagado, estado_pago: nuevoEstadoPago }).eq('id', pedidoId);
-            await supabaseClient.from('pagos_pedidos').insert([{ 
-                pedido_id: pedidoId, 
-                monto: abono, 
-                tipo_pago: `Abono (${metodo})`,
-                fecha: fechaHoraActual 
-            }]);
-            cargarDatos();
-        }
-
-        async function gestionarDevolucionDeposito(pedidoId, depositoActual) {
-            if (depositoActual <= 0) {
-                alert("No hay garantía o anticipo registrado para devolver.");
-                return;
-            }
-            const montoDevolverStr = prompt(`El depósito actual es $${depositoActual.toLocaleString()}. Ingrese la cantidad a devolver:`, depositoActual);
-            if (!montoDevolverStr) return;
-            const montoDevolucion = parseFloat(montoDevolverStr);
-
-            if (montoDevolucion > depositoActual) {
-                alert("No puedes devolver más de lo que está en garantía.");
-                return;
-            }
-
-            const nuevoDeposito = depositoActual - montoDevolucion;
-            const fechaHoraActual = new Date().toISOString();
-            await supabaseClient.from('pedidos').update({ deposito_garantia: nuevoDeposito }).eq('id', pedidoId);
-            await supabaseClient.from('pagos_pedidos').insert([{ 
-                pedido_id: pedidoId, 
-                monto: -montoDevolucion, 
-                tipo_pago: 'Devolución de Anticipo/Depósito',
-                fecha: fechaHoraActual 
-            }]);
-            alert("Devolución registrada correctamente.");
-            cargarDatos();
-        }
-
-        async function verHistorialPagos(pedidoId) {
-            const { data: pagos } = await supabaseClient.from('pagos_pedidos').select('*').eq('pedido_id', pedidoId).order('fecha', { ascending: false });
-            const box = document.getElementById('contenido-historial-pagos');
-            box.innerHTML = '';
-            if (!pagos || pagos.length === 0) {
-                box.innerHTML = '<p class="text-gray-500 text-xs">No hay registros de pagos, abonos o devoluciones.</p>';
-            } else {
-                pagos.forEach(p => {
-                    let fechaFmt = p.fecha ? new Date(p.fecha).toLocaleString() : 'Fecha no registrada';
-                    let color = p.monto < 0 ? 'text-red-600' : 'text-emerald-600';
-                    box.innerHTML += `<div class="border-b pb-1 text-xs flex justify-between"><span><strong>${p.tipo_pago}</strong><br><span class="text-gray-400">${fechaFmt}</span></span> <span class="font-bold ${color}">$${Number(p.monto).toLocaleString()}</span></div>`;
-                });
-            }
-            document.getElementById('modal-pagos').classList.remove('hidden');
-        }
-
-        function cerrarModalPagos() {
-            document.getElementById('modal-pagos').classList.add('hidden');
-        }
-
-        // EDITAR Y ELIMINAR PEDIDOS
         async function abrirModalEditarPedido(id) {
             const { data: p } = await supabaseClient.from('pedidos').select('*').eq('id', id).single();
             if (!p) return;
             document.getElementById('edit-ped-id').value = p.id;
-            document.getElementById('edit-ped-tipo').value = p.tipo_operacion;
             document.getElementById('edit-ped-estado').value = p.estado;
             document.getElementById('edit-ped-agendamiento').value = p.fecha_agendamiento || '';
             document.getElementById('edit-ped-entrega').value = p.fecha_entrega || '';
-            document.getElementById('edit-ped-deposito').value = p.deposito_garantia || 0;
+            document.getElementById('edit-ped-costo').value = p.costo_produccion_manual || 0;
             document.getElementById('modal-editar-pedido').classList.remove('hidden');
         }
 
@@ -742,197 +670,231 @@
         document.getElementById('form-editar-pedido').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('edit-ped-id').value;
-            const tipo_operacion = document.getElementById('edit-ped-tipo').value;
             const estado = document.getElementById('edit-ped-estado').value;
             const fecha_agendamiento = document.getElementById('edit-ped-agendamiento').value;
             const fecha_entrega = document.getElementById('edit-ped-entrega').value;
-            const deposito_garantia = parseFloat(document.getElementById('edit-ped-deposito').value) || 0;
+            const costo_produccion_manual = parseFloat(document.getElementById('edit-ped-costo').value) || 0;
 
-            const { error } = await supabaseClient.from('pedidos').update({
-                tipo_operacion,
-                estado,
-                fecha_agendamiento,
-                fecha_entrega,
-                deposito_garantia
+            await supabaseClient.from('pedidos').update({
+                estado, fecha_agendamiento, fecha_entrega, costo_produccion_manual
             }).eq('id', id);
 
-            if (error) {
-                alert("Error al actualizar pedido: " + error.message);
-                return;
-            }
             cerrarModalEditarPedido();
-            alert("¡Pedido actualizado correctamente!");
-            cargarDatos();
+            alert("¡Pedido actualizado con éxito!");
+            cargarDatosGlobales();
         });
 
-        async function eliminarPedido(id) {
-            if (!confirm("¿Estás seguro de eliminar este pedido? Se eliminarán también sus registros de pagos asociados.")) return;
-            await supabaseClient.from('pagos_pedidos').delete().eq('pedido_id', id);
-            await supabaseClient.from('detalle_pedido').delete().eq('pedido_id', id);
-            const { error } = await supabaseClient.from('pedidos').delete().eq('id', id);
-            if (error) {
-                alert("Error al eliminar pedido: " + error.message);
-                return;
-            }
-            alert("Pedido eliminado con éxito.");
-            cargarDatos();
-        }
+        async function registrarAbonoAdmin(pedidoId, pagadoActual, totalVenta, clienteNombre) {
+            const montoStr = prompt("Ingrese el monto del abono:");
+            if (!montoStr) return;
+            const abono = parseFloat(montoStr);
+            const metodo = prompt("Método de pago (Efectivo, Nequi, Bre-B, Bancolombia, Addi, Wompi):", "Efectivo") || "Efectivo";
+            const nuevoPagado = pagadoActual + abono;
+            const estadoPago = nuevoPagado >= totalVenta ? 'Pagado' : 'Parcial';
 
-        // REGISTRAR PRODUCTO
-        document.getElementById('form-producto').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const nombre = document.getElementById('prod-nombre').value.trim();
-            const stock = parseInt(document.getElementById('prod-stock').value);
-            const precio_detal = parseFloat(document.getElementById('prod-precio-detal').value);
-            const precio_mayorista = parseFloat(document.getElementById('prod-precio-mayorista').value);
-            const costo = parseFloat(document.getElementById('prod-costo').value) || 0;
-            const origen = document.getElementById('prod-origen').value;
-            const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            await supabaseClient.from('pedidos').update({ pagado: nuevoPagado, estado_pago: estadoPago }).eq('id', pedidoId);
+            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: abono, metodo_pago: metodo, tipo_pago: 'Abono' }]);
 
-            const { error } = await supabaseClient.from('productos').insert([{ 
-                referencia, 
-                nombre, 
-                stock, 
-                precio_detal, 
-                precio_mayorista,
-                precio_venta: precio_detal, 
-                costo,
-                origen
+            await supabaseClient.from('caja_movimientos').insert([{
+                tipo: 'INGRESO', categoria: 'Ventas', concepto: `Abono de Pedido`,
+                tercero: clienteNombre, metodo_pago: metodo, valor: abono,
+                aplica_4x1000: false, valor_4x1000: 0, pedido_id: pedidoId
             }]);
 
-            if (error) {
-                alert("Error al guardar producto: " + error.message);
-                return;
-            }
-            e.target.reset();
-            alert("¡Producto guardado exitosamente!");
-            cargarDatos();
-        });
-
-        // FUNCIONES DE EDICIÓN Y ELIMINACIÓN DE PRODUCTO
-        function abrirModalEditar(id) {
-            const p = listaProductosInventario.find(item => item.id === id);
-            if (!p) return;
-            document.getElementById('edit-prod-id').value = p.id;
-            document.getElementById('edit-prod-nombre').value = p.nombre;
-            document.getElementById('edit-prod-stock').value = p.stock;
-            document.getElementById('edit-prod-origen').value = p.origen || 'Nacional (Colombia)';
-            document.getElementById('edit-prod-detal').value = p.precio_detal || p.precio_venta || 0;
-            document.getElementById('edit-prod-mayorista').value = p.precio_mayorista || 0;
-            document.getElementById('modal-editar-producto').classList.remove('hidden');
+            alert("¡Abono registrado!");
+            cargarDatosGlobales();
         }
 
-        function cerrarModalEditar() {
-            document.getElementById('modal-editar-producto').classList.add('hidden');
-        }
+        // ================= PRODUCCIÓN =================
+        async function cargarProduccion() {
+            const q = (document.getElementById('buscador-produccion')?.value || '').toLowerCase();
+            // PRODUCCIÓN ES SOLO PARA PEDIDOS NO ENTREGADOS NI FINALIZADOS NI CANCELADOS
+            const { data: pedidos } = await supabaseClient.from('pedidos').select('*, clientes(nombre, telefono)').neq('estado', 'Entregado').neq('estado', 'Finalizado').neq('estado', 'Cancelado');
+            const tbody = document.getElementById('tabla-produccion');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-        document.getElementById('form-editar-prod').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('edit-prod-id').value;
-            const nombre = document.getElementById('edit-prod-nombre').value.trim();
-            const stock = parseInt(document.getElementById('edit-prod-stock').value);
-            const origen = document.getElementById('edit-prod-origen').value;
-            const precio_detal = parseFloat(document.getElementById('edit-prod-detal').value);
-            const precio_mayorista = parseFloat(document.getElementById('edit-prod-mayorista').value);
-
-            const { error } = await supabaseClient.from('productos').update({
-                nombre,
-                stock,
-                origen,
-                precio_detal,
-                precio_mayorista,
-                precio_venta: precio_detal
-            }).eq('id', id);
-
-            if (error) {
-                alert("Error al actualizar producto: " + error.message);
-                return;
-            }
-            cerrarModalEditar();
-            alert("¡Producto actualizado con éxito!");
-            cargarDatos();
-        });
-
-        async function eliminarProducto(id) {
-            if (!confirm("¿Estás seguro de eliminar este producto del inventario?")) return;
-            const { error } = await supabaseClient.from('productos').delete().eq('id', id);
-            if (error) {
-                alert("Error al eliminar producto: " + error.message);
-                return;
-            }
-            alert("Producto eliminado con éxito.");
-            cargarDatos();
-        }
-
-        async function sumarStockProducto(id, stockActual) {
-            const cantidadStr = prompt("¿Cuántas unidades adicionales llegaron para sumar al stock?");
-            if (!cantidadStr) return;
-            const cantidadExtra = parseInt(cantidadStr);
-            if (isNaN(cantidadExtra) || cantidadExtra <= 0) {
-                alert("Ingresa un número válido.");
-                return;
-            }
-
-            const nuevoStock = stockActual + cantidadExtra;
-            const { error } = await supabaseClient.from('productos').update({ stock: nuevoStock }).eq('id', id);
-            if (error) {
-                alert("Error al actualizar stock: " + error.message);
-                return;
-            }
-            alert(`Stock actualizado. Nuevo total: ${nuevoStock}`);
-            cargarDatos();
-        }
-
-        async function cargarInventarioTabla() {
-            const query = document.getElementById('buscador-inv')?.value.toLowerCase() || '';
-            const { data: productos } = await supabaseClient.from('productos').select('*');
-            const tbody = document.getElementById('tabla-inventario');
-            const tbodyReporte = document.getElementById('reporte-inventario');
-            if (tbody) tbody.innerHTML = '';
-            if (tbodyReporte) tbodyReporte.innerHTML = '';
-            let agotados = 0;
-
-            (productos || []).forEach(p => {
-                if (p.stock === 0) agotados++;
-                if (query && !p.nombre.toLowerCase().includes(query) && !p.referencia.toLowerCase().includes(query)) return;
-
-                let pDetal = p.precio_detal || p.precio_venta || 0;
-                let pMayor = p.precio_mayorista || 0;
-                let origenProd = p.origen || 'Nacional';
-
-                if (tbody) {
+            (pedidos || []).forEach(p => {
+                let cli = p.clientes?.nombre || 'Cliente';
+                let telf = p.clientes?.telefono || '';
+                if (!q || cli.toLowerCase().includes(q) || p.referencia_pedido.toLowerCase().includes(q)) {
                     tbody.innerHTML += `
                         <tr class="border-b">
-                            <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}<br><span class="text-gray-400 font-sans">${origenProd}</span></td>
-                            <td class="p-3">${p.nombre}</td>
-                            <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600' : ''}">${p.stock}</td>
-                            <td class="p-3 text-xs">Detal: $${Number(pDetal).toLocaleString()}<br><span class="text-emerald-700 font-bold">Mayor: $${Number(pMayor).toLocaleString()}</span></td>
-                            <td class="p-3 space-x-1">
-                                <button onclick="sumarStockProducto('${p.id}', ${p.stock})" class="text-xs bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700">➕ Stock</button>
-                                <button onclick="abrirModalEditar('${p.id}')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700">✏️ Editar</button>
-                                <button onclick="eliminarProducto('${p.id}')" class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">🗑️ Eliminar</button>
+                            <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
+                            <td class="p-3 text-xs"><strong>${cli}</strong><br>📞 ${telf}</td>
+                            <td class="p-3 text-xs">${p.fecha_entrega || '-'}</td>
+                            <td class="p-3 text-xs"><span class="px-2 py-1 bg-amber-50 text-amber-800 rounded font-bold">${p.tipo_operacion}</span></td>
+                            <td class="p-3 text-xs"><span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded font-bold">${p.estado}</span></td>
+                            <td class="p-3">
+                                <select onchange="cambiarEstadoProd('${p.id}', this.value)" class="p-1.5 border rounded text-xs font-bold">
+                                    <option value="Pendiente" ${p.estado==='Pendiente'?'selected':''}>Pendiente</option>
+                                    <option value="Fabricando" ${p.estado==='Fabricando'?'selected':''}>Fabricando</option>
+                                    <option value="Entregado">Marcar Entregado</option>
+                                </select>
                             </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        async function cambiarEstadoProd(id, estado) {
+            await supabaseClient.from('pedidos').update({ estado }).eq('id', id);
+            cargarDatosGlobales();
+        }
+
+        // ================= INVENTARIO =================
+        document.getElementById('form-producto-admin')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('prod-nombre').value.trim();
+            const mundo = document.getElementById('prod-mundo').value.trim();
+            const origen_compra = document.getElementById('prod-origen').value;
+            const sin_stock = document.getElementById('prod-sin-stock').checked;
+            const stock = sin_stock ? 0 : (parseInt(document.getElementById('prod-stock').value) || 0);
+            const precio_detal = parseFloat(document.getElementById('prod-detal').value);
+            const precio_mayorista = parseFloat(document.getElementById('prod-mayor').value);
+            const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            await supabaseClient.from('productos').insert([{
+                referencia, nombre, mundo, origen_compra, sin_stock, stock, precio_detal, precio_mayorista
+            }]);
+            e.target.reset();
+            alert("¡Producto registrado en catálogo!");
+            cargarDatosGlobales();
+        });
+
+        async function cargarInventarioAdmin() {
+            const q = (document.getElementById('buscador-inventario')?.value || '').toLowerCase();
+            const { data: productos } = await supabaseClient.from('productos').select('*');
+            const tbody = document.getElementById('tabla-inventario-admin');
+            const tbodyReporte = document.getElementById('tabla-reporte-inv');
+            if (tbody) tbody.innerHTML = '';
+            if (tbodyReporte) tbodyReporte.innerHTML = '';
+
+            (productos || []).forEach(p => {
+                if (tbody && (!q || p.nombre.toLowerCase().includes(q) || p.referencia.toLowerCase().includes(q))) {
+                    tbody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}<br><span class="text-slate-400">Origen: ${p.origen_compra}</span></td>
+                            <td class="p-3 font-semibold">${p.nombre}</td>
+                            <td class="p-3 text-xs font-bold">${p.sin_stock ? '<span class="text-blue-600">Sin Stock (Pedido)</span>' : p.stock}</td>
+                            <td class="p-3 text-xs">Detal: $${(p.precio_detal || 0).toLocaleString()}<br>Mayor: $${(p.precio_mayorista || 0).toLocaleString()}</td>
+                            <td class="p-3"><button onclick="eliminarProducto('${p.id}')" class="text-xs bg-red-600 text-white px-2 py-1 rounded">Eliminar</button></td>
                         </tr>
                     `;
                 }
                 if (tbodyReporte) {
                     tbodyReporte.innerHTML += `
+                        <tr class="border-b"><td class="p-2 font-mono">${p.referencia}</td><td class="p-2">${p.nombre}</td><td class="p-2">${p.origen_compra}</td><td class="p-2">${p.sin_stock ? 'Sin Stock' : p.stock}</td><td class="p-2">$${(p.precio_detal || 0).toLocaleString()}</td></tr>
+                    `;
+                }
+            });
+        }
+
+        async function eliminarProducto(id) {
+            if (!confirm("¿Eliminar producto del catálogo?")) return;
+            await supabaseClient.from('productos').delete().eq('id', id);
+            cargarDatosGlobales();
+        }
+
+        // ================= CONTABILIDAD & CAJA (4x1000 AUTOMÁTICO EN EGRESOS) =================
+        document.getElementById('form-caja-manual')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const tipo = document.getElementById('caja-tipo').value;
+            const concepto = document.getElementById('caja-concepto').value.trim();
+            const tercero = document.getElementById('caja-tercero').value.trim();
+            const metodo_pago = document.getElementById('caja-metodo').value;
+            const valor = parseFloat(document.getElementById('caja-valor').value);
+            const descripcion = document.getElementById('caja-desc').value.trim();
+
+            // REGLA CONTABLE: El 4x1000 aplica a TODOS los EGRESOS realizados mediante Nequi o Cuentas Bancarias
+            let esEgresoBancario = (tipo === 'EGRESO') && (metodo_pago !== 'Efectivo');
+            let aplica_4x1000 = esEgresoBancario;
+            let valor_4x1000 = esEgresoBancario ? (valor * 0.004) : 0;
+
+            await supabaseClient.from('caja_movimientos').insert([{
+                tipo, categoria: 'Manual', concepto, tercero, metodo_pago, valor, aplica_4x1000, valor_4x1000, descripcion
+            }]);
+
+            e.target.reset();
+            alert("¡Movimiento contable registrado!");
+            cargarContabilidad();
+        });
+
+        async function cargarContabilidad() {
+            const { data: movs } = await supabaseClient.from('caja_movimientos').select('*').order('fecha', { ascending: false });
+            const tbody = document.getElementById('tabla-caja-historial');
+            if (tbody) tbody.innerHTML = '';
+
+            let saldoEfectivo = 0;
+            let saldoBancos = 0;
+            let total4x1000 = 0;
+            let ventasMes = 0;
+
+            let hoy = new Date();
+            let mesActual = hoy.getMonth();
+
+            (movs || []).forEach(m => {
+                let mFecha = new Date(m.fecha);
+                if (mFecha.getMonth() === mesActual && m.tipo === 'INGRESO' && m.categoria === 'Ventas') {
+                    ventasMes += m.valor;
+                }
+
+                if (m.aplica_4x1000) total4x1000 += (m.valor_4x1000 || 0);
+
+                let esEfectivo = m.metodo_pago === 'Efectivo';
+
+                if (m.tipo === 'INGRESO') {
+                    if (esEfectivo) saldoEfectivo += m.valor;
+                    else saldoBancos += m.valor;
+                } else {
+                    // Egreso descuenta el valor + el 4x1000 si aplica
+                    let egresoTotal = m.valor + (m.valor_4x1000 || 0);
+                    if (esEfectivo) saldoEfectivo -= egresoTotal;
+                    else saldoBancos -= egresoTotal;
+                }
+
+                if (tbody) {
+                    tbody.innerHTML += `
                         <tr class="border-b">
-                            <td class="p-2 font-mono">${p.referencia}</td>
-                            <td class="p-2">${p.nombre}</td>
-                            <td class="p-2">${p.stock}</td>
-                            <td class="p-2">$${Number(pDetal).toLocaleString()}</td>
-                            <td class="p-2">$${Number(pMayor).toLocaleString()}</td>
-                            <td class="p-2">${origenProd}</td>
+                            <td class="p-2">${mFecha.toLocaleDateString()}</td>
+                            <td class="p-2 font-bold ${m.tipo==='INGRESO'?'text-emerald-600':'text-red-600'}">${m.tipo}</td>
+                            <td class="p-2">${m.concepto} (${m.tercero || 'N/A'})</td>
+                            <td class="p-2">${m.metodo_pago}</td>
+                            <td class="p-2 font-bold">$${m.valor.toLocaleString()}</td>
+                            <td class="p-2 text-red-600">${m.valor_4x1000 > 0 ? '$'+m.valor_4x1000.toLocaleString() : '-'}</td>
                         </tr>
                     `;
                 }
             });
 
-            document.getElementById('stat-agotados').innerText = agotados;
+            document.getElementById('stat-ventas-mes').innerText = `$${ventasMes.toLocaleString()}`;
+            document.getElementById('stat-saldo-efectivo').innerText = `$${saldoEfectivo.toLocaleString()}`;
+            document.getElementById('stat-saldo-bancos').innerText = `$${saldoBancos.toLocaleString()}`;
+
+            if (document.getElementById('bal-efectivo')) {
+                document.getElementById('bal-efectivo').innerText = `$${saldoEfectivo.toLocaleString()}`;
+                document.getElementById('bal-bancos').innerText = `$${saldoBancos.toLocaleString()}`;
+                document.getElementById('bal-4x1000').innerText = `$${total4x1000.toLocaleString()}`;
+                
+                document.getElementById('rep-ventas').innerText = `$${ventasMes.toLocaleString()}`;
+                document.getElementById('rep-efectivo').innerText = `$${saldoEfectivo.toLocaleString()}`;
+                document.getElementById('rep-bancos').innerText = `$${saldoBancos.toLocaleString()}`;
+                document.getElementById('fecha-reporte-pdf').innerText = `Emitido el ${new Date().toLocaleDateString()} - Cupissa S.A.S.`;
+            }
         }
 
-        window.onload = cargarDatos;
+        function descargarMovimientosMes() {
+            alert("Generando reporte mensual en formato CSV...");
+            let csvContent = "data:text/csv;charset=utf-8,Fecha,Tipo,Concepto,Tercero,Metodo,Valor,4x1000\n";
+            window.open(encodeURI(csvContent));
+        }
+
+        window.onload = () => {
+            cargarDatosGlobales();
+            document.getElementById('ped-fecha-agendamiento').valueAsDate = new Date();
+            document.getElementById('ped-fecha-entrega').valueAsDate = new Date();
+        };
     </script>
 </body>
 </html>
