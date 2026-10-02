@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Integral de Pedidos e Inventario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6">
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
+            <h1 class="text-2xl font-bold text-indigo-700">📦 Gestión Integral de Pedidos, Inventario y Caja</h1>
+            <div class="flex flex-wrap gap-2 mt-3 sm:mt-0 no-print">
+                <button onclick="switchTab('dashboard')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Dashboard & Alertas</button>
+                <button onclick="switchTab('pedidos')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Pedidos & Cuentas</button>
+                <button onclick="switchTab('inventario')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Inventario</button>
+                <button onclick="switchTab('reportes')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Reportes PDF</button>
+            </div>
+        </header>
+
+        <!-- SECCIÓN: DASHBOARD & ALERTAS VISUALES -->
+        <section id="tab-dashboard" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
+                    <h3 class="text-sm font-semibold text-gray-500">Productos Agotados</h3>
+                    <p id="stat-agotados" class="text-2xl font-bold text-red-600">0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
+                    <h3 class="text-sm font-semibold text-gray-500">Total por Cobrar (Créditos / Fiados)</h3>
+                    <p id="stat-por-cobrar" class="text-2xl font-bold text-amber-600">$0</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
+                    <h3 class="text-sm font-semibold text-gray-500">Depósitos en Garantía (Por devolver)</h3>
+                    <p id="stat-depositos" class="text-2xl font-bold text-blue-600">$0</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-4 text-indigo-800">🚨 Alertas Visuales: Pedidos Próximos a Entregar o Urgentes</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b text-sm text-gray-600 bg-gray-50">
+                                <th class="p-3">Ref Pedido</th>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Tipo</th>
+                                <th class="p-3">Fecha Entrega</th>
+                                <th class="p-3">Urgencia / Alerta</th>
+                                <th class="p-3">Estado Actual</th>
+                                <th class="p-3">Acción Rápida</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-alertas-pedidos" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: PEDIDOS -->
+        <section id="tab-pedidos" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-4 text-indigo-700">➕ Crear Nuevo Pedido / Venta / Alquiler</h2>
+                <form id="form-pedido" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <input type="text" id="ped-cliente" placeholder="Nombre del Cliente" required class="p-2 border rounded-lg">
+                        <select id="ped-tipo" class="p-2 border rounded-lg">
+                            <option value="Venta Contado">Venta Contado</option>
+                            <option value="Crédito / Fiado">Crédito / Fiado</option>
+                            <option value="Alquiler">Alquiler</option>
+                        </select>
+                        <input type="date" id="ped-fecha" class="p-2 border rounded-lg" required>
+                    </div>
+
+                    <!-- Buscador inteligente y armado de carrito -->
+                    <div class="border p-4 rounded-lg bg-gray-50 space-y-3">
+                        <h3 class="font-semibold text-sm text-gray-700">Agregar Productos (Buscador automático o libre)</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="sm:col-span-2 relative">
+                                <input type="text" id="buscador-productos" placeholder="🔍 Escribe para buscar producto en inventario..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
+                                <div id="sugerencias-box" class="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
+                            </div>
+                            <input type="number" id="item-cantidad" placeholder="Cantidad" value="1" min="1" class="p-2 border rounded-lg">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2">
+                            <input type="text" id="item-nombre-libre" placeholder="Nombre del producto (o selección rápida)" class="p-2 border rounded-lg bg-gray-100" >
+                            <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2 border rounded-lg">
+                            <div class="flex items-center justify-between gap-2">
+                                <label class="flex items-center text-xs gap-1 cursor-pointer">
+                                    <input type="checkbox" id="item-descuenta" checked> Descontar Stock
+                                </label>
+                                <button type="button" onclick="agregarItemAlCarrito()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-emerald-700">Añadir</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla Carrito -->
+                    <div>
+                        <h4 class="font-semibold text-sm mb-2">Productos en este pedido:</h4>
+                        <table class="w-full text-left border-collapse text-sm mb-3">
+                            <thead>
+                                <tr class="border-b bg-gray-100">
+                                    <th class="p-2">Producto</th>
+                                    <th class="p-2">Cantidad</th>
+                                    <th class="p-2">Precio Unitario</th>
+                                    <th class="p-2">Subtotal</th>
+                                    <th class="p-2">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-carrito">
+                                <tr><td colspan="5" class="p-3 text-center text-gray-400">No hay productos agregados aún.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t pt-4">
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Pago Inicial / Abono Hoy ($)</label>
+                            <input type="number" id="ped-pago-inicial" value="0" class="p-2 border rounded-lg w-full">
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Depósito en Garantía (Ej: Alquiler) ($)</label>
+                            <input type="number" id="ped-deposito" value="0" class="p-2 border rounded-lg w-full">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 w-full font-bold">Guardar Pedido Definitivo</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Listado General de Pedidos -->
+            <div class="bg-white p-6 rounded-xl shadow">
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+                    <h2 class="text-lg font-bold">Listado General de Pedidos</h2>
+                    <input type="text" id="buscador-pedidos-tabla" placeholder="🔍 Buscar por cliente o ref..." oninput="cargarPedidos()" class="p-2 border rounded-lg text-sm w-full sm:w-72">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b text-sm text-gray-600 bg-gray-50">
+                                <th class="p-3">Ref</th>
+                                <th class="p-3">Cliente</th>
+                                <th class="p-3">Tipo / Entrega</th>
+                                <th class="p-3">Total / Saldo</th>
+                                <th class="p-3">Depósito</th>
+                                <th class="p-3">Costo Fab. / Ganancia</th>
+                                <th class="p-3">Estado</th>
+                                <th class="p-3">Acciones y Pagos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-pedidos-general" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: INVENTARIO -->
+        <section id="tab-inventario" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow">
+                <h2 class="text-lg font-bold mb-4">Registrar Nuevo Producto (Referencia Automática)</h2>
+                <form id="form-producto" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <input type="text" id="prod-nombre" placeholder="Nombre del producto" required class="p-2 border rounded-lg">
+                    <input type="number" id="prod-stock" placeholder="Stock inicial" required class="p-2 border rounded-lg">
+                    <input type="number" id="prod-precio" placeholder="Precio de venta ($)" required class="p-2 border rounded-lg">
+                    <input type="number" id="prod-costo" placeholder="Costo estimado (Opcional)" class="p-2 border rounded-lg">
+                    <select id="prod-origen" class="p-2 border rounded-lg">
+                        <option value="Nacional (Colombia)">Nacional (Colombia)</option>
+                        <option value="Internacional (Venezuela)">Internacional (Venezuela)</option>
+                        <option value="Electrónicos (China)">Electrónicos (China)</option>
+                    </select>
+                    <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700">Guardar Producto</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Inventario Actual</h2>
+                    <input type="text" id="buscador-inv" placeholder="🔍 Buscar producto..." oninput="cargarInventarioTabla()" class="p-2 border rounded-lg text-sm w-64">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b text-sm text-gray-600 bg-gray-50">
+                                <th class="p-3">Referencia (SKU)</th>
+                                <th class="p-3">Producto</th>
+                                <th class="p-3">Stock</th>
+                                <th class="p-3">Precio Venta</th>
+                                <th class="p-3">Origen</th>
+                                <th class="p-3">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-inventario" class="text-sm"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: REPORTES PDF -->
+        <section id="tab-reportes" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow flex justify-between items-center no-print">
+                <h2 class="text-lg font-bold">Reporte de Inventario Actual</h2>
+                <button onclick="window.print()" class="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700">Imprimir / Descargar PDF</button>
+            </div>
+
+            <div id="printable-area" class="bg-white p-8 rounded-xl shadow border">
+                <h2 class="text-xl font-bold mb-2 text-center text-indigo-700">Informe General de Inventario</h2>
+                <p class="text-center text-sm text-gray-500 mb-6" id="fecha-reporte"></p>
+                <table class="w-full text-left border-collapse mb-6 text-xs">
+                    <thead>
+                        <tr class="border-b bg-gray-100">
+                            <th class="p-2">Referencia</th>
+                            <th class="p-2">Producto</th>
+                            <th class="p-2">Stock Restante</th>
+                            <th class="p-2">Precio Venta</th>
+                            <th class="p-2">Origen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reporte-inventario"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL HISTORIAL DE PAGOS -->
+    <div id="modal-pagos" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
+            <h3 class="text-lg font-bold text-indigo-700">Historial de Pagos y Movimientos</h3>
+            <div id="contenido-historial-pagos" class="max-h-60 overflow-y-auto space-y-2 text-sm border p-3 rounded-lg"></div>
+            <div class="flex justify-end">
+                <button onclick="cerrarModalPagos()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script>
+        const SUPABASE_URL = 'https://njwiobfjtmwsxyigxgrp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qd2lvYmZqdG13c3h5aWd4Z3JwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4OTkxNjYsImV4cCI6MjEwNjQ3NTE2Nn0.YISPVeUpk-gAImCRkr1TmFfP6fX6Mps7HPJ3MXfVkYI';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+        let carritoItems = [];
+        let listaProductosInventario = [];
+        let productoSeleccionadoId = null;
+
+        function switchTab(tab) {
+            ['dashboard', 'pedidos', 'inventario', 'reportes'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+            });
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            cargarDatos();
+        }
+
+        async function cargarDatos() {
+            await cargarInventarioSelector();
+            await cargarInventarioTabla();
+            await cargarPedidos();
+            document.getElementById('fecha-reporte').innerText = `Fecha de emisión: ${new Date().toLocaleDateString()}`;
+        }
+
+        async function cargarInventarioSelector() {
+            const { data } = await supabaseClient.from('productos').select('*');
+            listaProductosInventario = data || [];
+        }
+
+        function filtrarProductosInventario() {
+            const query = document.getElementById('buscador-productos').value.toLowerCase();
+            const box = document.getElementById('sugerencias-box');
+            if (!query) {
+                box.classList.add('hidden');
+                return;
+            }
+
+            const filtrados = listaProductosInventario.filter(p => p.nombre.toLowerCase().includes(query) || p.referencia.toLowerCase().includes(query));
+            if (filtrados.length === 0) {
+                box.innerHTML = `<div class="p-2 text-xs text-gray-500">No hay coincidencias. Puedes escribir un nombre libre abajo.</div>`;
+                box.classList.remove('hidden');
+                return;
+            }
+
+            box.innerHTML = '';
+            filtrados.forEach(p => {
+                box.innerHTML += `
+                    <div onclick="seleccionarProductoDeBusqueda('${p.id}')" class="p-2 hover:bg-indigo-50 cursor-pointer text-xs border-b flex justify-between">
+                        <span><strong>[${p.referencia}]</strong> ${p.nombre}</span>
+                        <span class="text-indigo-600 font-bold">Stock: ${p.stock} | $${p.precio_venta}</span>
+                    </div>
+                `;
+            });
+            box.classList.remove('hidden');
+        }
+
+        function seleccionarProductoDeBusqueda(id) {
+            const prod = listaProductosInventario.find(p => p.id === id);
+            if (prod) {
+                productoSeleccionadoId = prod.id;
+                document.getElementById('buscador-productos').value = `${prod.referencia} - ${prod.nombre}`;
+                document.getElementById('item-nombre-libre').value = prod.nombre;
+                document.getElementById('item-precio').value = prod.precio_venta;
+                document.getElementById('item-descuenta').checked = true;
+                document.getElementById('sugerencias-box').classList.add('hidden');
+            }
+        }
+
+        function agregarItemAlCarrito() {
+            const nombreLibre = document.getElementById('item-nombre-libre').value.trim() || document.getElementById('buscador-productos').value.trim();
+            const cantidad = parseInt(document.getElementById('item-cantidad').value) || 1;
+            const precio = parseFloat(document.getElementById('item-precio').value) || 0;
+            const descuenta = document.getElementById('item-descuenta').checked;
+
+            if (!nombreLibre) {
+                alert("Selecciona o escribe un producto.");
+                return;
+            }
+
+            carritoItems.push({
+                producto_id: productoSeleccionadoId,
+                nombre_producto: nombreLibre,
+                cantidad,
+                precio_unitario: precio,
+                descuenta_stock: descuenta
+            });
+
+            productoSeleccionadoId = null;
+            document.getElementById('buscador-productos').value = '';
+            document.getElementById('item-nombre-libre').value = '';
+            document.getElementById('item-precio').value = '';
+            renderizarCarrito();
+        }
+
+        function renderizarCarrito() {
+            const tbody = document.getElementById('tabla-carrito');
+            if (carritoItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-gray-400">No hay productos agregados aún.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            carritoItems.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2">${item.nombre_producto} ${!item.descuenta_stock ? '<span class="text-xs text-amber-600">(Sin stock)</span>' : ''}</td>
+                        <td class="p-2">${item.cantidad}</td>
+                        <td class="p-2">$${item.precio_unitario.toLocaleString()}</td>
+                        <td class="p-2 font-bold">$${(item.cantidad * item.precio_unitario).toLocaleString()}</td>
+                        <td class="p-2"><button type="button" onclick="carritoItems.splice(${index}, 1); renderizarCarrito();" class="text-red-600 text-xs">Eliminar</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        document.getElementById('form-pedido').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (carritoItems.length === 0) {
+                alert("Agrega al menos un producto.");
+                return;
+            }
+
+            const clienteNombre = document.getElementById('ped-cliente').value;
+            const tipoOperacion = document.getElementById('ped-tipo').value;
+            const fechaEntrega = document.getElementById('ped-fecha').value;
+            const pagoInicial = parseFloat(document.getElementById('ped-pago-inicial').value) || 0;
+            const depositoGarantia = parseFloat(document.getElementById('ped-deposito').value) || 0;
+
+            let totalPedido = carritoItems.reduce((acc, item) => acc + (item.cantidad * item.precio_unitario), 0);
+            let estadoPago = pagoInicial >= totalPedido ? 'Pagado' : (pagoInicial > 0 ? 'Parcial' : 'Pendiente');
+            let refPedido = 'PED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            let { data: cliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
+
+            let { data: pedido } = await supabaseClient.from('pedidos').insert([{
+                referencia_pedido: refPedido,
+                cliente_id: cliente.id,
+                tipo_operacion: tipoOperacion,
+                total: totalPedido,
+                pagado: pagoInicial,
+                deposito_garantia: depositoGarantia,
+                estado_pago: estadoPago,
+                fecha_entrega: fechaEntrega,
+                estado: 'Pendiente de Fabricar / Preparar'
+            }]).select().single();
+
+            for (let item of carritoItems) {
+                await supabaseClient.from('detalle_pedido').insert([{
+                    pedido_id: pedido.id,
+                    producto_id: item.producto_id,
+                    nombre_producto: item.nombre_producto,
+                    cantidad: item.cantidad,
+                    precio_unitario: item.precio_unitario,
+                    descuenta_stock: item.descuenta_stock
+                }]);
+
+                if (item.producto_id && item.descuenta_stock) {
+                    let prod = listaProductosInventario.find(p => p.id === item.producto_id);
+                    if (prod) {
+                        let nuevoStock = Math.max(0, prod.stock - item.cantidad);
+                        await supabaseClient.from('productos').update({ stock: nuevoStock }).eq('id', item.producto_id);
+                    }
+                }
+            }
+
+            if (pagoInicial > 0) {
+                await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedido.id, monto: pagoInicial, tipo_pago: 'Pago Total' }]);
+            }
+            if (depositoGarantia > 0) {
+                await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedido.id, monto: depositoGarantia, tipo_pago: 'Depósito Garantía' }]);
+            }
+
+            carritoItems = [];
+            renderizarCarrito();
+            document.getElementById('form-pedido').reset();
+            cargarDatos();
+        });
+
+        async function cargarPedidos() {
+            const queryBusqueda = document.getElementById('buscador-pedidos-tabla')?.value.toLowerCase() || '';
+            const { data: pedidos } = await supabaseClient.from('pedidos').select('*, clientes(nombre)');
+            const tbody = document.getElementById('tabla-pedidos-general');
+            const tbodyAlertas = document.getElementById('lista-alertas-pedidos');
+            if (tbody) tbody.innerHTML = '';
+            if (tbodyAlertas) tbodyAlertas.innerHTML = '';
+            
+            let totalPorCobrar = 0;
+            let totalDepositos = 0;
+            let hoy = new Date().toISOString().split('T')[0];
+
+            (pedidos || []).forEach(p => {
+                let clienteNombre = p.clientes?.nombre || 'Cliente';
+                let saldoPendiente = p.total - p.pagado;
+                if (p.estado_pago !== 'Pagado') totalPorCobrar += saldoPendiente;
+                totalDepositos += p.deposito_garantia;
+
+                // Alertas visuales de entrega
+                let alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">A tiempo</span>`;
+                if (p.fecha_entrega) {
+                    if (p.fecha_entrega < hoy && p.estado !== 'Finalizado' && p.estado !== 'Entregado') {
+                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700 font-bold animate-pulse">⚠️ ¡Vencido!</span>`;
+                    } else if (p.fecha_entrega === hoy) {
+                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-amber-100 text-amber-800 font-bold">🔥 ¡Entrega Hoy!</span>`;
+                    }
+                }
+
+                if (tbodyAlertas && p.estado !== 'Finalizado') {
+                    tbodyAlertas.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
+                            <td class="p-3">${clienteNombre}</td>
+                            <td class="p-3">${p.tipo_operacion}</td>
+                            <td class="p-3">${p.fecha_entrega || 'Sin fecha'}</td>
+                            <td class="p-3">${alertaHtml}</td>
+                            <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
+                            <td class="p-3">
+                                <select onchange="cambiarEstadoPedido('${p.id}', this.value)" class="text-xs border p-1 rounded bg-white">
+                                    <option value="">Cambiar Estado...</option>
+                                    <option value="Fabricando">Fabricando</option>
+                                    <option value="Empacado">Empacado</option>
+                                    <option value="Entregado">Entregado</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                if (queryBusqueda && !clienteNombre.toLowerCase().includes(queryBusqueda) && !p.referencia_pedido.toLowerCase().includes(queryBusqueda)) return;
+
+                if (tbody) {
+                    tbody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
+                            <td class="p-3">${clienteNombre}</td>
+                            <td class="p-3 text-xs">${p.tipo_operacion}<br><span class="text-gray-500">${p.fecha_entrega || ''}</span></td>
+                            <td class="p-3 text-xs">Total: $${Number(p.total).toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldoPendiente.toLocaleString()}</span></td>
+                            <td class="p-3 font-bold text-blue-600">$${Number(p.deposito_garantia).toLocaleString()}</td>
+                            <td class="p-3 text-xs">Costo: $${Number(p.costo_fabricacion).toLocaleString()}<br><span class="text-emerald-600 font-bold">Ganancia: $${Number(p.ganancia).toLocaleString()}</span></td>
+                            <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
+                            <td class="p-3 space-y-1">
+                                <div class="flex gap-1 flex-wrap">
+                                    <button onclick="registrarAbono('${p.id}', ${p.pagado}, ${p.total})" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded">Abonar</button>
+                                    <button onclick="registrarCostoFabricacion('${p.id}', ${p.total})" class="text-xs bg-amber-600 text-white px-2 py-1 rounded">Costo Fab.</button>
+                                    <button onclick="gestionarDeposito('${p.id}', ${p.deposito_garantia})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded">Dev. Depósito</button>
+                                </div>
+                                <div><button onclick="verHistorialPagos('${p.id}')" class="text-xs text-indigo-700 underline">Ver Historial Pagos</button></div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+
+            document.getElementById('stat-por-cobrar').innerText = `$${totalPorCobrar.toLocaleString()}`;
+            document.getElementById('stat-depositos').innerText = `$${totalDepositos.toLocaleString()}`;
+        }
+
+        async function registrarCostoFabricacion(pedidoId, totalPedido) {
+            const costoStr = prompt("Ingrese el costo real de fabricación de este pedido ($):");
+            if (costoStr === null) return;
+            const costo = parseFloat(costoStr) || 0;
+            const ganancia = totalPedido - costo;
+
+            await supabaseClient.from('pedidos').update({
+                costo_fabricacion: costo,
+                ganancia: ganancia
+            }).eq('id', pedidoId);
+
+            cargarDatos();
+        }
+
+        async function cambiarEstadoPedido(id, nuevoEstado) {
+            if (!nuevoEstado) return;
+            await supabaseClient.from('pedidos').update({ estado: nuevoEstado }).eq('id', id);
+            cargarDatos();
+        }
+
+        async function registrarAbono(pedidoId, pagadoActual, totalVenta) {
+            const montoStr = prompt("Ingrese el monto del abono o pago:");
+            if (!montoStr) return;
+            const abono = parseFloat(montoStr);
+            const nuevoPagado = pagadoActual + abono;
+            const nuevoEstadoPago = nuevoPagado >= totalVenta ? 'Pagado' : 'Parcial';
+
+            await supabaseClient.from('pedidos').update({ pagado: nuevoPagado, estado_pago: nuevoEstadoPago }).eq('id', pedidoId);
+            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: abono, tipo_pago: 'Abono' }]);
+            cargarDatos();
+        }
+
+        async function gestionarDeposito(pedidoId, depositoActual) {
+            if (depositoActual <= 0) {
+                alert("No hay depósito registrado.");
+                return;
+            }
+            if (!confirm(`¿Devolver depósito de $${depositoActual.toLocaleString()}?`)) return;
+
+            await supabaseClient.from('pedidos').update({ deposito_garantia: 0 }).eq('id', pedidoId);
+            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: depositoActual, tipo_pago: 'Devolución Depósito' }]);
+            cargarDatos();
+        }
+
+        async function verHistorialPagos(pedidoId) {
+            const { data: pagos } = await supabaseClient.from('pagos_pedidos').select('*').eq('pedido_id', pedidoId);
+            const box = document.getElementById('contenido-historial-pagos');
+            box.innerHTML = '';
+            if (!pagos || pagos.length === 0) {
+                box.innerHTML = '<p class="text-gray-500 text-xs">No hay registros de pagos o abonos aún.</p>';
+            } else {
+                pagos.forEach(p => {
+                    let fechaFmt = new Date(p.fecha).toLocaleString();
+                    box.innerHTML += `<div class="border-b pb-1 text-xs flex justify-between"><span><strong>${p.tipo_pago}</strong> (${fechaFmt})</span> <span class="font-bold text-emerald-600">$${Number(p.monto).toLocaleString()}</span></div>`;
+                });
+            }
+            document.getElementById('modal-pagos').classList.remove('hidden');
+        }
+
+        function cerrarModalPagos() {
+            document.getElementById('modal-pagos').classList.add('hidden');
+        }
+
+        document.getElementById('form-producto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('prod-nombre').value;
+            const stock = parseInt(document.getElementById('prod-stock').value);
+            const precio_venta = parseFloat(document.getElementById('prod-precio').value);
+            const costo = parseFloat(document.getElementById('prod-costo').value) || 0;
+            const origen = document.getElementById('prod-origen').value;
+            const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            await supabaseClient.from('productos').insert([{ referencia, nombre, stock, precio_venta, costo }]);
+            e.target.reset();
+            cargarDatos();
+        });
+
+        async function cargarInventarioTabla() {
+            const query = document.getElementById('buscador-inv')?.value.toLowerCase() || '';
+            const { data: productos } = await supabaseClient.from('productos').select('*');
+            const tbody = document.getElementById('tabla-inventario');
+            const tbodyReporte = document.getElementById('reporte-inventario');
+            if (tbody) tbody.innerHTML = '';
+            if (tbodyReporte) tbodyReporte.innerHTML = '';
+            let agotados = 0;
+
+            (productos || []).forEach(p => {
+                if (p.stock === 0) agotados++;
+                if (query && !p.nombre.toLowerCase().includes(query) && !p.referencia.toLowerCase().includes(query)) return;
+
+                if (tbody) {
+                    tbody.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}</td>
+                            <td class="p-3">${p.nombre}</td>
+                            <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600' : ''}">${p.stock}</td>
+                            <td class="p-3">$${Number(p.precio_venta).toLocaleString()}</td>
+                            <td class="p-3 text-xs text-gray-500">Registrado</td>
+                            <td class="p-3"><span class="px-2 py-1 rounded text-xs ${p.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${p.stock > 0 ? 'Disponible' : 'Agotado'}</span></td>
+                        </tr>
+                    `;
+                }
+                if (tbodyReporte) {
+                    tbodyReporte.innerHTML += `
+                        <tr class="border-b">
+                            <td class="p-2 font-mono">${p.referencia}</td>
+                            <td class="p-2">${p.nombre}</td>
+                            <td class="p-2">${p.stock}</td>
+                            <td class="p-2">$${Number(p.precio_venta).toLocaleString()}</td>
+                            <td class="p-2 text-xs">Inventario</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            document.getElementById('stat-agotados').innerText = agotados;
+        }
+
+        window.onload = cargarDatos;
+    </script>
+</body>
+</html>
