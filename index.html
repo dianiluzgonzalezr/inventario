@@ -20,102 +20,139 @@
             from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        /* Apariencia tipo Google Sheets compacta y profesional */
+        .sheets-table th {
+            background-color: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 8px 10px;
+        }
+        .sheets-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        .sheets-table tr:hover {
+            background-color: #f8fafc;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-slate-100 text-slate-800 font-sans antialiased pb-20">
 
     <!-- CONTENEDOR NOTIFICACIONES TOAST -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
-    <!-- NAVEGACIÓN SUPERIOR -->
+    <!-- NAVEGACIÓN SUPERIOR MÓVIL Y ESCRITORIO -->
     <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-40 no-print">
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">👑</span>
-                <div>
-                    <h1 class="text-lg font-extrabold tracking-wide">CUPISSA S.A.S.</h1>
-                    <p class="text-xs text-indigo-200">Panel Operativo, CRM & Inventario Inteligente</p>
+            <div class="flex items-center justify-between w-full sm:w-auto">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">👑</span>
+                    <div>
+                        <h1 class="text-base font-extrabold tracking-wide">CUPISSA S.A.S.</h1>
+                        <p class="text-[10px] text-indigo-200">Panel Gerencial & CRM</p>
+                    </div>
                 </div>
             </div>
-            <nav class="flex flex-wrap gap-1 sm:gap-2 text-sm">
-                <button onclick="switchTab('dashboard')" class="px-3 py-1.5 rounded-lg bg-indigo-800 hover:bg-indigo-700 font-medium transition">📊 Dashboard</button>
-                <button onclick="switchTab('pedidos')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">📦 Pedidos & CRM</button>
-                <button onclick="switchTab('produccion')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">⚙️️ Producción</button>
-                <button onclick="switchTab('inventario')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">📋 Inventario</button>
-                <button onclick="switchTab('contabilidad')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">💰 Caja & Contabilidad</button>
-                <button onclick="switchTab('reportes')" class="px-3 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition">📈 Reportes PDF</button>
+            <nav class="flex flex-wrap gap-1 text-xs justify-center sm:justify-end w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+                <button onclick="switchTab('dashboard')" id="btn-tab-dashboard" class="px-2.5 py-1.5 rounded-lg bg-indigo-800 font-medium transition whitespace-nowrap">📊 Dashboard</button>
+                <button onclick="switchTab('pedidos')" id="btn-tab-pedidos" class="px-2.5 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition whitespace-nowrap">📦 Pedidos & CRM</button>
+                <button onclick="switchTab('produccion')" id="btn-tab-produccion" class="px-2.5 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition whitespace-nowrap">⚙ Taller</button>
+                <button onclick="switchTab('inventario')" id="btn-tab-inventario" class="px-2.5 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition whitespace-nowrap">📋 Inventario</button>
+                <button onclick="switchTab('contabilidad')" id="btn-tab-contabilidad" class="px-2.5 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition whitespace-nowrap">💰 Caja</button>
+                <button onclick="switchTab('reportes')" id="btn-tab-reportes" class="px-2.5 py-1.5 rounded-lg hover:bg-indigo-800 font-medium transition whitespace-nowrap">📈 Reportes PDF</button>
             </nav>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
+    <main class="max-w-7xl mx-auto p-2 sm:p-6 space-y-4 sm:space-y-6">
 
         <!-- ================= DASHBOARD ================= -->
-        <section id="tab-dashboard" class="space-y-6 animate-fade-in">
-            <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+        <section id="tab-dashboard" class="space-y-4 sm:space-y-6 animate-fade-in">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase">Ventas del Mes</h3>
-                        <p id="stat-ventas-mes" class="text-2xl font-black text-indigo-600 mt-1">$0</p>
+                        <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Ventas del Mes</h3>
+                        <p id="stat-ventas-mes" class="text-xl sm:text-2xl font-black text-indigo-600 mt-1">$0</p>
                     </div>
-                    <div class="p-3 bg-indigo-50 rounded-xl text-indigo-600 font-bold text-xl">💵</div>
+                    <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 font-bold text-lg">💵</div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase">Cuentas por Cobrar</h3>
-                        <p id="stat-por-cobrar" class="text-2xl font-black text-amber-600 mt-1">$0</p>
+                        <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Cuentas por Cobrar</h3>
+                        <p id="stat-por-cobrar" class="text-xl sm:text-2xl font-black text-amber-600 mt-1">$0</p>
                     </div>
-                    <div class="p-3 bg-amber-50 rounded-xl text-amber-600 font-bold text-xl">⏳</div>
+                    <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 font-bold text-lg">⏳</div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase">Saldo Efectivo</h3>
-                        <p id="stat-saldo-efectivo" class="text-2xl font-black text-emerald-600 mt-1">$0</p>
+                        <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Saldo Efectivo</h3>
+                        <p id="stat-saldo-efectivo" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1">$0</p>
                     </div>
-                    <div class="p-3 bg-emerald-50 rounded-xl text-emerald-600 font-bold text-xl">🏦</div>
+                    <div class="p-2.5 bg-emerald-50 rounded-xl text-emerald-600 font-bold text-lg">🏦</div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
-                        <h3 class="text-xs font-bold text-slate-400 uppercase">Saldo Nequi / Bancos</h3>
-                        <p id="stat-saldo-bancos" class="text-2xl font-black text-blue-600 mt-1">$0</p>
+                        <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Nequi / Bancos</h3>
+                        <p id="stat-saldo-bancos" class="text-xl sm:text-2xl font-black text-blue-600 mt-1">$0</p>
                     </div>
-                    <div class="p-3 bg-blue-50 rounded-xl text-blue-600 font-bold text-xl">📱</div>
+                    <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 font-bold text-lg">📱</div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <!-- BUSCADOR INTELIGENTE GLOBAL BAJO EL DASHBOARD (CLIENTES / PRODUCTOS) -->
+            <div class="bg-gradient-to-r from-indigo-900 to-indigo-800 p-4 sm:p-5 rounded-2xl shadow-md text-white space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🔍</span>
                     <div>
-                        <h2 class="text-lg font-bold text-slate-800">🚨 Alertas Urgentes (Pendientes / Fabricando)</h2>
-                        <p class="text-xs text-slate-400">Pedidos activos ordenados por prioridad de entrega</p>
+                        <h2 class="text-sm sm:text-base font-bold">Buscador Inteligente (Cliente o Producto)</h2>
+                        <p class="text-[11px] text-indigo-200">Consulta instantánea de pedidos, deudas, compras, stock y modalidades (Contado vs Crédito)</p>
                     </div>
-                    <input type="text" id="buscador-alertas" oninput="cargarPedidosAdmin()" placeholder="🔍 Buscar por cliente o ref..." class="p-2.5 border rounded-xl text-sm w-full sm:w-72 bg-slate-50">
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="relative">
+                    <input type="text" id="input-buscador-global-360" oninput="ejecutarBuscadorGlobal360()" placeholder="Escribe el nombre del cliente, teléfono o referencia/nombre de producto..." class="w-full p-3 pl-4 rounded-xl text-sm text-slate-900 bg-white font-medium shadow focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    <div id="resultado-buscador-global-box" class="absolute z-40 w-full bg-white text-slate-800 rounded-xl shadow-2xl mt-2 p-4 hidden max-h-96 overflow-y-auto border border-slate-200 text-xs"></div>
+                </div>
+            </div>
+
+            <!-- ALERTAS URGENTES -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-800">🚨 Alertas Urgentes & Producción Rápida</h2>
+                        <p class="text-xs text-slate-400">Pedidos pendientes que requieren movimiento a taller</p>
+                    </div>
+                    <input type="text" id="buscador-alertas" oninput="cargarPedidosAdmin()" placeholder="🔍 Filtrar alertas..." class="p-2 border rounded-xl text-xs w-full sm:w-64 bg-slate-50">
+                </div>
+                <div class="overflow-x-auto border rounded-xl">
+                    <table class="w-full text-left border-collapse sheets-table">
                         <thead>
-                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
-                                <th class="p-3">Ref</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Entrega</th>
-                                <th class="p-3">Saldo Pendiente</th>
-                                <th class="p-3">Urgencia</th>
-                                <th class="p-3">Acción</th>
+                            <tr>
+                                <th>Ref</th>
+                                <th>Cliente</th>
+                                <th>Entrega</th>
+                                <th>Saldo Pend.</th>
+                                <th>Urgencia</th>
+                                <th>Acción Taller</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-alertas-dashboard" class="text-sm"></tbody>
+                        <tbody id="tabla-alertas-dashboard" class="text-xs"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- ================= PEDIDOS & CRM ================= -->
-        <section id="tab-pedidos" class="hidden space-y-6 animate-fade-in">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <section id="tab-pedidos" class="hidden space-y-4 sm:space-y-6 animate-fade-in">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b pb-3">
                     <div>
-                        <h2 class="text-lg font-bold text-indigo-700">➕ Crear Pedido Real / CRM</h2>
-                        <p class="text-xs text-slate-400">Puedes seleccionar un cliente existente para no duplicar datos</p>
+                        <h2 class="text-base sm:text-lg font-bold text-indigo-700">➕ Crear Pedido Real / CRM</h2>
+                        <p class="text-xs text-slate-400">Selecciona un cliente existente para evitar duplicidad</p>
                     </div>
                     <div class="w-full sm:w-72">
                         <select id="select-cliente-existente" onchange="autocompletarClienteExistente()" class="p-2 border rounded-xl w-full text-xs bg-indigo-50 font-semibold text-indigo-800 border-indigo-200">
@@ -126,29 +163,29 @@
 
                 <form id="form-pedido-admin" class="space-y-4">
                     <input type="hidden" id="cli-id-seleccionado">
-                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Nombre del Cliente *</label>
-                            <input type="text" id="cli-nombre" placeholder="Nombre completo" required class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Nombre del Cliente *</label>
+                            <input type="text" id="cli-nombre" placeholder="Nombre completo" required class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Teléfono / WhatsApp *</label>
-                            <input type="text" id="cli-telefono" placeholder="3101234567" required oninput="buscarClientePorTelefono()" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Teléfono / WhatsApp *</label>
+                            <input type="text" id="cli-telefono" placeholder="3101234567" required oninput="buscarClientePorTelefono()" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Dirección</label>
-                            <input type="text" id="cli-direccion" placeholder="Calle 50 # 20-10" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Dirección</label>
+                            <input type="text" id="cli-direccion" placeholder="Calle 50 # 20-10" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Correo / CC (Opcionales)</label>
-                            <input type="text" id="cli-email-cc" placeholder="correo@mail.com / C.C." class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Correo / C.C. (Opcional)</label>
+                            <input type="text" id="cli-email-cc" placeholder="correo@mail.com / C.C." class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Tipo Operación</label>
-                            <select id="ped-tipo" class="p-2.5 border rounded-xl w-full text-sm mt-1 font-semibold text-indigo-600 bg-indigo-50">
+                            <label class="text-[11px] font-semibold text-slate-500">Tipo Operación</label>
+                            <select id="ped-tipo" class="p-2.5 border rounded-xl w-full text-xs mt-1 font-semibold text-indigo-600 bg-indigo-50">
                                 <option value="Venta Contado">Venta Contado</option>
                                 <option value="Crédito / Fiado">Crédito / Fiado</option>
                                 <option value="Personalizado (Sin Stock)">Personalizado (Bajo Pedido)</option>
@@ -156,67 +193,69 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Fecha Agendamiento</label>
-                            <input type="date" id="ped-fecha-agendamiento" class="p-2.5 border rounded-xl w-full text-sm mt-1" required>
+                            <label class="text-[11px] font-semibold text-slate-500">Fecha Agendamiento</label>
+                            <input type="date" id="ped-fecha-agendamiento" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50" required>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Fecha Entrega</label>
-                            <input type="date" id="ped-fecha-entrega" class="p-2.5 border rounded-xl w-full text-sm mt-1" required>
+                            <label class="text-[11px] font-semibold text-slate-500">Fecha Entrega</label>
+                            <input type="date" id="ped-fecha-entrega" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50" required>
                         </div>
                     </div>
 
-                    <div class="border p-4 rounded-xl bg-slate-50 space-y-3">
+                    <div class="border p-3 sm:p-4 rounded-xl bg-slate-50 space-y-3">
                         <h3 class="font-bold text-xs text-slate-600 uppercase">Productos (Catálogo Supabase o Personalizados)</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <div class="sm:col-span-2 relative">
-                                <input type="text" id="buscador-prod-pedido" placeholder="🔍 Buscar producto por nombre o ref..." oninput="filtrarInvPedido()" class="p-2.5 border rounded-xl w-full bg-white text-sm">
+                                <input type="text" id="buscador-prod-pedido" placeholder="🔍 Buscar producto en catálogo..." oninput="filtrarInvPedido()" class="p-2.5 border rounded-xl w-full bg-white text-xs">
                                 <div id="sugerencias-inv-box" class="absolute z-30 w-full bg-white border rounded-xl shadow-xl mt-1 max-h-48 overflow-y-auto hidden"></div>
                             </div>
-                            <select id="select-tipo-precio" onchange="actualizarPrecioItem()" class="p-2.5 border rounded-xl bg-white text-sm font-semibold">
+                            <select id="select-tipo-precio" onchange="actualizarPrecioItem()" class="p-2.5 border rounded-xl bg-white text-xs font-semibold">
                                 <option value="detal">Precio Detal</option>
                                 <option value="mayorista">Precio Mayorista</option>
                             </select>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
-                            <input type="text" id="item-nombre" placeholder="Nombre del producto / ítem" class="p-2.5 border rounded-xl bg-white text-sm sm:col-span-2">
-                            <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2.5 border rounded-xl bg-amber-50 font-bold text-indigo-700 text-sm">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
+                            <input type="text" id="item-nombre" placeholder="Nombre del producto / ítem" class="p-2.5 border rounded-xl bg-white text-xs sm:col-span-2">
+                            <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2.5 border rounded-xl bg-amber-50 font-bold text-indigo-700 text-xs">
                             <div class="flex items-center gap-2">
-                                <input type="number" id="item-cantidad" value="1" min="1" class="p-2.5 border rounded-xl w-20 text-sm text-center">
-                                <button type="button" onclick="agregarItemPedidoAdmin()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold w-full shadow transition">+ Agregar</button>
+                                <input type="number" id="item-cantidad" value="1" min="1" class="p-2.5 border rounded-xl w-16 text-xs text-center bg-white">
+                                <button type="button" onclick="agregarItemPedidoAdmin()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2.5 rounded-xl text-xs font-bold w-full shadow transition">+ Agregar</button>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <h4 class="font-bold text-sm mb-2 text-slate-700">Ítems en este pedido:</h4>
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="border-b bg-slate-100 text-xs text-slate-500">
-                                    <th class="p-2">Ítem</th><th class="p-2">Cant</th><th class="p-2">Precio U.</th><th class="p-2">Subtotal</th><th class="p-2">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-carrito-admin">
-                                <tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">No hay ítems agregados.</td></tr>
-                            </tbody>
-                        </table>
+                        <h4 class="font-bold text-xs mb-2 text-slate-700">Ítems en este pedido:</h4>
+                        <div class="border rounded-xl overflow-hidden">
+                            <table class="w-full text-left border-collapse sheets-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ítem</th><th>Cant</th><th>Precio U.</th><th>Subtotal</th><th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-carrito-admin">
+                                    <tr><td colspan="5" class="p-4 text-center text-slate-400 text-xs">No hay ítems agregados.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 border-t pt-4">
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 border-t pt-3">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Costo Producción Manual ($)</label>
-                            <input type="number" id="ped-costo-manual" value="0" placeholder="Ej: Insumos específicos" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Costo Producción ($)</label>
+                            <input type="number" id="ped-costo-manual" value="0" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Domicilio / Envío ($)</label>
-                            <input type="number" id="ped-domicilio" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Domicilio / Envío ($)</label>
+                            <input type="number" id="ped-domicilio" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Anticipo / Abono Inicial ($)</label>
-                            <input type="number" id="ped-anticipo" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-sm mt-1 font-bold text-emerald-600">
+                            <label class="text-[11px] font-semibold text-slate-500">Anticipo / Abono ($)</label>
+                            <input type="number" id="ped-anticipo" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-xs mt-1 font-bold text-emerald-600 bg-slate-50">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Método de Pago</label>
-                            <select id="ped-metodo" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="text-[11px] font-semibold text-slate-500">Método de Pago</label>
+                            <select id="ped-metodo" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Nequi">Nequi</option>
                                 <option value="Bre-B">Bre-B</option>
@@ -226,8 +265,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Descontar Stock Auto</label>
-                            <select id="ped-descontar-stock" class="p-2.5 border rounded-xl w-full text-sm mt-1 font-bold text-slate-700">
+                            <label class="text-[11px] font-semibold text-slate-500">Descontar Stock Auto</label>
+                            <select id="ped-descontar-stock" class="p-2.5 border rounded-xl w-full text-xs mt-1 font-bold text-slate-700 bg-slate-50">
                                 <option value="si">Sí (Automático)</option>
                                 <option value="no">No (Manual)</option>
                             </select>
@@ -236,20 +275,20 @@
 
                     <div class="flex flex-col sm:flex-row justify-between items-center bg-indigo-50 p-4 rounded-xl gap-3">
                         <div>
-                            <p class="text-xs text-indigo-700 font-semibold">TOTAL PEDIDO: <span id="lbl-total-admin" class="text-xl font-black">$0</span></p>
-                            <p class="text-xs text-amber-700 font-semibold">SALDO PENDIENTE: <span id="lbl-saldo-admin" class="text-base font-bold">$0</span></p>
+                            <p class="text-xs text-indigo-700 font-semibold">TOTAL PEDIDO: <span id="lbl-total-admin" class="text-lg font-black">$0</span></p>
+                            <p class="text-xs text-amber-700 font-semibold">SALDO PENDIENTE: <span id="lbl-saldo-admin" class="text-sm font-bold">$0</span></p>
                         </div>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow transition w-full sm:w-auto">💾 Guardar Pedido Definitivo</button>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow transition w-full sm:w-auto text-xs">💾 Guardar Pedido Definitivo</button>
                     </div>
                 </form>
             </div>
 
             <!-- Listado General de Pedidos -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h2 class="text-lg font-bold text-slate-800">Listado General & Historial de Clientes</h2>
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800">Listado General & Historial CRM</h2>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                        <select id="filtro-estado-pedidos" onchange="cargarPedidosAdmin()" class="p-2.5 border rounded-xl text-sm bg-slate-50 font-semibold">
+                        <select id="filtro-estado-pedidos" onchange="cargarPedidosAdmin()" class="p-2.5 border rounded-xl text-xs bg-slate-50 font-semibold">
                             <option value="todos">Todos los Estados</option>
                             <option value="Pendiente">Pendientes</option>
                             <option value="Fabricando">Fabricando</option>
@@ -257,153 +296,153 @@
                             <option value="Finalizado">Finalizados</option>
                             <option value="Cancelado">Cancelados</option>
                         </select>
-                        <input type="text" id="buscador-pedidos-gral" placeholder="🔍 Buscar cliente, tel, ref..." oninput="cargarPedidosAdmin()" class="p-2.5 border rounded-xl text-sm w-full sm:w-72 bg-slate-50">
+                        <input type="text" id="buscador-pedidos-gral" placeholder="🔍 Buscar cliente o ref..." oninput="cargarPedidosAdmin()" class="p-2.5 border rounded-xl text-xs w-full sm:w-64 bg-slate-50">
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="overflow-x-auto border rounded-xl">
+                    <table class="w-full text-left border-collapse sheets-table">
                         <thead>
-                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
-                                <th class="p-3">Ref / Fechas</th>
-                                <th class="p-3">Cliente & Contacto</th>
-                                <th class="p-3">Operación / Estado</th>
-                                <th class="p-3">Financiero</th>
-                                <th class="p-3">Acciones & Visor 360°</th>
+                            <tr>
+                                <th>Ref / Fechas</th>
+                                <th>Cliente & Contacto</th>
+                                <th>Operación / Estado</th>
+                                <th>Financiero</th>
+                                <th>Acciones 360°</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-pedidos-gral" class="text-sm"></tbody>
+                        <tbody id="tabla-pedidos-gral" class="text-xs"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- ================= PRODUCCIÓN ================= -->
-        <section id="tab-produccion" class="hidden space-y-6 animate-fade-in">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+        <!-- ================= PRODUCCIÓN / TALLER ================= -->
+        <section id="tab-produccion" class="hidden space-y-4 sm:space-y-6 animate-fade-in">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
-                        <h2 class="text-lg font-bold text-indigo-700">⚙️ Producción y Taller</h2>
-                        <p class="text-xs text-slate-400">Pedidos activos en fabricación o pendientes de entrega</p>
+                        <h2 class="text-base sm:text-lg font-bold text-indigo-700">⚙️ Taller y Producción (Pedidos Activos)</h2>
+                        <p class="text-xs text-slate-400">Mueve pedidos urgentes a fabricación y controla el taller</p>
                     </div>
-                    <input type="text" id="buscador-produccion" placeholder="🔍 Buscar por cliente o ref..." oninput="cargarProduccion()" class="p-2.5 border rounded-xl text-sm w-full sm:w-80 bg-slate-50">
+                    <input type="text" id="buscador-produccion" placeholder="🔍 Buscar por cliente o ref..." oninput="cargarProduccion()" class="p-2.5 border rounded-xl text-xs w-full sm:w-72 bg-slate-50">
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="overflow-x-auto border rounded-xl">
+                    <table class="w-full text-left border-collapse sheets-table">
                         <thead>
-                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
-                                <th class="p-3">Ref Pedido</th>
-                                <th class="p-3">Cliente</th>
-                                <th class="p-3">Fecha Entrega</th>
-                                <th class="p-3">Tipo Operación</th>
-                                <th class="p-3">Estado Actual</th>
-                                <th class="p-3">Acción Rápida</th>
+                            <tr>
+                                <th>Ref Pedido</th>
+                                <th>Cliente</th>
+                                <th>Entrega</th>
+                                <th>Operación</th>
+                                <th>Estado Taller</th>
+                                <th>Acción Rápida</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-produccion" class="text-sm"></tbody>
+                        <tbody id="tabla-produccion" class="text-xs"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- ================= INVENTARIO SUPABASE ================= -->
-        <section id="tab-inventario" class="hidden space-y-6 animate-fade-in">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <section id="tab-inventario" class="hidden space-y-4 sm:space-y-6 animate-fade-in">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold text-indigo-700">📦 Registrar / Editar Producto en Supabase</h2>
-                    <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-1 rounded-full">Sincronizado Supabase</span>
+                    <h2 class="text-base sm:text-lg font-bold text-indigo-700">📦 Registrar / Editar Producto en Supabase</h2>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-1 rounded-full">Sincronizado Supabase</span>
                 </div>
-                <form id="form-producto-admin" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                <form id="form-producto-admin" class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
                     <input type="hidden" id="prod-id-edit">
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Nombre del Producto *</label>
-                        <input type="text" id="prod-nombre" placeholder="Nombre completo" required class="p-2.5 border rounded-xl text-sm w-full mt-1">
+                        <label class="font-semibold text-slate-500">Nombre del Producto *</label>
+                        <input type="text" id="prod-nombre" placeholder="Nombre completo" required class="p-2.5 border rounded-xl w-full mt-1 bg-slate-50">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Mundo / Categoría *</label>
-                        <input type="text" id="prod-mundo" placeholder="Ej: TEXTIL, CALZADO, HOGAR" required class="p-2.5 border rounded-xl text-sm w-full mt-1">
+                        <label class="font-semibold text-slate-500">Mundo / Categoría *</label>
+                        <input type="text" id="prod-mundo" placeholder="Ej: TEXTIL, CALZADO" required class="p-2.5 border rounded-xl w-full mt-1 bg-slate-50">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Origen de Compra</label>
-                        <select id="prod-origen" class="p-2.5 border rounded-xl text-sm font-semibold w-full mt-1">
+                        <label class="font-semibold text-slate-500">Origen de Compra</label>
+                        <select id="prod-origen" class="p-2.5 border rounded-xl font-semibold w-full mt-1 bg-slate-50">
                             <option value="Colombia">Colombia</option>
                             <option value="Venezuela">Venezuela</option>
                             <option value="Online (Temu u otro)">Online (Temu / Otro)</option>
                         </select>
                     </div>
-                    <div class="flex items-center gap-2 pt-6">
+                    <div class="flex items-center gap-2 pt-5">
                         <input type="checkbox" id="prod-sin-stock" class="w-4 h-4 text-indigo-600 rounded">
-                        <label for="prod-sin-stock" class="text-xs font-bold text-slate-600">Sin Stock (Bajo Pedido)</label>
+                        <label for="prod-sin-stock" class="font-bold text-slate-600">Sin Stock (Bajo Pedido)</label>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Stock Actual</label>
-                        <input type="number" id="prod-stock" value="10" placeholder="0" class="p-2.5 border rounded-xl text-sm w-full mt-1">
+                        <label class="font-semibold text-slate-500">Stock Actual</label>
+                        <input type="number" id="prod-stock" value="10" placeholder="0" class="p-2.5 border rounded-xl w-full mt-1 bg-slate-50">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Precio Detal ($) *</label>
-                        <input type="number" id="prod-detal" placeholder="0" required class="p-2.5 border rounded-xl text-sm w-full mt-1 font-bold text-indigo-700">
+                        <label class="font-semibold text-slate-500">Precio Detal ($) *</label>
+                        <input type="number" id="prod-detal" placeholder="0" required class="p-2.5 border rounded-xl w-full mt-1 font-bold text-indigo-700 bg-slate-50">
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Precio Mayorista ($) *</label>
-                        <input type="number" id="prod-mayor" placeholder="0" required class="p-2.5 border rounded-xl text-sm w-full mt-1 font-bold text-amber-700">
+                        <label class="font-semibold text-slate-500">Precio Mayorista ($) *</label>
+                        <input type="number" id="prod-mayor" placeholder="0" required class="p-2.5 border rounded-xl w-full mt-1 font-bold text-amber-700 bg-slate-50">
                     </div>
-                    <div class="flex items-end gap-2">
-                        <button type="submit" id="btn-guardar-prod" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl font-bold w-full transition shadow">💾 Guardar en Catálogo Supabase</button>
-                        <button type="button" id="btn-cancelar-edit-prod" onclick="cancelarEdicionProd()" class="hidden bg-slate-300 hover:bg-slate-400 p-3 rounded-xl font-bold text-sm">Cancelar</button>
+                    <div class="flex items-end gap-2 pt-1 sm:pt-0">
+                        <button type="submit" id="btn-guardar-prod" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-xl font-bold w-full transition shadow">💾 Guardar Catálogo</button>
+                        <button type="button" id="btn-cancelar-edit-prod" onclick="cancelarEdicionProd()" class="hidden bg-slate-300 hover:bg-slate-400 p-2.5 rounded-xl font-bold">Cancelar</button>
                     </div>
                 </form>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
-                        <h2 class="text-lg font-bold text-slate-800">Catálogo de Productos (<span id="count-productos-inv">0</span> registrados)</h2>
-                        <p class="text-xs text-slate-400">Permite sumar stock directo (+ / -) y editar en tiempo real</p>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-800">Catálogo Supabase (<span id="count-productos-inv">0</span>)</h2>
+                        <p class="text-xs text-slate-400">Suma stock directo (+ / -) y edita en tiempo real</p>
                     </div>
                     <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                        <select id="filtro-origen-inv" onchange="cargarInventarioAdmin()" class="p-2.5 border rounded-xl text-sm bg-slate-50 font-semibold">
+                        <select id="filtro-origen-inv" onchange="cargarInventarioAdmin()" class="p-2.5 border rounded-xl text-xs bg-slate-50 font-semibold">
                             <option value="todos">Todos los Orígenes</option>
                             <option value="Venezuela">Venezuela</option>
                             <option value="Colombia">Colombia</option>
                             <option value="Online">Online / Temu</option>
                         </select>
-                        <input type="text" id="buscador-inventario" placeholder="🔍 Buscar por nombre, ref o mundo..." oninput="cargarInventarioAdmin()" class="p-2.5 border rounded-xl text-sm w-full sm:w-72 bg-slate-50">
+                        <input type="text" id="buscador-inventario" placeholder="🔍 Buscar producto..." oninput="cargarInventarioAdmin()" class="p-2.5 border rounded-xl text-xs w-full sm:w-64 bg-slate-50">
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                <div class="overflow-x-auto border rounded-xl">
+                    <table class="w-full text-left border-collapse sheets-table">
                         <thead>
-                            <tr class="border-b text-xs text-slate-400 uppercase bg-slate-50">
-                                <th class="p-3">Ref / Origen</th>
-                                <th class="p-3">Producto & Mundo</th>
-                                <th class="p-3">Stock Directo (+ / -)</th>
-                                <th class="p-3">Precios (Detal / Mayor)</th>
-                                <th class="p-3">Acciones</th>
+                            <tr>
+                                <th>Ref / Origen</th>
+                                <th>Producto & Mundo</th>
+                                <th>Stock (+ / -)</th>
+                                <th>Precios (Detal / Mayor)</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tabla-inventario-admin" class="text-sm"></tbody>
+                        <tbody id="tabla-inventario-admin" class="text-xs"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
         <!-- ================= CONTABILIDAD & CAJA ================= -->
-        <section id="tab-contabilidad" class="hidden space-y-6 animate-fade-in">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 class="text-lg font-bold mb-4 text-indigo-700">💸 Movimiento Manual (4x1000 Automático)</h2>
-                    <form id="form-caja-manual" class="space-y-3">
+        <section id="tab-contabilidad" class="hidden space-y-4 sm:space-y-6 animate-fade-in">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-base sm:text-lg font-bold mb-3 text-indigo-700">💸 Movimiento Manual (4x1000 Automático)</h2>
+                    <form id="form-caja-manual" class="space-y-3 text-xs">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Tipo Movimiento</label>
-                            <select id="caja-tipo" class="p-2.5 border rounded-xl w-full text-sm font-bold mt-1">
+                            <label class="font-semibold text-slate-500">Tipo Movimiento</label>
+                            <select id="caja-tipo" class="p-2.5 border rounded-xl w-full font-bold mt-1 bg-slate-50">
                                 <option value="INGRESO">INGRESO Manual</option>
                                 <option value="EGRESO">EGRESO / Gasto</option>
                             </select>
                         </div>
-                        <input type="text" id="caja-concepto" placeholder="Concepto (Ej: Compra telas, Publicidad Meta)" required class="p-2.5 border rounded-xl w-full text-sm">
-                        <input type="text" id="caja-tercero" placeholder="Tercero / Proveedor" class="p-2.5 border rounded-xl w-full text-sm">
+                        <input type="text" id="caja-concepto" placeholder="Concepto (Ej: Compra telas, Publicidad)" required class="p-2.5 border rounded-xl w-full bg-slate-50">
+                        <input type="text" id="caja-tercero" placeholder="Tercero / Proveedor" class="p-2.5 border rounded-xl w-full bg-slate-50">
                         <div>
-                            <label class="text-xs font-semibold text-slate-500">Método de Pago</label>
-                            <select id="caja-metodo" class="p-2.5 border rounded-xl w-full text-sm mt-1">
+                            <label class="font-semibold text-slate-500">Método de Pago</label>
+                            <select id="caja-metodo" class="p-2.5 border rounded-xl w-full mt-1 bg-slate-50">
                                 <option value="Efectivo">Efectivo (Sin 4x1000)</option>
                                 <option value="Nequi">Nequi (Aplica 4x1000 en Egresos)</option>
                                 <option value="Bre-B">Bre-B (Aplica 4x1000 en Egresos)</option>
@@ -412,35 +451,35 @@
                                 <option value="Wompi">Wompi (Aplica 4x1000 en Egresos)</option>
                             </select>
                         </div>
-                        <input type="number" id="caja-valor" placeholder="Valor ($)" required class="p-2.5 border rounded-xl w-full text-sm font-bold text-indigo-700">
-                        <textarea id="caja-desc" placeholder="Descripción adicional opcional..." class="p-2.5 border rounded-xl w-full text-sm"></textarea>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl font-bold w-full transition shadow">Registrar Movimiento Contable</button>
+                        <input type="number" id="caja-valor" placeholder="Valor ($)" required class="p-2.5 border rounded-xl w-full font-bold text-indigo-700 bg-slate-50">
+                        <textarea id="caja-desc" placeholder="Descripción opcional..." class="p-2.5 border rounded-xl w-full bg-slate-50"></textarea>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl font-bold w-full transition shadow">Registrar Movimiento</button>
                     </form>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                    <h2 class="text-lg font-bold text-slate-800">📊 Balances de Caja & Descarga Mensual</h2>
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between border-b pb-2"><span>Saldo Efectivo Actual:</span> <span id="bal-efectivo" class="font-bold text-emerald-600 text-base">$0</span></div>
-                        <div class="flex justify-between border-b pb-2"><span>Saldo Nequi / Bancos Actual:</span> <span id="bal-bancos" class="font-bold text-blue-600 text-base">$0</span></div>
-                        <div class="flex justify-between border-b pb-2"><span>Total Impuesto 4x1000 Acumulado:</span> <span id="bal-4x1000" class="font-bold text-red-600">$0</span></div>
+                <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800">📊 Balances & Descarga Mensual</h2>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between border-b pb-2"><span>Saldo Efectivo Actual:</span> <span id="bal-efectivo" class="font-bold text-emerald-600 text-sm">$0</span></div>
+                        <div class="flex justify-between border-b pb-2"><span>Saldo Nequi / Bancos:</span> <span id="bal-bancos" class="font-bold text-blue-600 text-sm">$0</span></div>
+                        <div class="flex justify-between border-b pb-2"><span>Impuesto 4x1000 Acumulado:</span> <span id="bal-4x1000" class="font-bold text-red-600">$0</span></div>
                     </div>
-                    <div class="pt-4 border-t">
-                        <button onclick="descargarMovimientosMes()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold w-full text-sm shadow transition">📥 Descargar Movimientos del Mes (CSV)</button>
+                    <div class="pt-2">
+                        <button onclick="descargarMovimientosMes()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold w-full text-xs shadow transition">📥 Descargar Movimientos (CSV)</button>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <h2 class="text-lg font-bold text-slate-800">Historial Contable y de Caja</h2>
-                    <input type="text" id="buscador-caja" placeholder="🔍 Buscar movimiento por concepto o tercero..." oninput="cargarContabilidad()" class="p-2.5 border rounded-xl text-sm w-full sm:w-72 bg-slate-50">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800">Historial Contable & Caja</h2>
+                    <input type="text" id="buscador-caja" placeholder="🔍 Buscar movimiento..." oninput="cargarContabilidad()" class="p-2.5 border rounded-xl text-xs w-full sm:w-64 bg-slate-50">
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
+                <div class="overflow-x-auto border rounded-xl">
+                    <table class="w-full text-left border-collapse sheets-table text-xs">
                         <thead>
-                            <tr class="border-b bg-slate-100 text-slate-400 uppercase">
-                                <th class="p-2">Fecha</th><th class="p-2">Tipo</th><th class="p-2">Concepto / Tercero</th><th class="p-2">Método</th><th class="p-2">Valor</th><th class="p-2">4x1000</th>
+                            <tr>
+                                <th>Fecha</th><th>Tipo</th><th>Concepto / Tercero</th><th>Método</th><th>Valor</th><th>4x1000</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-caja-historial"></tbody>
@@ -449,79 +488,112 @@
             </div>
         </section>
 
-        <!-- ================= REPORTES PDF ================= -->
-        <section id="tab-reportes" class="hidden space-y-6 animate-fade-in">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center no-print">
+        <!-- ================= REPORTES PDF GERENCIALES ================= -->
+        <section id="tab-reportes" class="hidden space-y-4 sm:space-y-6 animate-fade-in">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 no-print">
                 <div>
-                    <h2 class="text-lg font-bold">Reporte Gerencial Consolidado</h2>
-                    <p class="text-xs text-slate-400">Listo para imprimir o guardar como PDF oficial</p>
+                    <h2 class="text-base sm:text-lg font-bold">Reportes PDF Gerenciales & Inventario</h2>
+                    <p class="text-xs text-slate-400">Selecciona el reporte oficial requerido para impresión</p>
                 </div>
-                <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow transition flex items-center gap-2">🖨 Imprimir / Descargar PDF</button>
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <button onclick="cambiarTipoReportePDF('consolidado')" id="btn-rep-cons" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow">📋 Consolidado General</button>
+                    <button onclick="cambiarTipoReportePDF('detallado')" id="btn-rep-det" class="px-3 py-2 bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">📄 Detalle de Pedidos & Stock</button>
+                    <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1">🖨 Imprimir PDF</button>
+                </div>
             </div>
-            <div id="printable-area" class="bg-white p-8 rounded-2xl shadow-sm border space-y-6">
+
+            <!-- AREA IMPRESIÓN OFICIAL -->
+            <div id="printable-area" class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border space-y-6 text-slate-800">
                 <div class="text-center border-b pb-4">
-                    <h2 class="text-2xl font-black text-indigo-700">CUPISSA S.A.S. - INFORME EJECUTIVO Y CONTABLE</h2>
+                    <h2 class="text-xl sm:text-2xl font-black text-indigo-700">CUPISSA S.A.S. - INFORME OFICIAL GERENCIAL</h2>
                     <p class="text-xs text-slate-400 mt-1" id="fecha-reporte-pdf"></p>
                 </div>
-                
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs border-b pb-4">
-                    <div><strong>Ventas del Mes:</strong> <br><span id="rep-ventas" class="text-sm font-bold text-indigo-600">$0</span></div>
-                    <div><strong>Cuentas por Cobrar:</strong> <br><span id="rep-cobrar" class="text-sm font-bold text-amber-600">$0</span></div>
-                    <div><strong>Caja Efectivo:</strong> <br><span id="rep-efectivo" class="text-sm font-bold text-emerald-600">$0</span></div>
-                    <div><strong>Caja Nequi/Bancos:</strong> <br><span id="rep-bancos" class="text-sm font-bold text-blue-600">$0</span></div>
+
+                <!-- VISTA 1: REPORTE CONSOLIDADO GENERAL -->
+                <div id="vista-pdf-consolidado" class="space-y-6">
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-b pb-4">
+                        <div><strong>Ventas del Mes:</strong> <br><span id="rep-ventas" class="text-sm font-bold text-indigo-600">$0</span></div>
+                        <div><strong>Cuentas por Cobrar:</strong> <br><span id="rep-cobrar" class="text-sm font-bold text-amber-600">$0</span></div>
+                        <div><strong>Caja Efectivo:</strong> <br><span id="rep-efectivo" class="text-sm font-bold text-emerald-600">$0</span></div>
+                        <div><strong>Caja Bancos:</strong> <br><span id="rep-bancos" class="text-sm font-bold text-blue-600">$0</span></div>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xs text-slate-700 mb-2 uppercase">Estado de Inventario (Supabase)</h3>
+                        <div class="border rounded-xl overflow-hidden">
+                            <table class="w-full text-left border-collapse sheets-table text-xs">
+                                <thead>
+                                    <tr><th>Ref</th><th>Producto</th><th>Origen</th><th>Stock</th><th>Precio Detal</th></tr>
+                                </thead>
+                                <tbody id="tabla-reporte-inv"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <h3 class="font-bold text-sm text-slate-700 mb-2">Estado de Inventario y Origen en Supabase</h3>
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="border-b bg-slate-100"><th class="p-2">Ref</th><th class="p-2">Producto</th><th class="p-2">Origen</th><th class="p-2">Stock</th><th class="p-2">Precio Detal</th></tr>
-                        </thead>
-                        <tbody id="tabla-reporte-inv"></tbody>
-                    </table>
+                <!-- VISTA 2: REPORTE DETALLADO DE PEDIDOS, STOCK INICIAL Y PAGOS (CONTADO VS CRÉDITO) -->
+                <div id="vista-pdf-detallado" class="space-y-6 hidden">
+                    <div>
+                        <h3 class="font-bold text-xs text-indigo-900 mb-2 uppercase">📦 Detalle de Pedidos, Stock Inicial, Ventas (Contado vs Crédito) y Estado de Deudas</h3>
+                        <p class="text-[11px] text-slate-500 mb-3">Relación detallada de cada pedido con desglose de pagos de contado, créditos pendientes, stock inicial y destino.</p>
+                        <div class="border rounded-xl overflow-hidden">
+                            <table class="w-full text-left border-collapse sheets-table text-[11px]">
+                                <thead>
+                                    <tr>
+                                        <th>Ref / Fecha</th>
+                                        <th>Cliente & Teléfono</th>
+                                        <th>Modalidad (Contado / Crédito)</th>
+                                        <th>Detalle Productos & Stock Inicial</th>
+                                        <th>Pagos / Deuda</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-reporte-pedidos-detallado"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+
             </div>
         </section>
 
     </main>
 
-    <!-- MODAL DETALLE 360° Y EDICIÓN TOTAL DEL PEDIDO -->
-    <div id="modal-detalle-completo-pedido" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl max-h-[92vh] overflow-y-auto animate-fade-in">
-            <div class="flex justify-between items-start border-b pb-4">
+    <!-- ================= MODAL DETALLE 360° Y EDICIÓN TOTAL DEL PEDIDO ================= -->
+    <div id="modal-detalle-completo-pedido" class="fixed inset-0 bg-black bg-opacity-60 hidden flex items-center justify-center p-3 sm:p-4 z-50">
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-4 sm:p-8 space-y-4 sm:space-y-6 shadow-2xl max-h-[92vh] overflow-y-auto animate-fade-in text-xs sm:text-sm">
+            <div class="flex justify-between items-start border-b pb-3">
                 <div>
                     <div class="flex items-center gap-2">
-                        <h3 class="text-xl sm:text-2xl font-black text-indigo-900" id="det-ped-ref">CUP-XXXXXX</h3>
-                        <span id="det-ped-badge-estado" class="px-3 py-1 rounded-full text-xs font-bold bg-indigo-100 text-indigo-800">Estado</span>
+                        <h3 class="text-lg sm:text-2xl font-black text-indigo-900" id="det-ped-ref">CUP-XXXXXX</h3>
+                        <span id="det-ped-badge-estado" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-indigo-100 text-indigo-800">Estado</span>
                     </div>
-                    <p class="text-xs text-slate-400 mt-1" id="det-ped-fechas">Agendado: -- | Entrega: --</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5" id="det-ped-fechas">Agendado: -- | Entrega: --</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button id="btn-toggle-edicion-360" onclick="toggleModoEdicion360()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1 transition">
-                        ✏️ Editar Todo el Pedido
+                    <button id="btn-toggle-edicion-360" onclick="toggleModoEdicion360()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1 transition">
+                        ✏️ Editar Pedido
                     </button>
-                    <button onclick="cerrarModalDetallePedido()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold ml-2">✕</button>
+                    <button onclick="cerrarModalDetallePedido()" class="text-slate-400 hover:text-slate-600 text-xl font-bold ml-2">✕</button>
                 </div>
             </div>
 
             <!-- VISTA LECTURA CLIENTE -->
-            <div id="vista-lectura-cliente" class="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div id="vista-lectura-cliente" class="bg-indigo-50/60 p-3.5 rounded-2xl border border-indigo-100 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                    <span class="text-slate-400 font-semibold block uppercase">Cliente CRM</span>
+                    <span class="text-slate-400 font-semibold block uppercase text-[10px]">Cliente CRM</span>
                     <strong class="text-sm text-slate-800" id="det-cli-nombre">--</strong>
                     <p class="text-slate-600" id="det-cli-tel">📞 --</p>
                 </div>
                 <div>
-                    <span class="text-slate-400 font-semibold block uppercase">Ubicación y Contacto</span>
+                    <span class="text-slate-400 font-semibold block uppercase text-[10px]">Ubicación y Contacto</span>
                     <p class="text-slate-700" id="det-cli-dir">Dirección: --</p>
                     <p class="text-slate-700" id="det-cli-email">Email / CC: --</p>
                 </div>
             </div>
 
             <!-- VISTA EDICIÓN CLIENTE Y FECHAS (OCULTA POR DEFECTO) -->
-            <div id="vista-edicion-360" class="hidden bg-amber-50 p-4 rounded-2xl border border-amber-200 space-y-4 text-xs">
-                <h4 class="font-bold text-amber-900 uppercase">✏️ Editar Información del Cliente y Fechas</h4>
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div id="vista-edicion-360" class="hidden bg-amber-50 p-4 rounded-2xl border border-amber-200 space-y-3 text-xs">
+                <h4 class="font-bold text-amber-900 uppercase text-[11px]">✏️️ Editar Cliente y Fechas</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
                     <div>
                         <label class="font-semibold text-slate-600">Nombre Cliente</label>
                         <input type="text" id="edit-360-cli-nombre" class="p-2 border rounded-xl w-full bg-white font-semibold mt-1">
@@ -539,9 +611,9 @@
                         <input type="text" id="edit-360-cli-email" class="p-2 border rounded-xl w-full bg-white mt-1">
                     </div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-amber-200 pt-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 border-t border-amber-200 pt-2">
                     <div>
-                        <label class="font-semibold text-slate-600">Estado del Pedido</label>
+                        <label class="font-semibold text-slate-600">Estado</label>
                         <select id="edit-360-estado" class="p-2 border rounded-xl w-full bg-white font-bold text-indigo-700 mt-1">
                             <option value="Pendiente">Pendiente</option>
                             <option value="Fabricando">Fabricando</option>
@@ -551,29 +623,28 @@
                         </select>
                     </div>
                     <div>
-                        <label class="font-semibold text-slate-600">Fecha Agendamiento</label>
+                        <label class="font-semibold text-slate-600">Agendamiento</label>
                         <input type="date" id="edit-360-agendamiento" class="p-2 border rounded-xl w-full bg-white mt-1">
                     </div>
                     <div>
-                        <label class="font-semibold text-slate-600">Fecha Entrega</label>
+                        <label class="font-semibold text-slate-600">Entrega</label>
                         <input type="date" id="edit-360-entrega" class="p-2 border rounded-xl w-full bg-white mt-1">
                     </div>
                 </div>
             </div>
 
-            <!-- Productos Relacionados -->
+            <!-- Productos en este pedido -->
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">📦 Productos en este Pedido</h4>
-                    <button id="btn-agregar-item-360" onclick="mostrarFormAgregarItem360()" class="hidden text-xs bg-indigo-600 text-white px-3 py-1 rounded-xl font-bold">+ Agregar Ítem a este Pedido</button>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-800">📦 Productos en este Pedido</h4>
+                    <button id="btn-agregar-item-360" onclick="mostrarFormAgregarItem360()" class="hidden text-xs bg-indigo-600 text-white px-2.5 py-1 rounded-xl font-bold">+ Agregar Ítem</button>
                 </div>
 
-                <!-- Formulario agregar producto dentro del modal 360 -->
                 <div id="form-add-item-360-box" class="hidden p-3 bg-indigo-50 border border-indigo-200 rounded-xl mb-3 space-y-2 text-xs">
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-                        <input type="text" id="add-360-item-nombre" placeholder="Nombre ítem / producto" class="p-2 border rounded-xl sm:col-span-2">
-                        <input type="number" id="add-360-item-cant" value="1" placeholder="Cant" class="p-2 border rounded-xl">
-                        <input type="number" id="add-360-item-precio" placeholder="Precio ($)" class="p-2 border rounded-xl font-bold">
+                        <input type="text" id="add-360-item-nombre" placeholder="Nombre ítem / producto" class="p-2 border rounded-xl sm:col-span-2 bg-white">
+                        <input type="number" id="add-360-item-cant" value="1" placeholder="Cant" class="p-2 border rounded-xl bg-white">
+                        <input type="number" id="add-360-item-precio" placeholder="Precio ($)" class="p-2 border rounded-xl font-bold bg-white">
                     </div>
                     <div class="flex justify-end gap-2">
                         <button onclick="guardarNuevoItem360()" class="bg-emerald-600 text-white px-3 py-1 rounded-xl font-bold">Guardar Ítem</button>
@@ -581,14 +652,14 @@
                 </div>
 
                 <div class="border rounded-2xl overflow-hidden">
-                    <table class="w-full text-left border-collapse text-xs">
+                    <table class="w-full text-left border-collapse sheets-table text-xs">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-500 font-bold border-b">
-                                <th class="p-2.5">Producto / Ítem</th>
-                                <th class="p-2.5 text-center">Cant.</th>
-                                <th class="p-2.5 text-right">Precio Unit.</th>
-                                <th class="p-2.5 text-right">Subtotal</th>
-                                <th class="p-2.5 text-center col-accion-360 hidden">Acción</th>
+                            <tr>
+                                <th>Producto / Ítem</th>
+                                <th class="text-center">Cant.</th>
+                                <th class="text-right">Precio Unit.</th>
+                                <th class="text-right">Subtotal</th>
+                                <th class="text-center col-accion-360 hidden">Acción</th>
                             </tr>
                         </thead>
                         <tbody id="det-tabla-productos"></tbody>
@@ -596,20 +667,20 @@
                 </div>
             </div>
 
-            <!-- Historial de Abonos / Pagos con Fechas -->
+            <!-- Historial de Abonos -->
             <div>
                 <div class="flex justify-between items-center mb-2">
-                    <h4 class="font-bold text-sm text-slate-800 flex items-center gap-2">💵 Historial de Abonos y Transacciones</h4>
+                    <h4 class="font-bold text-xs sm:text-sm text-slate-800">💵 Historial de Abonos y Pagos</h4>
                     <button id="btn-modal-abonar" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold transition shadow">+ Registrar Abono</button>
                 </div>
                 <div class="border rounded-2xl overflow-hidden">
-                    <table class="w-full text-left border-collapse text-xs">
+                    <table class="w-full text-left border-collapse sheets-table text-xs">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-500 font-bold border-b">
-                                <th class="p-2.5">Fecha y Hora</th>
-                                <th class="p-2.5">Tipo</th>
-                                <th class="p-2.5">Método Pago</th>
-                                <th class="p-2.5 text-right">Monto</th>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Tipo</th>
+                                <th>Método Pago</th>
+                                <th class="text-right">Monto</th>
                             </tr>
                         </thead>
                         <tbody id="det-tabla-abonos"></tbody>
@@ -620,25 +691,23 @@
             <!-- Resumen Financiero y Acciones -->
             <div class="bg-slate-50 p-4 rounded-2xl border flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
                 <div class="space-y-1 w-full sm:w-auto">
-                    <!-- Vista Lectura Financiera -->
                     <div id="fin-lectura-box">
-                        <p class="text-slate-600">Costo Domicilio: <strong id="det-fin-domicilio">$0</strong> | Costo Producción: <strong id="det-fin-costo">$0</strong></p>
+                        <p class="text-slate-600">Domicilio: <strong id="det-fin-domicilio">$0</strong> | Costo Prod: <strong id="det-fin-costo">$0</strong></p>
                         <p class="text-indigo-900 text-sm font-black">TOTAL PEDIDO: <span id="det-fin-total">$0</span></p>
                         <p class="text-emerald-600 font-bold">TOTAL ABONADO: <span id="det-fin-pagado">$0</span></p>
                         <p class="text-red-600 text-sm font-black">SALDO PENDIENTE: <span id="det-fin-saldo">$0</span></p>
                     </div>
-                    <!-- Vista Edición Financiera -->
                     <div id="fin-edicion-box" class="hidden grid grid-cols-2 gap-2">
-                        <div><label class="font-semibold text-slate-600">Total Pedido ($)</label><input type="number" id="edit-360-total" class="p-2 border rounded-xl w-full font-bold text-indigo-700"></div>
-                        <div><label class="font-semibold text-slate-600">Abonado Real ($)</label><input type="number" id="edit-360-pagado" class="p-2 border rounded-xl w-full font-bold text-emerald-600"></div>
-                        <div><label class="font-semibold text-slate-600">Domicilio ($)</label><input type="number" id="edit-360-domicilio" class="p-2 border rounded-xl w-full"></div>
-                        <div><label class="font-semibold text-slate-600">Costo Prod ($)</label><input type="number" id="edit-360-costo" class="p-2 border rounded-xl w-full"></div>
+                        <div><label class="font-semibold text-slate-600">Total ($)</label><input type="number" id="edit-360-total" class="p-2 border rounded-xl w-full font-bold text-indigo-700 bg-white"></div>
+                        <div><label class="font-semibold text-slate-600">Abonado ($)</label><input type="number" id="edit-360-pagado" class="p-2 border rounded-xl w-full font-bold text-emerald-600 bg-white"></div>
+                        <div><label class="font-semibold text-slate-600">Domicilio ($)</label><input type="number" id="edit-360-domicilio" class="p-2 border rounded-xl w-full bg-white"></div>
+                        <div><label class="font-semibold text-slate-600">Costo Prod ($)</label><input type="number" id="edit-360-costo" class="p-2 border rounded-xl w-full bg-white"></div>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
-                    <button id="btn-guardar-cambios-360" onclick="guardarEdicionCompleta360()" class="hidden px-5 py-2.5 bg-emerald-600 text-white hover:bg-emerald-700 font-bold rounded-xl transition shadow">💾 Guardar Cambios 360°</button>
-                    <button id="btn-cancelar-pedido-modal" class="px-4 py-2.5 bg-red-100 text-red-700 hover:bg-red-200 font-bold rounded-xl transition">🚫 Cancelar Pedido (Devolver Stock)</button>
-                    <button onclick="cerrarModalDetallePedido()" class="px-5 py-2.5 bg-indigo-600 text-white hover:bg-indigo-700 font-bold rounded-xl transition shadow">Cerrar</button>
+                    <button id="btn-guardar-cambios-360" onclick="guardarEdicionCompleta360()" class="hidden px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow">💾 Guardar Cambios</button>
+                    <button id="btn-cancelar-pedido-modal" class="px-3 py-2 bg-red-100 text-red-700 hover:bg-red-200 font-bold rounded-xl transition">🚫 Cancelar (Devolver Stock)</button>
+                    <button onclick="cerrarModalDetallePedido()" class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-xl shadow">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -646,30 +715,30 @@
 
     <!-- MODAL SUMAR LOTES DE STOCK -->
     <div id="modal-sumar-lote" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl">
-            <h3 class="text-lg font-black text-indigo-700">📦 Sumar Lote de Stock</h3>
-            <p id="lbl-lote-prod-nombre" class="text-xs text-slate-500 font-bold"></p>
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 space-y-4 shadow-2xl text-xs">
+            <h3 class="text-base font-black text-indigo-700">📦 Sumar Lote de Stock</h3>
+            <p id="lbl-lote-prod-nombre" class="text-slate-500 font-bold"></p>
             <input type="hidden" id="lote-prod-id">
             <div>
-                <label class="text-xs font-semibold text-slate-600">Cantidad a Sumar (+)</label>
-                <input type="number" id="lote-cantidad" value="10" min="1" class="p-2.5 border rounded-xl w-full font-bold text-indigo-700 mt-1">
+                <label class="font-semibold text-slate-600">Cantidad a Sumar (+)</label>
+                <input type="number" id="lote-cantidad" value="10" min="1" class="p-2.5 border rounded-xl w-full font-bold text-indigo-700 mt-1 bg-slate-50">
             </div>
             <div class="flex justify-end gap-2 pt-2">
-                <button type="button" onclick="cerrarModalLote()" class="px-4 py-2 bg-slate-200 rounded-xl text-xs font-bold">Cancelar</button>
-                <button type="button" onclick="confirmarSumarLote()" class="px-5 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs shadow">Sumar al Stock</button>
+                <button type="button" onclick="cerrarModalLote()" class="px-4 py-2 bg-slate-200 rounded-xl font-bold">Cancelar</button>
+                <button type="button" onclick="confirmarSumarLote()" class="px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow">Sumar al Stock</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL EDITAR PEDIDO RÁPIDO -->
     <div id="modal-editar-pedido" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <h3 class="text-xl font-black text-indigo-700">✏️ Editar Fechas y Estado</h3>
-            <form id="form-editar-pedido" class="space-y-3 text-sm">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-3 shadow-2xl max-h-[90vh] overflow-y-auto text-xs">
+            <h3 class="text-base font-black text-indigo-700">✏️ Editar Fechas y Estado</h3>
+            <form id="form-editar-pedido" class="space-y-3">
                 <input type="hidden" id="edit-ped-id">
                 <div>
-                    <label class="font-semibold text-slate-600">Estado del Pedido</label>
-                    <select id="edit-ped-estado" class="p-2.5 border rounded-xl w-full font-bold mt-1">
+                    <label class="font-semibold text-slate-600">Estado</label>
+                    <select id="edit-ped-estado" class="p-2.5 border rounded-xl w-full font-bold mt-1 bg-slate-50">
                         <option value="Pendiente">Pendiente</option>
                         <option value="Fabricando">Fabricando</option>
                         <option value="Entregado">Entregado</option>
@@ -678,23 +747,23 @@
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div><label class="text-xs font-semibold">Fecha Agendamiento</label><input type="date" id="edit-ped-agendamiento" class="p-2 border rounded-xl w-full mt-1"></div>
-                    <div><label class="text-xs font-semibold">Fecha Entrega</label><input type="date" id="edit-ped-entrega" class="p-2 border rounded-xl w-full mt-1"></div>
+                    <div><label class="font-semibold">Agendamiento</label><input type="date" id="edit-ped-agendamiento" class="p-2 border rounded-xl w-full mt-1 bg-slate-50"></div>
+                    <div><label class="font-semibold">Entrega</label><input type="date" id="edit-ped-entrega" class="p-2 border rounded-xl w-full mt-1 bg-slate-50"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div><label class="text-xs font-semibold">Total ($)</label><input type="number" id="edit-ped-total" class="p-2 border rounded-xl w-full mt-1 font-bold text-indigo-700"></div>
-                    <div><label class="text-xs font-semibold">Pagado / Abono ($)</label><input type="number" id="edit-ped-pagado" class="p-2 border rounded-xl w-full mt-1 font-bold text-emerald-600"></div>
+                    <div><label class="font-semibold">Total ($)</label><input type="number" id="edit-ped-total" class="p-2 border rounded-xl w-full mt-1 font-bold text-indigo-700 bg-slate-50"></div>
+                    <div><label class="font-semibold">Pagado ($)</label><input type="number" id="edit-ped-pagado" class="p-2 border rounded-xl w-full mt-1 font-bold text-emerald-600 bg-slate-50"></div>
                 </div>
-                <div><label class="text-xs font-semibold">Costo Producción Manual ($)</label><input type="number" id="edit-ped-costo" class="p-2 border rounded-xl w-full mt-1"></div>
+                <div><label class="font-semibold">Costo Producción ($)</label><input type="number" id="edit-ped-costo" class="p-2 border rounded-xl w-full mt-1 bg-slate-50"></div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" onclick="cerrarModalEditarPedido()" class="px-4 py-2 bg-slate-300 rounded-xl">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 bg-indigo-600 text-white font-bold rounded-xl shadow">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalEditarPedido()" class="px-4 py-2 bg-slate-300 rounded-xl font-bold">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white font-bold rounded-xl shadow">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- SCRIPT JS FUNCIONAL -->
+    <!-- SCRIPT JS FUNCIONAL COMPLETO -->
     <script>
         const SUPABASE_URL = 'https://njwiobfjtmwsxyigxgrp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qd2lvYmZqdG13c3h5aWd4Z3JwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4OTkxNjYsImV4cCI6MjEwNjQ3NTE2Nn0.YISPVeUpk-gAImCRkr1TmFfP6fX6Mps7HPJ3MXfVkYI';
@@ -704,14 +773,16 @@
         let productosCache = [];
         let clientesCache = [];
         let pedidosCache = [];
+        let detallesPedidosCache = {}; // Cache de detalles por pedido_id
         let productoSeleccionadoCache = null;
         let pedidoActualDetalle = null;
         let modoEdicion360Activo = false;
+        let tipoReportePDFActual = 'consolidado';
 
         function showToast(mensaje, tipo = 'exito') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `p-3.5 px-5 rounded-xl text-white font-bold text-xs shadow-xl animate-fade-in flex items-center gap-2 ${tipo==='exito' ? 'bg-emerald-600' : 'bg-red-600'}`;
+            toast.className = `p-3 px-4 rounded-xl text-white font-bold text-xs shadow-xl animate-fade-in flex items-center gap-2 ${tipo==='exito' ? 'bg-emerald-600' : 'bg-red-600'}`;
             toast.innerHTML = `<span>${tipo==='exito' ? '✅' : '🚨'}</span> <span>${mensaje}</span>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3500);
@@ -720,8 +791,16 @@
         function switchTab(tab) {
             ['dashboard', 'pedidos', 'produccion', 'inventario', 'contabilidad', 'reportes'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
+                let btn = document.getElementById(`btn-tab-${t}`);
+                if(btn) {
+                    btn.classList.remove('bg-indigo-800');
+                }
             });
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            let btnActivo = document.getElementById(`btn-tab-${tab}`);
+            if(btnActivo) {
+                btnActivo.classList.add('bg-indigo-800');
+            }
             cargarDatosGlobales();
         }
 
@@ -742,13 +821,111 @@
                 pedidosCache = peds || [];
             } catch (e) { console.error("Error pedidos:", e); }
 
+            try {
+                const { data: dets } = await supabaseClient.from('detalle_pedido').select('*');
+                detallesPedidosCache = {};
+                (dets || []).forEach(d => {
+                    if(!detallesPedidosCache[d.pedido_id]) detallesPedidosCache[d.pedido_id] = [];
+                    detallesPedidosCache[d.pedido_id].push(d);
+                });
+            } catch (e) { console.error("Error detalles pedido:", e); }
+
             await cargarInventarioAdmin();
             await cargarPedidosAdmin();
             await cargarProduccion();
             await cargarContabilidad();
+            actualizarReporteDetalladoPDF();
         }
 
-        // ================= CONTROL DEDUPLICACIÓN DE CLIENTES =================
+        // ================= BUSCADOR INTELIGENTE GLOBAL (CLIENTES Y PRODUCTOS) =================
+        function ejecutarBuscadorGlobal360() {
+            const query = document.getElementById('input-buscador-global-360').value.toLowerCase().trim();
+            const box = document.getElementById('resultado-buscador-global-box');
+            if (!query) { box.classList.add('hidden'); return; }
+
+            let html = '';
+            
+            // 1. Buscar Cliente por nombre o teléfono
+            let clientesEncontrados = clientesCache.filter(c => 
+                (c.nombre || '').toLowerCase().includes(query) || (c.telefono || '').toLowerCase().includes(query)
+            );
+
+            // 2. Buscar Producto por nombre o referencia
+            let productosEncontrados = productosCache.filter(p => 
+                (p.nombre || '').toLowerCase().includes(query) || (p.referencia || '').toLowerCase().includes(query)
+            );
+
+            if (clientesEncontrados.length === 0 && productosEncontrados.length === 0) {
+                box.innerHTML = `<p class="text-slate-400 text-center py-2">No se encontraron coincidencias para "${query}".</p>`;
+                box.classList.remove('hidden');
+                return;
+            }
+
+            if (clientesEncontrados.length > 0) {
+                html += `<h4 class="font-extrabold text-indigo-900 border-b pb-1 mb-2 uppercase text-[11px]">👤 Clientes Encontrados</h4>`;
+                clientesEncontrados.forEach(c => {
+                    let pedsCli = pedidosCache.filter(p => p.cliente_id === c.id);
+                    let totalPedidos = pedsCli.length;
+                    let totalComprado = pedsCli.reduce((acc, p) => acc + Number(p.total || 0), 0);
+                    let totalDeuda = pedsCli.reduce((acc, p) => acc + (Number(p.total || 0) - Number(p.pagado || 0)), 0);
+
+                    html += `
+                        <div class="p-2.5 bg-indigo-50/50 rounded-xl mb-2 border border-indigo-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <strong>${c.nombre}</strong> (📞 ${c.telefono || 'Sin Tel'})<br>
+                                <span class="text-slate-600 font-semibold">Pedidos:</span> ${totalPedidos} | 
+                                <span class="text-indigo-700 font-bold">Ha comprado: $${totalComprado.toLocaleString()}</span> | 
+                                <span class="text-red-600 font-black">Debe: $${totalDeuda.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (productosEncontrados.length > 0) {
+                html += `<h4 class="font-extrabold text-indigo-900 border-b pb-1 mb-2 mt-3 uppercase text-[11px]">📦 Productos en Inventario / Ventas</h4>`;
+                productosEncontrados.forEach(p => {
+                    let stockInicial = p.stock_inicial || p.stock || 0;
+                    let stockActual = p.sin_stock ? 'Bajo Pedido' : (p.stock || 0);
+
+                    // Calcular ventas de contado vs crédito para este producto
+                    let vendidosContado = 0;
+                    let vendidosCredito = 0;
+                    let totalVendidas = 0;
+
+                    Object.keys(detallesPedidosCache).forEach(pedId => {
+                        let items = detallesPedidosCache[pedId];
+                        let ped = pedidosCache.find(x => x.id === pedId);
+                        items.forEach(it => {
+                            if (it.producto_id === p.id || (it.nombre_producto || '').toLowerCase() === (p.nombre || '').toLowerCase()) {
+                                let cant = Number(it.cantidad || 1);
+                                totalVendidas += cant;
+                                if (ped && (ped.tipo_operacion || '').toLowerCase().includes('crédito')) {
+                                    vendidosCredito += cant;
+                                } else {
+                                    vendidosContado += cant;
+                                }
+                            }
+                        });
+                    });
+
+                    html += `
+                        <div class="p-2.5 bg-slate-50 rounded-xl mb-2 border border-slate-200">
+                            <strong>[${p.referencia || 'REF'}] ${p.nombre}</strong><br>
+                            <span class="text-slate-500">Había (Stock Inicial):</span> <strong>${stockInicial}</strong> | 
+                            <span class="text-emerald-700">Quedan (Stock Actual):</span> <strong>${stockActual}</strong> | 
+                            <span class="text-indigo-700 font-bold">Se han vendido: ${totalVendidas}</span> 
+                            (<span class="text-emerald-600">Contado: ${vendidosContado}</span> | <span class="text-amber-600">Crédito: ${vendidosCredito}</span>)
+                        </div>
+                    `;
+                });
+            }
+
+            box.innerHTML = html;
+            box.classList.remove('hidden');
+        }
+
+        // ================= CONTROL DEDUPLICACIÓN CLIENTES =================
         function poblarSelectClientes() {
             const select = document.getElementById('select-cliente-existente');
             if (!select) return;
@@ -803,7 +980,7 @@
                 if (cData) cli = cData;
             }
 
-            const { data: items } = await supabaseClient.from('detalle_pedido').select('*').eq('pedido_id', pedidoId);
+            const items = detallesPedidosCache[pedidoId] || await supabaseClient.from('detalle_pedido').select('*').eq('pedido_id', pedidoId).then(r => r.data || []);
             const { data: pagos } = await supabaseClient.from('pagos_pedidos').select('*').eq('pedido_id', pedidoId).order('fecha', { ascending: true });
 
             pedidoActualDetalle = { ...p, cliente: cli, items: items || [], pagos: pagos || [] };
@@ -816,13 +993,11 @@
             document.getElementById('det-ped-badge-estado').innerText = p.estado || 'Pendiente';
             document.getElementById('det-ped-fechas').innerText = `Agendado: ${p.fecha_agendamiento || '-'} | Entrega: ${p.fecha_entrega || '-'}`;
 
-            // Datos Lectura
             document.getElementById('det-cli-nombre').innerText = cli.nombre || 'Cliente General';
             document.getElementById('det-cli-tel').innerText = `📞 ${cli.telefono || 'Sin Teléfono'}`;
             document.getElementById('det-cli-dir').innerText = `Dirección: ${cli.direccion || 'N/A'}`;
             document.getElementById('det-cli-email').innerText = `Email / CC: ${cli.email || 'N/A'}`;
 
-            // Cargar datos en los inputs de edición 360°
             document.getElementById('edit-360-cli-nombre').value = cli.nombre || '';
             document.getElementById('edit-360-cli-tel').value = cli.telefono || '';
             document.getElementById('edit-360-cli-dir').value = cli.direccion || '';
@@ -838,7 +1013,6 @@
 
             renderProductosModal360();
 
-            // Render abonos con fecha
             const tbodyAbonos = document.getElementById('det-tabla-abonos');
             tbodyAbonos.innerHTML = '';
             if (!pagos || pagos.length === 0) {
@@ -885,8 +1059,8 @@
             const colsAccion = document.querySelectorAll('.col-accion-360');
 
             if (modoEdicion360Activo) {
-                btnToggle.innerText = '👁️ Ver Modo Lectura';
-                btnToggle.className = 'bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition';
+                btnToggle.innerText = '👁️ Ver Lectura';
+                btnToggle.className = 'bg-slate-600 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow transition';
                 vistaLecturaCli.classList.add('hidden');
                 vistaEdicionCli.classList.remove('hidden');
                 finLectura.classList.add('hidden');
@@ -895,8 +1069,8 @@
                 btnAddProd.classList.remove('hidden');
                 colsAccion.forEach(el => el.classList.remove('hidden'));
             } else {
-                btnToggle.innerText = '✏️ Editar Todo el Pedido';
-                btnToggle.className = 'bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow transition';
+                btnToggle.innerText = '✏️ Editar Pedido';
+                btnToggle.className = 'bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow transition';
                 vistaLecturaCli.classList.remove('hidden');
                 vistaEdicionCli.classList.add('hidden');
                 finLectura.classList.remove('hidden');
@@ -956,7 +1130,6 @@
 
             pedidoActualDetalle.items.push(nItem);
             
-            // Recalcular Total del Pedido automáticamente
             let nuevoSubtotal = pedidoActualDetalle.items.reduce((acc, it) => acc + (it.cantidad * it.precio_unitario), 0);
             let totalActualizado = nuevoSubtotal + Number(pedidoActualDetalle.domicilio || 0);
             document.getElementById('edit-360-total').value = totalActualizado;
@@ -990,7 +1163,6 @@
             const pedId = pedidoActualDetalle.id;
             const cliId = pedidoActualDetalle.cliente_id;
 
-            // 1. Guardar o actualizar cliente
             const cliNombre = document.getElementById('edit-360-cli-nombre').value.trim();
             const cliTel = document.getElementById('edit-360-cli-tel').value.trim();
             const cliDir = document.getElementById('edit-360-cli-dir').value.trim();
@@ -1002,7 +1174,6 @@
                 }).eq('id', cliId);
             }
 
-            // 2. Guardar finanzas y estado del pedido
             const estado = document.getElementById('edit-360-estado').value;
             const fecha_agendamiento = document.getElementById('edit-360-agendamiento').value;
             const fecha_entrega = document.getElementById('edit-360-entrega').value;
@@ -1031,7 +1202,7 @@
 
         // ================= CANCELACIÓN / DEVOLUCIÓN A STOCK =================
         async function procesarCancelarOBorrarPedido(pedidoId) {
-            const { data: items } = await supabaseClient.from('detalle_pedido').select('*').eq('pedido_id', pedidoId);
+            const items = detallesPedidosCache[pedidoId] || await supabaseClient.from('detalle_pedido').select('*').eq('pedido_id', pedidoId).then(r => r.data || []);
 
             let mensajeDevolucion = "⚠️ ¿Deseas devolver los productos de este pedido al STOCK DISPONIBLE en el inventario?\n\n- ACEPTAR: Reingresa stock a Supabase.\n- CANCELAR: Anula pedido sin alterar stock.";
             let devolverStock = confirm(mensajeDevolucion);
@@ -1101,29 +1272,29 @@
                 if (tbody) {
                     tbody.innerHTML += `
                         <tr class="border-b hover:bg-slate-50 transition">
-                            <td class="p-3 font-mono text-xs text-indigo-600 font-bold">
+                            <td class="p-2.5 font-mono text-xs text-indigo-600 font-bold">
                                 ${ref}<br>
-                                <span class="text-slate-400 font-normal">Origen: ${origen}</span>
+                                <span class="text-slate-400 font-normal text-[10px]">Origen: ${origen}</span>
                             </td>
-                            <td class="p-3 font-semibold text-slate-800">
+                            <td class="p-2.5 font-semibold text-slate-800">
                                 ${nombre}<br>
-                                <span class="text-xs text-slate-400 font-normal">Mundo: ${mundo}</span>
+                                <span class="text-[10px] text-slate-400 font-normal">Mundo: ${mundo}</span>
                             </td>
-                            <td class="p-3 text-xs font-bold">
+                            <td class="p-2.5 text-xs font-bold">
                                 <div class="flex items-center gap-1">
                                     <button onclick="modificarStockDirecto('${id}', -1)" class="w-6 h-6 rounded bg-slate-200 text-slate-700 font-bold hover:bg-slate-300">-</button>
-                                    <span class="px-2 min-w-[3rem] text-center ${stockNum <= 2 && !sinStock ? 'text-red-600 font-black' : ''}">${stockVal}</span>
+                                    <span class="px-2 min-w-[2.5rem] text-center ${stockNum <= 2 && !sinStock ? 'text-red-600 font-black' : ''}">${stockVal}</span>
                                     <button onclick="modificarStockDirecto('${id}', 1)" class="w-6 h-6 rounded bg-indigo-100 text-indigo-700 font-bold hover:bg-indigo-200">+</button>
                                     ${!sinStock ? `<button onclick="abrirModalLote('${id}', '${nombre.replace(/'/g, "\\'")}')" class="ml-1 text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold hover:bg-emerald-200">+ Lote</button>` : ''}
                                 </div>
                             </td>
-                            <td class="p-3 text-xs">
+                            <td class="p-2.5 text-xs">
                                 Detal: <strong class="text-indigo-600">$${precioD.toLocaleString()}</strong><br>
                                 Mayor: <strong class="text-amber-600">$${precioM.toLocaleString()}</strong>
                             </td>
-                            <td class="p-3 space-x-1">
-                                <button onclick='prepararEdicionProd(${JSON.stringify(p).replace(/'/g, "&#39;")})' class="text-xs bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded font-bold shadow">✏️ Editar</button>
-                                <button onclick="eliminarProducto('${id}')" class="text-xs bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded font-bold shadow">🗑️️</button>
+                            <td class="p-2.5 space-x-1">
+                                <button onclick='prepararEdicionProd(${JSON.stringify(p).replace(/'/g, "&#39;")})' class="text-[11px] bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded font-bold shadow">✏️ Editar</button>
+                                <button onclick="eliminarProducto('${id}')" class="text-[11px] bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded font-bold shadow">🗑</button>
                             </td>
                         </tr>
                     `;
@@ -1194,7 +1365,7 @@
             document.getElementById('prod-detal').value = typeof p.precio_detal === 'number' ? p.precio_detal : 0;
             document.getElementById('prod-mayor').value = typeof p.precio_mayorista === 'number' ? p.precio_mayorista : 0;
 
-            document.getElementById('btn-guardar-prod').innerText = '💾 Actualizar Producto';
+            document.getElementById('btn-guardar-prod').innerText = '💾 Actualizar Catálogo';
             document.getElementById('btn-cancelar-edit-prod').classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1202,7 +1373,7 @@
         function cancelarEdicionProd() {
             document.getElementById('form-producto-admin').reset();
             document.getElementById('prod-id-edit').value = '';
-            document.getElementById('btn-guardar-prod').innerText = '💾 Guardar en Catálogo Supabase';
+            document.getElementById('btn-guardar-prod').innerText = '💾 Guardar Catálogo';
             document.getElementById('btn-cancelar-edit-prod').classList.add('hidden');
         }
 
@@ -1227,7 +1398,7 @@
             } else {
                 const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
                 const { error } = await supabaseClient.from('productos').insert([{
-                    referencia, nombre, mundo, origen_compra, sin_stock, stock, precio_detal, precio_mayorista
+                    referencia, stock_inicial: stock, nombre, mundo, origen_compra, sin_stock, stock, precio_detal, precio_mayorista
                 }]);
 
                 if (error) { showToast("Error al guardar: " + error.message, "error"); return; }
@@ -1450,19 +1621,19 @@
 
                 if (tbodyAlertas && p.estado !== 'Entregado' && p.estado !== 'Finalizado' && p.estado !== 'Cancelado') {
                     if (!queryAlertas || cli.toLowerCase().includes(queryAlertas) || (p.referencia_pedido || '').toLowerCase().includes(queryAlertas)) {
-                        let alertaBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">A tiempo</span>`;
-                        if (p.fecha_entrega < hoy) alertaBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold animate-pulse">⚠️ Vencido</span>`;
-                        else if (p.fecha_entrega === hoy) alertaBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-800 rounded text-xs font-bold">🔥 Hoy</span>`;
+                        let alertaBadge = `<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[11px] font-bold">A tiempo</span>`;
+                        if (p.fecha_entrega < hoy) alertaBadge = `<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[11px] font-bold animate-pulse">⚠️️ Vencido</span>`;
+                        else if (p.fecha_entrega === hoy) alertaBadge = `<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[11px] font-bold">🔥 Hoy</span>`;
 
                         tbodyAlertas.innerHTML += `
                             <tr class="border-b">
-                                <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido || 'N/A'}</td>
-                                <td class="p-3 font-semibold">${cli}</td>
-                                <td class="p-3 text-xs">${p.fecha_entrega || '-'}</td>
-                                <td class="p-3 font-bold text-red-600">$${saldo.toLocaleString()}</td>
-                                <td class="p-3">${alertaBadge}</td>
-                                <td class="p-3">
-                                    <button onclick="verDetallePedido('${p.id}')" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-xl font-bold shadow">🔍 Detalle 360°</button>
+                                <td class="p-2.5 font-mono font-bold text-indigo-600">${p.referencia_pedido || 'N/A'}</td>
+                                <td class="p-2.5 font-semibold">${cli}</td>
+                                <td class="p-2.5 text-xs">${p.fecha_entrega || '-'}</td>
+                                <td class="p-2.5 font-bold text-red-600">$${saldo.toLocaleString()}</td>
+                                <td class="p-2.5">${alertaBadge}</td>
+                                <td class="p-2.5">
+                                    <button onclick="moverPedidoAProduccion('${p.id}')" class="text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-xl font-bold shadow">⚙️ Taller</button>
                                 </td>
                             </tr>
                         `;
@@ -1476,16 +1647,16 @@
                     let msgWsp = encodeURIComponent(`Hola ${cli}, de CUPISSA S.A.S. te contactamos sobre tu pedido ${p.referencia_pedido || ''}. Saldo pendiente: $${saldo.toLocaleString()}.`);
                     tbody.innerHTML += `
                         <tr class="border-b hover:bg-slate-50 transition">
-                            <td class="p-3 text-xs font-mono"><strong>${p.referencia_pedido || 'N/A'}</strong><br>Entrega: ${p.fecha_entrega || '-'}</td>
-                            <td class="p-3 text-xs">
+                            <td class="p-2.5 text-xs font-mono"><strong>${p.referencia_pedido || 'N/A'}</strong><br>Entrega: ${p.fecha_entrega || '-'}</td>
+                            <td class="p-2.5 text-xs">
                                 <strong>${cli}</strong><br>
                                 📞 ${telf} <a href="https://wa.me/57${telf}?text=${msgWsp}" target="_blank" class="text-emerald-600 font-bold hover:underline">💬 WhatsApp</a>
                             </td>
-                            <td class="p-3 text-xs"><span class="px-2 py-1 bg-indigo-50 text-indigo-700 rounded font-semibold">${p.tipo_operacion || 'Contado'}</span><br>Estado: <strong>${p.estado || 'Pendiente'}</strong></td>
-                            <td class="p-3 text-xs">Total: $${totalNum.toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldo.toLocaleString()}</span></td>
-                            <td class="p-3 space-x-1">
-                                <button onclick="verDetallePedido('${p.id}')" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-xl font-bold shadow">🔍 Detalle 360°</button>
-                                <button onclick="abrirModalEditarPedido('${p.id}')" class="text-xs bg-amber-500 hover:bg-amber-600 text-white px-2 py-1 rounded font-bold shadow">✏ Editar</button>
+                            <td class="p-2.5 text-xs"><span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded font-semibold">${p.tipo_operacion || 'Contado'}</span><br>Estado: <strong>${p.estado || 'Pendiente'}</strong></td>
+                            <td class="p-2.5 text-xs">Total: $${totalNum.toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldo.toLocaleString()}</span></td>
+                            <td class="p-2.5 space-x-1">
+                                <button onclick="verDetallePedido('${p.id}')" class="text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-xl font-bold shadow">🔍 360°</button>
+                                <button onclick="abrirModalEditarPedido('${p.id}')" class="text-[11px] bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1 rounded font-bold shadow">✏</button>
                             </td>
                         </tr>
                     `;
@@ -1494,6 +1665,12 @@
 
             document.getElementById('stat-por-cobrar').innerText = `$${porCobrarTotal.toLocaleString()}`;
             document.getElementById('rep-cobrar').innerText = `$${porCobrarTotal.toLocaleString()}`;
+        }
+
+        async function moverPedidoAProduccion(id) {
+            await supabaseClient.from('pedidos').update({ estado: 'Fabricando' }).eq('id', id);
+            showToast("¡Pedido movido a Producción / Taller!");
+            cargarDatosGlobales();
         }
 
         async function abrirModalEditarPedido(id) {
@@ -1564,7 +1741,7 @@
             cargarDatosGlobales();
         }
 
-        // ================= PRODUCCIÓN =================
+        // ================= PRODUCCIÓN / TALLER =================
         async function cargarProduccion() {
             const q = (document.getElementById('buscador-produccion')?.value || '').toLowerCase().trim();
             const tbody = document.getElementById('tabla-produccion');
@@ -1580,12 +1757,12 @@
                 if (!q || cli.toLowerCase().includes(q) || ref.toLowerCase().includes(q)) {
                     tbody.innerHTML += `
                         <tr class="border-b hover:bg-slate-50 transition">
-                            <td class="p-3 font-mono font-bold text-indigo-600">${ref}</td>
-                            <td class="p-3 text-xs"><strong>${cli}</strong><br>📞 ${telf}</td>
-                            <td class="p-3 text-xs font-semibold">${p.fecha_entrega || '-'}</td>
-                            <td class="p-3 text-xs"><span class="px-2 py-1 bg-amber-50 text-amber-800 rounded font-bold">${p.tipo_operacion || 'Contado'}</span></td>
-                            <td class="p-3 text-xs"><span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded font-bold">${p.estado || 'Pendiente'}</span></td>
-                            <td class="p-3">
+                            <td class="p-2.5 font-mono font-bold text-indigo-600">${ref}</td>
+                            <td class="p-2.5 text-xs"><strong>${cli}</strong><br>📞 ${telf}</td>
+                            <td class="p-2.5 text-xs font-semibold">${p.fecha_entrega || '-'}</td>
+                            <td class="p-2.5 text-xs"><span class="px-2 py-0.5 bg-amber-50 text-amber-800 rounded font-bold">${p.tipo_operacion || 'Contado'}</span></td>
+                            <td class="p-2.5 text-xs"><span class="px-2 py-0.5 bg-indigo-100 text-indigo-800 rounded font-bold">${p.estado || 'Pendiente'}</span></td>
+                            <td class="p-2.5">
                                 <select onchange="cambiarEstadoProd('${p.id}', this.value)" class="p-1.5 border rounded text-xs font-bold bg-white shadow-sm">
                                     <option value="Pendiente" ${p.estado==='Pendiente'?'selected':''}>Pendiente</option>
                                     <option value="Fabricando" ${p.estado==='Fabricando'?'selected':''}>Fabricando</option>
@@ -1691,6 +1868,77 @@
                 document.getElementById('rep-bancos').innerText = `$${saldoBancos.toLocaleString()}`;
                 document.getElementById('fecha-reporte-pdf').innerText = `Emitido el ${new Date().toLocaleDateString()} - Cupissa S.A.S.`;
             }
+        }
+
+        function cambiarTipoReportePDF(tipo) {
+            tipoReportePDFActual = tipo;
+            const vistaCons = document.getElementById('vista-pdf-consolidado');
+            const vistaDet = document.getElementById('vista-pdf-detallado');
+            const btnCons = document.getElementById('btn-rep-cons');
+            const btnDet = document.getElementById('btn-rep-det');
+
+            if (tipo === 'consolidado') {
+                vistaCons.classList.remove('hidden');
+                vistaDet.classList.add('hidden');
+                btnCons.className = 'px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow';
+                btnDet.className = 'px-3 py-2 bg-slate-200 text-slate-700 rounded-xl text-xs font-bold';
+            } else {
+                vistaCons.classList.add('hidden');
+                vistaDet.classList.remove('hidden');
+                btnCons.className = 'px-3 py-2 bg-slate-200 text-slate-700 rounded-xl text-xs font-bold';
+                btnDet.className = 'px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow';
+                actualizarReporteDetalladoPDF();
+            }
+        }
+
+        function actualizarReporteDetalladoPDF() {
+            const tbody = document.getElementById('tabla-reporte-pedidos-detallado');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            if (pedidosCache.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">Sin pedidos registrados para el reporte detallado.</td></tr>`;
+                return;
+            }
+
+            pedidosCache.forEach(p => {
+                let cliObj = clientesCache.find(c => c.id === p.cliente_id) || {};
+                let cli = cliObj.nombre || 'Cliente General';
+                let telf = cliObj.telefono || 'N/A';
+                let tipoOp = p.tipo_operacion || 'Venta Contado';
+                let total = Number(p.total || 0);
+                let pagado = Number(p.pagado || 0);
+                let saldoDebe = total - pagado;
+
+                let items = detallesPedidosCache[p.id] || [];
+                let detalleProductosHtml = '';
+                items.forEach(it => {
+                    let prodRef = productosCache.find(pr => pr.id === it.producto_id) || {};
+                    let stockInicialProd = prodRef.stock_inicial || prodRef.stock || 'N/A';
+                    detalleProductosHtml += `• <strong>${it.nombre_producto}</strong> (Cant: ${it.cantidad}, P.U: $${Number(it.precio_unitario || 0).toLocaleString()})<br><span class="text-[10px] text-slate-500">Stock Inicial Ref: ${stockInicialProd}</span><br>`;
+                });
+
+                if (items.length === 0) {
+                    detalleProductosHtml = 'Sin ítems especificados.';
+                }
+
+                let pagoInfoHtml = '';
+                if (tipoOp.toLowerCase().includes('crédito') || saldoDebe > 0) {
+                    pagoInfoHtml = `<span class="text-amber-700 font-bold">💳 Crédito</span><br>Pagó Contado/Anticipo: $${pagado.toLocaleString()}<br><span class="text-red-600 font-black">Debe: $${saldoDebe.toLocaleString()}</span>`;
+                } else {
+                    pagoInfoHtml = `<span class="text-emerald-700 font-bold">💵 Contado Pago Total</span><br>Pagó: $${pagado.toLocaleString()} | Deuda: $0`;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2 font-mono"><strong>${p.referencia_pedido || 'N/A'}</strong><br><span class="text-[10px] text-slate-400">${p.fecha_agendamiento || '-'}</span></td>
+                        <td class="p-2"><strong>${cli}</strong><br><span class="text-[10px]">📞 ${telf}</span></td>
+                        <td class="p-2"><span class="px-1.5 py-0.5 bg-indigo-50 text-indigo-800 rounded font-bold">${tipoOp}</span></td>
+                        <td class="p-2">${detalleProductosHtml}</td>
+                        <td class="p-2">${pagoInfoHtml}</td>
+                    </tr>
+                `;
+            });
         }
 
         function descargarMovimientosMes() {
