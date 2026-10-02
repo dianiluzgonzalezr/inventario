@@ -53,11 +53,10 @@
                             <tr class="border-b text-sm text-gray-600 bg-gray-50">
                                 <th class="p-3">Ref Pedido</th>
                                 <th class="p-3">Cliente</th>
-                                <th class="p-3">Tipo</th>
-                                <th class="p-3">Fecha Entrega</th>
+                                <th class="p-3">F. Agendamiento</th>
+                                <th class="p-3">F. Entrega</th>
                                 <th class="p-3">Urgencia</th>
                                 <th class="p-3">Estado</th>
-                                <th class="p-3">Acción Rápida</th>
                             </tr>
                         </thead>
                         <tbody id="lista-alertas-pedidos" class="text-sm"></tbody>
@@ -71,14 +70,21 @@
             <div class="bg-white p-6 rounded-xl shadow">
                 <h2 class="text-lg font-bold mb-4 text-indigo-700">➕ Crear Nuevo Pedido / Venta</h2>
                 <form id="form-pedido" class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                         <input type="text" id="ped-cliente" placeholder="Nombre del Cliente" required class="p-2 border rounded-lg">
                         <select id="ped-tipo" class="p-2 border rounded-lg">
                             <option value="Venta Contado">Venta Contado</option>
                             <option value="Crédito / Fiado">Crédito / Fiado</option>
                             <option value="Alquiler">Alquiler</option>
                         </select>
-                        <input type="date" id="ped-fecha" class="p-2 border rounded-lg" required>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-500">Fecha Agendamiento</label>
+                            <input type="date" id="ped-fecha-agendamiento" class="p-2 border rounded-lg w-full" required>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-500">Fecha Entrega</label>
+                            <input type="date" id="ped-fecha-entrega" class="p-2 border rounded-lg w-full" required>
+                        </div>
                     </div>
 
                     <!-- Buscador y Selección de Tarifa con Precio Manual -->
@@ -162,11 +168,11 @@
                             <tr class="border-b text-sm text-gray-600 bg-gray-50">
                                 <th class="p-3">Ref</th>
                                 <th class="p-3">Cliente</th>
-                                <th class="p-3">Tipo / Fecha</th>
+                                <th class="p-3">Fechas (Agend. / Entrega)</th>
                                 <th class="p-3">Total / Saldo</th>
                                 <th class="p-3">Garantía</th>
                                 <th class="p-3">Estado</th>
-                                <th class="p-3">Acciones, Pagos y Devoluciones</th>
+                                <th class="p-3">Acciones & Gestión</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-pedidos-general" class="text-sm"></tbody>
@@ -242,10 +248,10 @@
         </section>
     </div>
 
-    <!-- MODAL HISTORIAL DE PAGOS -->
+    <!-- MODAL HISTORIAL DE PAGOS / ABONOS -->
     <div id="modal-pagos" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
-            <h3 class="text-lg font-bold text-indigo-700">Historial de Pagos, Abonos y Anticipos</h3>
+            <h3 class="text-lg font-bold text-indigo-700">Historial de Pagos, Abonos y Devoluciones</h3>
             <div id="contenido-historial-pagos" class="max-h-60 overflow-y-auto space-y-2 text-sm border p-3 rounded-lg"></div>
             <div class="flex justify-end">
                 <button onclick="cerrarModalPagos()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar</button>
@@ -289,6 +295,53 @@
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" onclick="cerrarModalEditar()" class="bg-gray-400 text-white px-3 py-2 rounded-lg text-sm">Cancelar</button>
                     <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR PEDIDO -->
+    <div id="modal-editar-pedido" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-xl w-full p-6 space-y-4 shadow-xl max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold text-indigo-700">Editar Pedido</h3>
+            <form id="form-editar-pedido" class="space-y-3">
+                <input type="hidden" id="edit-ped-id">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Tipo Operación</label>
+                        <select id="edit-ped-tipo" class="p-2 border rounded-lg w-full text-sm">
+                            <option value="Venta Contado">Venta Contado</option>
+                            <option value="Crédito / Fiado">Crédito / Fiado</option>
+                            <option value="Alquiler">Alquiler</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Estado del Pedido</label>
+                        <select id="edit-ped-estado" class="p-2 border rounded-lg w-full text-sm">
+                            <option value="Pendiente">Pendiente</option>
+                            <option value="Fabricando">Fabricando</option>
+                            <option value="Entregado">Entregado</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Fecha Agendamiento</label>
+                        <input type="date" id="edit-ped-agendamiento" class="p-2 border rounded-lg w-full text-sm" required>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-gray-600">Fecha Entrega</label>
+                        <input type="date" id="edit-ped-entrega" class="p-2 border rounded-lg w-full text-sm" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-semibold text-gray-600">Depósito / Garantía ($)</label>
+                    <input type="number" id="edit-ped-deposito" class="p-2 border rounded-lg w-full text-sm">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="cerrarModalEditarPedido()" class="bg-gray-400 text-white px-3 py-2 rounded-lg text-sm">Cancelar</button>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Actualizar Fechas y Datos</button>
                 </div>
             </form>
         </div>
@@ -373,7 +426,7 @@
         function agregarItemAlCarrito() {
             const nombreLibre = document.getElementById('item-nombre-libre').value.trim() || document.getElementById('buscador-productos').value.trim();
             const cantidad = parseInt(document.getElementById('item-cantidad').value) || 1;
-            const precio = parseFloat(document.getElementById('item-precio').value) || 0; // Precio manual editable
+            const precio = parseFloat(document.getElementById('item-precio').value) || 0;
             const descuenta = document.getElementById('item-descuenta').checked;
 
             if (!nombreLibre) {
@@ -434,7 +487,8 @@
 
             const clienteNombre = document.getElementById('ped-cliente').value.trim();
             const tipoOperacion = document.getElementById('ped-tipo').value;
-            const fechaEntrega = document.getElementById('ped-fecha').value;
+            const fechaAgendamiento = document.getElementById('ped-fecha-agendamiento').value;
+            const fechaEntrega = document.getElementById('ped-fecha-entrega').value;
             const pagoInicial = parseFloat(document.getElementById('ped-pago-inicial').value) || 0;
             const metodoPago = document.getElementById('ped-metodo-pago').value;
             const depositoGarantia = parseFloat(document.getElementById('ped-deposito').value) || 0;
@@ -457,8 +511,9 @@
                 pagado: pagoInicial,
                 deposito_garantia: depositoGarantia,
                 estado_pago: estadoPago,
+                fecha_agendamiento: fechaAgendamiento,
                 fecha_entrega: fechaEntrega,
-                estado: 'Pendiente de Fabricar / Preparar'
+                estado: 'Pendiente'
             }]).select().single();
 
             if (errPedido) {
@@ -485,18 +540,21 @@
                 }
             }
 
+            let fechaHoraActual = new Date().toISOString();
             if (pagoInicial > 0) {
                 await supabaseClient.from('pagos_pedidos').insert([{ 
                     pedido_id: pedido.id, 
                     monto: pagoInicial, 
-                    tipo_pago: `Anticipo (${metodoPago})` 
+                    tipo_pago: `Anticipo (${metodoPago})`,
+                    fecha: fechaHoraActual
                 }]);
             }
             if (depositoGarantia > 0) {
                 await supabaseClient.from('pagos_pedidos').insert([{ 
                     pedido_id: pedido.id, 
                     monto: depositoGarantia, 
-                    tipo_pago: `Depósito Garantía (${metodoPago})` 
+                    tipo_pago: `Depósito Garantía (${metodoPago})`,
+                    fecha: fechaHoraActual
                 }]);
             }
 
@@ -539,18 +597,10 @@
                         <tr class="border-b">
                             <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
                             <td class="p-3">${clienteNombre}</td>
-                            <td class="p-3">${p.tipo_operacion}</td>
-                            <td class="p-3">${p.fecha_entrega || 'Sin fecha'}</td>
+                            <td class="p-3 text-xs">${p.fecha_agendamiento || 'Sin agendar'}</td>
+                            <td class="p-3 text-xs">${p.fecha_entrega || 'Sin fecha'}</td>
                             <td class="p-3">${alertaHtml}</td>
                             <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
-                            <td class="p-3">
-                                <select onchange="cambiarEstadoPedido('${p.id}', this.value)" class="text-xs border p-1 rounded bg-white">
-                                    <option value="">Estado...</option>
-                                    <option value="Fabricando">Fabricando</option>
-                                    <option value="Entregado">Entregado</option>
-                                    <option value="Finalizado">Finalizado</option>
-                                </select>
-                            </td>
                         </tr>
                     `;
                 }
@@ -562,7 +612,7 @@
                         <tr class="border-b">
                             <td class="p-3 font-mono font-bold text-indigo-600">${p.referencia_pedido}</td>
                             <td class="p-3">${clienteNombre}</td>
-                            <td class="p-3 text-xs">${p.tipo_operacion}<br><span class="text-gray-500">${p.fecha_entrega || ''}</span></td>
+                            <td class="p-3 text-xs">Agend: ${p.fecha_agendamiento || '-'}<br>Entrega: <span class="font-semibold">${p.fecha_entrega || '-'}</span></td>
                             <td class="p-3 text-xs">Total: $${Number(p.total).toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldoPendiente.toLocaleString()}</span></td>
                             <td class="p-3 font-bold text-blue-600">$${Number(p.deposito_garantia).toLocaleString()}</td>
                             <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
@@ -571,7 +621,11 @@
                                     <button onclick="registrarAbono('${p.id}', ${p.pagado}, ${p.total})" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded">Abonar</button>
                                     <button onclick="gestionarDevolucionDeposito('${p.id}', ${p.deposito_garantia})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded">Devolver Depósito</button>
                                 </div>
-                                <div><button onclick="verHistorialPagos('${p.id}')" class="text-xs text-indigo-700 underline">Historial de Pagos</button></div>
+                                <div class="flex gap-2 pt-1">
+                                    <button onclick="abrirModalEditarPedido('${p.id}')" class="text-xs text-amber-600 font-bold hover:underline">✏️ Editar</button>
+                                    <button onclick="eliminarPedido('${p.id}')" class="text-xs text-red-600 font-bold hover:underline">🗑️ Eliminar</button>
+                                    <button onclick="verHistorialPagos('${p.id}')" class="text-xs text-indigo-700 underline">Pagos</button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -582,12 +636,6 @@
             document.getElementById('stat-depositos').innerText = `$${totalDepositos.toLocaleString()}`;
         }
 
-        async function cambiarEstadoPedido(id, nuevoEstado) {
-            if (!nuevoEstado) return;
-            await supabaseClient.from('pedidos').update({ estado: nuevoEstado }).eq('id', id);
-            cargarDatos();
-        }
-
         async function registrarAbono(pedidoId, pagadoActual, totalVenta) {
             const montoStr = prompt("Ingrese el monto del abono:");
             if (!montoStr) return;
@@ -595,9 +643,15 @@
             const metodo = prompt("¿Método de pago? (Efectivo / Transferencia)", "Efectivo") || "Efectivo";
             const nuevoPagado = pagadoActual + abono;
             const nuevoEstadoPago = nuevoPagado >= totalVenta ? 'Pagado' : 'Parcial';
+            const fechaHoraActual = new Date().toISOString();
 
             await supabaseClient.from('pedidos').update({ pagado: nuevoPagado, estado_pago: nuevoEstadoPago }).eq('id', pedidoId);
-            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: abono, tipo_pago: `Abono (${metodo})` }]);
+            await supabaseClient.from('pagos_pedidos').insert([{ 
+                pedido_id: pedidoId, 
+                monto: abono, 
+                tipo_pago: `Abono (${metodo})`,
+                fecha: fechaHoraActual 
+            }]);
             cargarDatos();
         }
 
@@ -616,23 +670,29 @@
             }
 
             const nuevoDeposito = depositoActual - montoDevolucion;
+            const fechaHoraActual = new Date().toISOString();
             await supabaseClient.from('pedidos').update({ deposito_garantia: nuevoDeposito }).eq('id', pedidoId);
-            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: -montoDevolucion, tipo_pago: 'Devolución de Anticipo/Depósito' }]);
+            await supabaseClient.from('pagos_pedidos').insert([{ 
+                pedido_id: pedidoId, 
+                monto: -montoDevolucion, 
+                tipo_pago: 'Devolución de Anticipo/Depósito',
+                fecha: fechaHoraActual 
+            }]);
             alert("Devolución registrada correctamente.");
             cargarDatos();
         }
 
         async function verHistorialPagos(pedidoId) {
-            const { data: pagos } = await supabaseClient.from('pagos_pedidos').select('*').eq('pedido_id', pedidoId);
+            const { data: pagos } = await supabaseClient.from('pagos_pedidos').select('*').eq('pedido_id', pedidoId).order('fecha', { ascending: false });
             const box = document.getElementById('contenido-historial-pagos');
             box.innerHTML = '';
             if (!pagos || pagos.length === 0) {
-                box.innerHTML = '<p class="text-gray-500 text-xs">No hay registros de pagos o abonos.</p>';
+                box.innerHTML = '<p class="text-gray-500 text-xs">No hay registros de pagos, abonos o devoluciones.</p>';
             } else {
                 pagos.forEach(p => {
-                    let fechaFmt = new Date(p.fecha).toLocaleString();
+                    let fechaFmt = p.fecha ? new Date(p.fecha).toLocaleString() : 'Fecha no registrada';
                     let color = p.monto < 0 ? 'text-red-600' : 'text-emerald-600';
-                    box.innerHTML += `<div class="border-b pb-1 text-xs flex justify-between"><span><strong>${p.tipo_pago}</strong> (${fechaFmt})</span> <span class="font-bold ${color}">$${Number(p.monto).toLocaleString()}</span></div>`;
+                    box.innerHTML += `<div class="border-b pb-1 text-xs flex justify-between"><span><strong>${p.tipo_pago}</strong><br><span class="text-gray-400">${fechaFmt}</span></span> <span class="font-bold ${color}">$${Number(p.monto).toLocaleString()}</span></div>`;
                 });
             }
             document.getElementById('modal-pagos').classList.remove('hidden');
@@ -640,6 +700,62 @@
 
         function cerrarModalPagos() {
             document.getElementById('modal-pagos').classList.add('hidden');
+        }
+
+        // EDITAR Y ELIMINAR PEDIDOS
+        async function abrirModalEditarPedido(id) {
+            const { data: p } = await supabaseClient.from('pedidos').select('*').eq('id', id).single();
+            if (!p) return;
+            document.getElementById('edit-ped-id').value = p.id;
+            document.getElementById('edit-ped-tipo').value = p.tipo_operacion;
+            document.getElementById('edit-ped-estado').value = p.estado;
+            document.getElementById('edit-ped-agendamiento').value = p.fecha_agendamiento || '';
+            document.getElementById('edit-ped-entrega').value = p.fecha_entrega || '';
+            document.getElementById('edit-ped-deposito').value = p.deposito_garantia || 0;
+            document.getElementById('modal-editar-pedido').classList.remove('hidden');
+        }
+
+        function cerrarModalEditarPedido() {
+            document.getElementById('modal-editar-pedido').classList.add('hidden');
+        }
+
+        document.getElementById('form-editar-pedido').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-ped-id').value;
+            const tipo_operacion = document.getElementById('edit-ped-tipo').value;
+            const estado = document.getElementById('edit-ped-estado').value;
+            const fecha_agendamiento = document.getElementById('edit-ped-agendamiento').value;
+            const fecha_entrega = document.getElementById('edit-ped-entrega').value;
+            const deposito_garantia = parseFloat(document.getElementById('edit-ped-deposito').value) || 0;
+
+            const { error } = await supabaseClient.from('pedidos').update({
+                tipo_operacion,
+                estado,
+                fecha_agendamiento,
+                fecha_entrega,
+                deposito_garantia
+            }).eq('id', id);
+
+            if (error) {
+                alert("Error al actualizar pedido: " + error.message);
+                return;
+            }
+            cerrarModalEditarPedido();
+            alert("¡Pedido actualizado correctamente!");
+            cargarDatos();
+        });
+
+        async function eliminarPedido(id) {
+            if (!confirm("¿Estás seguro de eliminar este pedido? Se eliminarán también sus registros de pagos asociados.")) return;
+            await supabaseClient.from('pagos_pedidos').delete().eq('pedido_id', id);
+            await supabaseClient.from('detalle_pedido').delete().eq('pedido_id', id);
+            const { error } = await supabaseClient.from('pedidos').delete().eq('id', id);
+            if (error) {
+                alert("Error al eliminar pedido: " + error.message);
+                return;
+            }
+            alert("Pedido eliminado con éxito.");
+            cargarDatos();
         }
 
         // REGISTRAR PRODUCTO
@@ -673,7 +789,7 @@
             cargarDatos();
         });
 
-        // FUNCIONES DE EDICIÓN DE PRODUCTO
+        // FUNCIONES DE EDICIÓN Y ELIMINACIÓN DE PRODUCTO
         function abrirModalEditar(id) {
             const p = listaProductosInventario.find(item => item.id === id);
             if (!p) return;
@@ -716,6 +832,17 @@
             alert("¡Producto actualizado con éxito!");
             cargarDatos();
         });
+
+        async function eliminarProducto(id) {
+            if (!confirm("¿Estás seguro de eliminar este producto del inventario?")) return;
+            const { error } = await supabaseClient.from('productos').delete().eq('id', id);
+            if (error) {
+                alert("Error al eliminar producto: " + error.message);
+                return;
+            }
+            alert("Producto eliminado con éxito.");
+            cargarDatos();
+        }
 
         async function sumarStockProducto(id, stockActual) {
             const cantidadStr = prompt("¿Cuántas unidades adicionales llegaron para sumar al stock?");
@@ -763,6 +890,7 @@
                             <td class="p-3 space-x-1">
                                 <button onclick="sumarStockProducto('${p.id}', ${p.stock})" class="text-xs bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700">➕ Stock</button>
                                 <button onclick="abrirModalEditar('${p.id}')" class="text-xs bg-amber-600 text-white px-2 py-1 rounded hover:bg-amber-700">✏️ Editar</button>
+                                <button onclick="eliminarProducto('${p.id}')" class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700">🗑️ Eliminar</button>
                             </td>
                         </tr>
                     `;
