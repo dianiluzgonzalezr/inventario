@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -24,12 +23,12 @@
             <div class="flex flex-wrap gap-2 mt-3 sm:mt-0 no-print">
                 <button onclick="switchTab('dashboard')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Dashboard & Alertas</button>
                 <button onclick="switchTab('pedidos')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Pedidos & Cuentas</button>
-                <button onclick="switchTab('inventario')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Inventario</button>
+                <button onclick="switchTab('inventario')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Inventario & Stock</button>
                 <button onclick="switchTab('reportes')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Reportes PDF</button>
             </div>
         </header>
 
-        <!-- SECCIÓN: DASHBOARD & ALERTAS VISUALES -->
+        <!-- SECCIÓN: DASHBOARD -->
         <section id="tab-dashboard" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
@@ -41,13 +40,13 @@
                     <p id="stat-por-cobrar" class="text-2xl font-bold text-amber-600">$0</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                    <h3 class="text-sm font-semibold text-gray-500">Depósitos en Garantía (Por devolver)</h3>
+                    <h3 class="text-sm font-semibold text-gray-500">Anticipos / Depósitos (Por devolver)</h3>
                     <p id="stat-depositos" class="text-2xl font-bold text-blue-600">$0</p>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-lg font-bold mb-4 text-indigo-800">🚨 Alertas Visuales: Pedidos Próximos a Entregar o Urgentes</h2>
+                <h2 class="text-lg font-bold mb-4 text-indigo-800">🚨 Alertas Visuales: Pedidos Próximos o Urgentes</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -56,8 +55,8 @@
                                 <th class="p-3">Cliente</th>
                                 <th class="p-3">Tipo</th>
                                 <th class="p-3">Fecha Entrega</th>
-                                <th class="p-3">Urgencia / Alerta</th>
-                                <th class="p-3">Estado Actual</th>
+                                <th class="p-3">Urgencia</th>
+                                <th class="p-3">Estado</th>
                                 <th class="p-3">Acción Rápida</th>
                             </tr>
                         </thead>
@@ -82,18 +81,18 @@
                         <input type="date" id="ped-fecha" class="p-2 border rounded-lg" required>
                     </div>
 
-                    <!-- Buscador inteligente y armado de carrito -->
+                    <!-- Buscador y Carrito -->
                     <div class="border p-4 rounded-lg bg-gray-50 space-y-3">
-                        <h3 class="font-semibold text-sm text-gray-700">Agregar Productos (Buscador automático o libre)</h3>
+                        <h3 class="font-semibold text-sm text-gray-700">Agregar Productos</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="sm:col-span-2 relative">
-                                <input type="text" id="buscador-productos" placeholder="🔍 Escribe para buscar producto en inventario..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
+                                <input type="text" id="buscador-productos" placeholder="🔍 Buscar producto en inventario..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
                                 <div id="sugerencias-box" class="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
                             </div>
                             <input type="number" id="item-cantidad" placeholder="Cantidad" value="1" min="1" class="p-2 border rounded-lg">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2">
-                            <input type="text" id="item-nombre-libre" placeholder="Nombre del producto (o selección rápida)" class="p-2 border rounded-lg bg-gray-100" >
+                            <input type="text" id="item-nombre-libre" placeholder="Nombre del producto" class="p-2 border rounded-lg bg-gray-100">
                             <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2 border rounded-lg">
                             <div class="flex items-center justify-between gap-2">
                                 <label class="flex items-center text-xs gap-1 cursor-pointer">
@@ -104,15 +103,14 @@
                         </div>
                     </div>
 
-                    <!-- Tabla Carrito -->
                     <div>
                         <h4 class="font-semibold text-sm mb-2">Productos en este pedido:</h4>
                         <table class="w-full text-left border-collapse text-sm mb-3">
                             <thead>
                                 <tr class="border-b bg-gray-100">
                                     <th class="p-2">Producto</th>
-                                    <th class="p-2">Cantidad</th>
-                                    <th class="p-2">Precio Unitario</th>
+                                    <th class="p-2">Cant</th>
+                                    <th class="p-2">Precio U.</th>
                                     <th class="p-2">Subtotal</th>
                                     <th class="p-2">Acción</th>
                                 </tr>
@@ -123,17 +121,26 @@
                         </table>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t pt-4">
+                    <!-- Configuración de Pagos y Métodos -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 border-t pt-4">
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Pago Inicial / Abono Hoy ($)</label>
+                            <label class="text-xs font-semibold text-gray-600">Anticipo / Pago Inicial ($)</label>
                             <input type="number" id="ped-pago-inicial" value="0" class="p-2 border rounded-lg w-full">
                         </div>
                         <div>
-                            <label class="text-xs font-semibold text-gray-600">Depósito en Garantía (Ej: Alquiler) ($)</label>
+                            <label class="text-xs font-semibold text-gray-600">Método de Pago Inicial</label>
+                            <select id="ped-metodo-pago" class="p-2 border rounded-lg w-full text-sm">
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-gray-600">Depósito / Garantía ($)</label>
                             <input type="number" id="ped-deposito" value="0" class="p-2 border rounded-lg w-full">
                         </div>
                         <div class="flex items-end">
-                            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 w-full font-bold">Guardar Pedido Definitivo</button>
+                            <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 w-full font-bold">Guardar Pedido</button>
                         </div>
                     </div>
                 </form>
@@ -151,12 +158,11 @@
                             <tr class="border-b text-sm text-gray-600 bg-gray-50">
                                 <th class="p-3">Ref</th>
                                 <th class="p-3">Cliente</th>
-                                <th class="p-3">Tipo / Entrega</th>
+                                <th class="p-3">Tipo / Fecha</th>
                                 <th class="p-3">Total / Saldo</th>
-                                <th class="p-3">Depósito</th>
-                                <th class="p-3">Costo Fab. / Ganancia</th>
+                                <th class="p-3">Garantía</th>
                                 <th class="p-3">Estado</th>
-                                <th class="p-3">Acciones y Pagos</th>
+                                <th class="p-3">Acciones, Pagos y Devoluciones</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-pedidos-general" class="text-sm"></tbody>
@@ -165,19 +171,18 @@
             </div>
         </section>
 
-        <!-- SECCIÓN: INVENTARIO -->
+        <!-- SECCIÓN: INVENTARIO & STOCK -->
         <section id="tab-inventario" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-lg font-bold mb-4">Registrar Nuevo Producto (Referencia Automática)</h2>
+                <h2 class="text-lg font-bold mb-4">Registrar Nuevo Producto o Insumo</h2>
                 <form id="form-producto" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <input type="text" id="prod-nombre" placeholder="Nombre del producto" required class="p-2 border rounded-lg">
                     <input type="number" id="prod-stock" placeholder="Stock inicial" required class="p-2 border rounded-lg">
                     <input type="number" id="prod-precio" placeholder="Precio de venta ($)" required class="p-2 border rounded-lg">
-                    <input type="number" id="prod-costo" placeholder="Costo estimado (Opcional)" class="p-2 border rounded-lg">
+                    <input type="number" id="prod-costo" placeholder="Costo estimado / Insumo ($)" class="p-2 border rounded-lg">
                     <select id="prod-origen" class="p-2 border rounded-lg">
                         <option value="Nacional (Colombia)">Nacional (Colombia)</option>
-                        <option value="Internacional (Venezuela)">Internacional (Venezuela)</option>
-                        <option value="Electrónicos (China)">Electrónicos (China)</option>
+                        <option value="Internacional">Internacional</option>
                     </select>
                     <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700">Guardar Producto</button>
                 </form>
@@ -185,19 +190,18 @@
 
             <div class="bg-white p-6 rounded-xl shadow">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">Inventario Actual</h2>
+                    <h2 class="text-lg font-bold">Inventario Actual & Ingreso de Stock</h2>
                     <input type="text" id="buscador-inv" placeholder="🔍 Buscar producto..." oninput="cargarInventarioTabla()" class="p-2 border rounded-lg text-sm w-64">
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="border-b text-sm text-gray-600 bg-gray-50">
-                                <th class="p-3">Referencia (SKU)</th>
+                                <th class="p-3">SKU / Ref</th>
                                 <th class="p-3">Producto</th>
-                                <th class="p-3">Stock</th>
+                                <th class="p-3">Stock Actual</th>
                                 <th class="p-3">Precio Venta</th>
-                                <th class="p-3">Origen</th>
-                                <th class="p-3">Estado</th>
+                                <th class="p-3">Acción: Sumar Stock (Llegadas)</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-inventario" class="text-sm"></tbody>
@@ -223,7 +227,6 @@
                             <th class="p-2">Producto</th>
                             <th class="p-2">Stock Restante</th>
                             <th class="p-2">Precio Venta</th>
-                            <th class="p-2">Origen</th>
                         </tr>
                     </thead>
                     <tbody id="reporte-inventario"></tbody>
@@ -235,7 +238,7 @@
     <!-- MODAL HISTORIAL DE PAGOS -->
     <div id="modal-pagos" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-lg w-full p-6 space-y-4 shadow-xl">
-            <h3 class="text-lg font-bold text-indigo-700">Historial de Pagos y Movimientos</h3>
+            <h3 class="text-lg font-bold text-indigo-700">Historial de Pagos, Abonos y Anticipos</h3>
             <div id="contenido-historial-pagos" class="max-h-60 overflow-y-auto space-y-2 text-sm border p-3 rounded-lg"></div>
             <div class="flex justify-end">
                 <button onclick="cerrarModalPagos()" class="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm">Cerrar</button>
@@ -243,13 +246,10 @@
         </div>
     </div>
 
-    
-
     <script>
         const SUPABASE_URL = 'https://njwiobfjtmwsxyigxgrp.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5qd2lvYmZqdG13c3h5aWd4Z3JwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4OTkxNjYsImV4cCI6MjEwNjQ3NTE2Nn0.YISPVeUpk-gAImCRkr1TmFfP6fX6Mps7HPJ3MXfVkYI';
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 
         let carritoItems = [];
         let listaProductosInventario = [];
@@ -282,14 +282,12 @@
                 box.classList.add('hidden');
                 return;
             }
-
             const filtrados = listaProductosInventario.filter(p => p.nombre.toLowerCase().includes(query) || p.referencia.toLowerCase().includes(query));
             if (filtrados.length === 0) {
-                box.innerHTML = `<div class="p-2 text-xs text-gray-500">No hay coincidencias. Puedes escribir un nombre libre abajo.</div>`;
+                box.innerHTML = `<div class="p-2 text-xs text-gray-500">No hay coincidencias. Escribe un nombre libre abajo.</div>`;
                 box.classList.remove('hidden');
                 return;
             }
-
             box.innerHTML = '';
             filtrados.forEach(p => {
                 box.innerHTML += `
@@ -360,26 +358,33 @@
             });
         }
 
+        // GUARDAR PEDIDO CORREGIDO
         document.getElementById('form-pedido').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (carritoItems.length === 0) {
-                alert("Agrega al menos un producto.");
+                alert("Agrega al menos un producto al pedido.");
                 return;
             }
 
-            const clienteNombre = document.getElementById('ped-cliente').value;
+            const clienteNombre = document.getElementById('ped-cliente').value.trim();
             const tipoOperacion = document.getElementById('ped-tipo').value;
             const fechaEntrega = document.getElementById('ped-fecha').value;
             const pagoInicial = parseFloat(document.getElementById('ped-pago-inicial').value) || 0;
+            const metodoPago = document.getElementById('ped-metodo-pago').value;
             const depositoGarantia = parseFloat(document.getElementById('ped-deposito').value) || 0;
 
             let totalPedido = carritoItems.reduce((acc, item) => acc + (item.cantidad * item.precio_unitario), 0);
             let estadoPago = pagoInicial >= totalPedido ? 'Pagado' : (pagoInicial > 0 ? 'Parcial' : 'Pendiente');
             let refPedido = 'PED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            let { data: cliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
+            // Insertar cliente de forma segura
+            let { data: cliente, error: errCliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
+            if (errCliente) {
+                alert("Error al guardar cliente: " + errCliente.message);
+                return;
+            }
 
-            let { data: pedido } = await supabaseClient.from('pedidos').insert([{
+            let { data: pedido, error: errPedido } = await supabaseClient.from('pedidos').insert([{
                 referencia_pedido: refPedido,
                 cliente_id: cliente.id,
                 tipo_operacion: tipoOperacion,
@@ -390,6 +395,11 @@
                 fecha_entrega: fechaEntrega,
                 estado: 'Pendiente de Fabricar / Preparar'
             }]).select().single();
+
+            if (errPedido) {
+                alert("Error al guardar pedido: " + errPedido.message);
+                return;
+            }
 
             for (let item of carritoItems) {
                 await supabaseClient.from('detalle_pedido').insert([{
@@ -411,15 +421,24 @@
             }
 
             if (pagoInicial > 0) {
-                await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedido.id, monto: pagoInicial, tipo_pago: 'Pago Total' }]);
+                await supabaseClient.from('pagos_pedidos').insert([{ 
+                    pedido_id: pedido.id, 
+                    monto: pagoInicial, 
+                    tipo_pago: `Anticipo (${metodoPago})` 
+                }]);
             }
             if (depositoGarantia > 0) {
-                await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedido.id, monto: depositoGarantia, tipo_pago: 'Depósito Garantía' }]);
+                await supabaseClient.from('pagos_pedidos').insert([{ 
+                    pedido_id: pedido.id, 
+                    monto: depositoGarantia, 
+                    tipo_pago: `Depósito Garantía (${metodoPago})` 
+                }]);
             }
 
             carritoItems = [];
             renderizarCarrito();
             document.getElementById('form-pedido').reset();
+            alert("¡Pedido guardado con éxito!");
             cargarDatos();
         });
 
@@ -441,13 +460,12 @@
                 if (p.estado_pago !== 'Pagado') totalPorCobrar += saldoPendiente;
                 totalDepositos += p.deposito_garantia;
 
-                // Alertas visuales de entrega
                 let alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">A tiempo</span>`;
                 if (p.fecha_entrega) {
-                    if (p.fecha_entrega < hoy && p.estado !== 'Finalizado' && p.estado !== 'Entregado') {
-                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700 font-bold animate-pulse">⚠️ ¡Vencido!</span>`;
+                    if (p.fecha_entrega < hoy && p.estado !== 'Finalizado') {
+                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700 font-bold">⚠️ Vencido</span>`;
                     } else if (p.fecha_entrega === hoy) {
-                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-amber-100 text-amber-800 font-bold">🔥 ¡Entrega Hoy!</span>`;
+                        alertaHtml = `<span class="px-2 py-1 rounded text-xs bg-amber-100 text-amber-800 font-bold">🔥 Hoy</span>`;
                     }
                 }
 
@@ -462,9 +480,8 @@
                             <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
                             <td class="p-3">
                                 <select onchange="cambiarEstadoPedido('${p.id}', this.value)" class="text-xs border p-1 rounded bg-white">
-                                    <option value="">Cambiar Estado...</option>
+                                    <option value="">Estado...</option>
                                     <option value="Fabricando">Fabricando</option>
-                                    <option value="Empacado">Empacado</option>
                                     <option value="Entregado">Entregado</option>
                                     <option value="Finalizado">Finalizado</option>
                                 </select>
@@ -483,15 +500,13 @@
                             <td class="p-3 text-xs">${p.tipo_operacion}<br><span class="text-gray-500">${p.fecha_entrega || ''}</span></td>
                             <td class="p-3 text-xs">Total: $${Number(p.total).toLocaleString()}<br><span class="text-red-600 font-bold">Saldo: $${saldoPendiente.toLocaleString()}</span></td>
                             <td class="p-3 font-bold text-blue-600">$${Number(p.deposito_garantia).toLocaleString()}</td>
-                            <td class="p-3 text-xs">Costo: $${Number(p.costo_fabricacion).toLocaleString()}<br><span class="text-emerald-600 font-bold">Ganancia: $${Number(p.ganancia).toLocaleString()}</span></td>
                             <td class="p-3"><span class="px-2 py-1 rounded text-xs bg-gray-100">${p.estado}</span></td>
                             <td class="p-3 space-y-1">
                                 <div class="flex gap-1 flex-wrap">
                                     <button onclick="registrarAbono('${p.id}', ${p.pagado}, ${p.total})" class="text-xs bg-indigo-600 text-white px-2 py-1 rounded">Abonar</button>
-                                    <button onclick="registrarCostoFabricacion('${p.id}', ${p.total})" class="text-xs bg-amber-600 text-white px-2 py-1 rounded">Costo Fab.</button>
-                                    <button onclick="gestionarDeposito('${p.id}', ${p.deposito_garantia})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded">Dev. Depósito</button>
+                                    <button onclick="gestionarDevolucionDeposito('${p.id}', ${p.deposito_garantia})" class="text-xs bg-blue-600 text-white px-2 py-1 rounded">Devolver Depósito</button>
                                 </div>
-                                <div><button onclick="verHistorialPagos('${p.id}')" class="text-xs text-indigo-700 underline">Ver Historial Pagos</button></div>
+                                <div><button onclick="verHistorialPagos('${p.id}')" class="text-xs text-indigo-700 underline">Historial de Pagos</button></div>
                             </td>
                         </tr>
                     `;
@@ -502,20 +517,6 @@
             document.getElementById('stat-depositos').innerText = `$${totalDepositos.toLocaleString()}`;
         }
 
-        async function registrarCostoFabricacion(pedidoId, totalPedido) {
-            const costoStr = prompt("Ingrese el costo real de fabricación de este pedido ($):");
-            if (costoStr === null) return;
-            const costo = parseFloat(costoStr) || 0;
-            const ganancia = totalPedido - costo;
-
-            await supabaseClient.from('pedidos').update({
-                costo_fabricacion: costo,
-                ganancia: ganancia
-            }).eq('id', pedidoId);
-
-            cargarDatos();
-        }
-
         async function cambiarEstadoPedido(id, nuevoEstado) {
             if (!nuevoEstado) return;
             await supabaseClient.from('pedidos').update({ estado: nuevoEstado }).eq('id', id);
@@ -523,26 +524,37 @@
         }
 
         async function registrarAbono(pedidoId, pagadoActual, totalVenta) {
-            const montoStr = prompt("Ingrese el monto del abono o pago:");
+            const montoStr = prompt("Ingrese el monto del abono:");
             if (!montoStr) return;
             const abono = parseFloat(montoStr);
+            const metodo = prompt("¿Método de pago? (Efectivo / Transferencia)", "Efectivo") || "Efectivo";
             const nuevoPagado = pagadoActual + abono;
             const nuevoEstadoPago = nuevoPagado >= totalVenta ? 'Pagado' : 'Parcial';
 
             await supabaseClient.from('pedidos').update({ pagado: nuevoPagado, estado_pago: nuevoEstadoPago }).eq('id', pedidoId);
-            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: abono, tipo_pago: 'Abono' }]);
+            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: abono, tipo_pago: `Abono (${metodo})` }]);
             cargarDatos();
         }
 
-        async function gestionarDeposito(pedidoId, depositoActual) {
+        // DEVOLUCIÓN DE ANTICIPOS / DEPÓSITOS
+        async function gestionarDevolucionDeposito(pedidoId, depositoActual) {
             if (depositoActual <= 0) {
-                alert("No hay depósito registrado.");
+                alert("No hay garantía o anticipo registrado para devolver.");
                 return;
             }
-            if (!confirm(`¿Devolver depósito de $${depositoActual.toLocaleString()}?`)) return;
+            const montoDevolverStr = prompt(`El depósito actual es $${depositoActual.toLocaleString()}. Ingrese la cantidad a devolver:`, depositoActual);
+            if (!montoDevolverStr) return;
+            const montoDevolucion = parseFloat(montoDevolverStr);
 
-            await supabaseClient.from('pedidos').update({ deposito_garantia: 0 }).eq('id', pedidoId);
-            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: depositoActual, tipo_pago: 'Devolución Depósito' }]);
+            if (montoDevolucion > depositoActual) {
+                alert("No puedes devolver más de lo que está en garantía.");
+                return;
+            }
+
+            const nuevoDeposito = depositoActual - montoDevolucion;
+            await supabaseClient.from('pedidos').update({ deposito_garantia: nuevoDeposito }).eq('id', pedidoId);
+            await supabaseClient.from('pagos_pedidos').insert([{ pedido_id: pedidoId, monto: -montoDevolucion, tipo_pago: 'Devolución de Anticipo/Depósito' }]);
+            alert("Devolución registrada correctamente.");
             cargarDatos();
         }
 
@@ -551,11 +563,12 @@
             const box = document.getElementById('contenido-historial-pagos');
             box.innerHTML = '';
             if (!pagos || pagos.length === 0) {
-                box.innerHTML = '<p class="text-gray-500 text-xs">No hay registros de pagos o abonos aún.</p>';
+                box.innerHTML = '<p class="text-gray-500 text-xs">No hay registros de pagos o abonos.</p>';
             } else {
                 pagos.forEach(p => {
                     let fechaFmt = new Date(p.fecha).toLocaleString();
-                    box.innerHTML += `<div class="border-b pb-1 text-xs flex justify-between"><span><strong>${p.tipo_pago}</strong> (${fechaFmt})</span> <span class="font-bold text-emerald-600">$${Number(p.monto).toLocaleString()}</span></div>`;
+                    let color = p.monto < 0 ? 'text-red-600' : 'text-emerald-600';
+                    box.innerHTML += `<div class="border-b pb-1 text-xs flex justify-between"><span><strong>${p.tipo_pago}</strong> (${fechaFmt})</span> <span class="font-bold ${color}">$${Number(p.monto).toLocaleString()}</span></div>`;
                 });
             }
             document.getElementById('modal-pagos').classList.remove('hidden');
@@ -565,19 +578,44 @@
             document.getElementById('modal-pagos').classList.add('hidden');
         }
 
+        // REGISTRAR PRODUCTO
         document.getElementById('form-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const nombre = document.getElementById('prod-nombre').value;
+            const nombre = document.getElementById('prod-nombre').value.trim();
             const stock = parseInt(document.getElementById('prod-stock').value);
             const precio_venta = parseFloat(document.getElementById('prod-precio').value);
             const costo = parseFloat(document.getElementById('prod-costo').value) || 0;
-            const origen = document.getElementById('prod-origen').value;
             const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            await supabaseClient.from('productos').insert([{ referencia, nombre, stock, precio_venta, costo }]);
+            const { error } = await supabaseClient.from('productos').insert([{ referencia, nombre, stock, precio_venta, costo }]);
+            if (error) {
+                alert("Error al guardar producto: " + error.message);
+                return;
+            }
             e.target.reset();
+            alert("¡Producto guardado exitosamente!");
             cargarDatos();
         });
+
+        // SUBIR / AUMENTAR STOCK (LLEGADAS)
+        async function sumarStockProducto(id, stockActual) {
+            const cantidadStr = prompt("¿Cuántas unidades adicionales llegaron para sumar al stock?");
+            if (!cantidadStr) return;
+            const cantidadExtra = parseInt(cantidadStr);
+            if (isNaN(cantidadExtra) || cantidadExtra <= 0) {
+                alert("Ingresa un número válido.");
+                return;
+            }
+
+            const nuevoStock = stockActual + cantidadExtra;
+            const { error } = await supabaseClient.from('productos').update({ stock: nuevoStock }).eq('id', id);
+            if (error) {
+                alert("Error al actualizar stock: " + error.message);
+                return;
+            }
+            alert(`Stock actualizado. Nuevo total: ${nuevoStock}`);
+            cargarDatos();
+        }
 
         async function cargarInventarioTabla() {
             const query = document.getElementById('buscador-inv')?.value.toLowerCase() || '';
@@ -597,10 +635,11 @@
                         <tr class="border-b">
                             <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}</td>
                             <td class="p-3">${p.nombre}</td>
-                            <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600' : ''}">${p.stock}</td>
+                            <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600 text-red-600' : ''}">${p.stock}</td>
                             <td class="p-3">$${Number(p.precio_venta).toLocaleString()}</td>
-                            <td class="p-3 text-xs text-gray-500">Registrado</td>
-                            <td class="p-3"><span class="px-2 py-1 rounded text-xs ${p.stock > 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${p.stock > 0 ? 'Disponible' : 'Agotado'}</span></td>
+                            <td class="p-3">
+                                <button onclick="sumarStockProducto('${p.id}', ${p.stock})" class="text-xs bg-emerald-600 text-white px-3 py-1 rounded-lg hover:bg-emerald-700">➕ Agregar Stock</button>
+                            </td>
                         </tr>
                     `;
                 }
@@ -611,7 +650,6 @@
                             <td class="p-2">${p.nombre}</td>
                             <td class="p-2">${p.stock}</td>
                             <td class="p-2">$${Number(p.precio_venta).toLocaleString()}</td>
-                            <td class="p-2 text-xs">Inventario</td>
                         </tr>
                     `;
                 }
