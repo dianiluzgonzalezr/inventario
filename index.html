@@ -2050,7 +2050,8 @@
 
         window.onload = function() {
             loadState();
-  // Set current date on forms
+
+            // Set current date on forms
             const hoyStr = new Date().toISOString().split('T')[0];
             if (document.getElementById('ped-fecha-agendamiento')) document.getElementById('ped-fecha-agendamiento').value = hoyStr;
             if (document.getElementById('ped-fecha-entrega')) document.getElementById('ped-fecha-entrega').value = hoyStr;
