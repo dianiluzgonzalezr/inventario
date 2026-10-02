@@ -129,6 +129,11 @@
                                 <tr><td colspan="5" class="p-3 text-center text-gray-400">No hay productos agregados aún.</td></tr>
                             </tbody>
                         </table>
+                        <!-- TOTAL VISIBLE ANTES DE GUARDAR -->
+                        <div class="flex justify-end items-center bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                            <span class="text-base font-bold text-indigo-900 mr-4">Total del Pedido:</span>
+                            <span id="label-total-carrito" class="text-xl font-extrabold text-indigo-700">$0</span>
+                        </div>
                     </div>
 
                     <!-- Configuración de Pagos y Métodos -->
@@ -457,12 +462,17 @@
 
         function renderizarCarrito() {
             const tbody = document.getElementById('tabla-carrito');
+            let totalGeneral = 0;
+
             if (carritoItems.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-gray-400">No hay productos agregados aún.</td></tr>`;
+                document.getElementById('label-total-carrito').innerText = `$0`;
                 return;
             }
             tbody.innerHTML = '';
             carritoItems.forEach((item, index) => {
+                let subtotal = item.cantidad * item.precio_unitario;
+                totalGeneral += subtotal;
                 tbody.innerHTML += `
                     <tr class="border-b">
                         <td class="p-2">${item.nombre_producto} ${!item.descuenta_stock ? '<span class="text-xs text-amber-600">(Sin stock)</span>' : ''}</td>
@@ -470,11 +480,12 @@
                         <td class="p-2">
                             <input type="number" value="${item.precio_unitario}" onchange="actualizarPrecioItemCarrito(${index}, this.value)" class="p-1 border rounded w-28 text-sm font-bold text-indigo-700 bg-amber-50">
                         </td>
-                        <td class="p-2 font-bold">$${(item.cantidad * item.precio_unitario).toLocaleString()}</td>
+                        <td class="p-2 font-bold">$${subtotal.toLocaleString()}</td>
                         <td class="p-2"><button type="button" onclick="carritoItems.splice(${index}, 1); renderizarCarrito();" class="text-red-600 text-xs">Eliminar</button></td>
                     </tr>
                 `;
             });
+            document.getElementById('label-total-carrito').innerText = `$${totalGeneral.toLocaleString()}`;
         }
 
         // GUARDAR PEDIDO
@@ -497,15 +508,24 @@
             let estadoPago = pagoInicial >= totalPedido ? 'Pagado' : (pagoInicial > 0 ? 'Parcial' : 'Pendiente');
             let refPedido = 'PED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            let { data: cliente, error: errCliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
-            if (errCliente) {
-                alert("Error al guardar cliente: " + errCliente.message);
-                return;
+            // Verificación previa para evitar clientes repetidos por nombre
+            let clienteId = null;
+            const { data: clienteExistente } = await supabaseClient.from('clientes').select('id').ilike('nombre', clienteNombre).maybeSingle();
+            
+            if (clienteExistente) {
+                clienteId = clienteExistente.id;
+            } else {
+                let { data: nuevoCliente, error: errCliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
+                if (errCliente) {
+                    alert("Error al guardar cliente: " + errCliente.message);
+                    return;
+                }
+                clienteId = nuevoCliente.id;
             }
 
             let { data: pedido, error: errPedido } = await supabaseClient.from('pedidos').insert([{
                 referencia_pedido: refPedido,
-                cliente_id: cliente.id,
+                cliente_id: clienteId,
                 tipo_operacion: tipoOperacion,
                 total: totalPedido,
                 pagado: pagoInicial,
