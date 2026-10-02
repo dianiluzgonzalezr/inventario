@@ -19,7 +19,7 @@
 
     <div id="app" class="max-w-7xl mx-auto p-4 sm:p-6">
         <header class="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
-            <h1 class="text-2xl font-bold text-indigo-700">📦 Gestión Integral de Pedidos, Inventario y Caja</h1>
+            <h1 class="text-2xl font-bold text-indigo-700">📦 Gestión Integral de Pedidos e Inventario</h1>
             <div class="flex flex-wrap gap-2 mt-3 sm:mt-0 no-print">
                 <button onclick="switchTab('dashboard')" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Dashboard & Alertas</button>
                 <button onclick="switchTab('pedidos')" class="px-4 py-2 bg-gray-200 rounded-lg text-sm font-medium hover:bg-gray-300">Pedidos & Cuentas</button>
@@ -69,7 +69,7 @@
         <!-- SECCIÓN: PEDIDOS -->
         <section id="tab-pedidos" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-xl shadow">
-                <h2 class="text-lg font-bold mb-4 text-indigo-700">➕ Crear Nuevo Pedido / Venta / Alquiler</h2>
+                <h2 class="text-lg font-bold mb-4 text-indigo-700">➕ Crear Nuevo Pedido / Venta</h2>
                 <form id="form-pedido" class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <input type="text" id="ped-cliente" placeholder="Nombre del Cliente" required class="p-2 border rounded-lg">
@@ -81,15 +81,18 @@
                         <input type="date" id="ped-fecha" class="p-2 border rounded-lg" required>
                     </div>
 
-                    <!-- Buscador y Carrito -->
+                    <!-- Buscador y Selección de Tarifa -->
                     <div class="border p-4 rounded-lg bg-gray-50 space-y-3">
-                        <h3 class="font-semibold text-sm text-gray-700">Agregar Productos</h3>
+                        <h3 class="font-semibold text-sm text-gray-700">Agregar Productos con Tipo de Precio</h3>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div class="sm:col-span-2 relative">
                                 <input type="text" id="buscador-productos" placeholder="🔍 Buscar producto en inventario..." oninput="filtrarProductosInventario()" class="p-2 border rounded-lg w-full bg-white">
                                 <div id="sugerencias-box" class="absolute z-10 w-full bg-white border rounded-lg shadow-lg mt-1 max-h-48 overflow-y-auto hidden"></div>
                             </div>
-                            <input type="number" id="item-cantidad" placeholder="Cantidad" value="1" min="1" class="p-2 border rounded-lg">
+                            <select id="item-tipo-precio" onchange="actualizarPrecioSeleccionado()" class="p-2 border rounded-lg bg-white text-sm font-semibold text-indigo-700">
+                                <option value="detal">Precio Al Detal</option>
+                                <option value="mayorista">Precio Mayorista</option>
+                            </select>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-2">
                             <input type="text" id="item-nombre-libre" placeholder="Nombre del producto" class="p-2 border rounded-lg bg-gray-100">
@@ -178,19 +181,16 @@
                 <form id="form-producto" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <input type="text" id="prod-nombre" placeholder="Nombre del producto" required class="p-2 border rounded-lg">
                     <input type="number" id="prod-stock" placeholder="Stock inicial" required class="p-2 border rounded-lg">
-                    <input type="number" id="prod-precio" placeholder="Precio de venta ($)" required class="p-2 border rounded-lg">
+                    <input type="number" id="prod-precio-detal" placeholder="Precio al Detal ($)" required class="p-2 border rounded-lg">
+                    <input type="number" id="prod-precio-mayorista" placeholder="Precio Mayorista ($)" required class="p-2 border rounded-lg">
                     <input type="number" id="prod-costo" placeholder="Costo estimado / Insumo ($)" class="p-2 border rounded-lg">
-                    <select id="prod-origen" class="p-2 border rounded-lg">
-                        <option value="Nacional (Colombia)">Nacional (Colombia)</option>
-                        <option value="Internacional">Internacional</option>
-                    </select>
                     <button type="submit" class="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700">Guardar Producto</button>
                 </form>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold">Inventario Actual & Ingreso de Stock</h2>
+                    <h2 class="text-lg font-bold">Inventario Actual & Tarifas</h2>
                     <input type="text" id="buscador-inv" placeholder="🔍 Buscar producto..." oninput="cargarInventarioTabla()" class="p-2 border rounded-lg text-sm w-64">
                 </div>
                 <div class="overflow-x-auto">
@@ -199,9 +199,10 @@
                             <tr class="border-b text-sm text-gray-600 bg-gray-50">
                                 <th class="p-3">SKU / Ref</th>
                                 <th class="p-3">Producto</th>
-                                <th class="p-3">Stock Actual</th>
-                                <th class="p-3">Precio Venta</th>
-                                <th class="p-3">Acción: Sumar Stock (Llegadas)</th>
+                                <th class="p-3">Stock</th>
+                                <th class="p-3">P. Detal</th>
+                                <th class="p-3">P. Mayorista</th>
+                                <th class="p-3">Acción: Sumar Stock</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-inventario" class="text-sm"></tbody>
@@ -226,7 +227,8 @@
                             <th class="p-2">Referencia</th>
                             <th class="p-2">Producto</th>
                             <th class="p-2">Stock Restante</th>
-                            <th class="p-2">Precio Venta</th>
+                            <th class="p-2">P. Detal</th>
+                            <th class="p-2">P. Mayorista</th>
                         </tr>
                     </thead>
                     <tbody id="reporte-inventario"></tbody>
@@ -253,7 +255,7 @@
 
         let carritoItems = [];
         let listaProductosInventario = [];
-        let productoSeleccionadoId = null;
+        let productoSeleccionadoObj = null;
 
         function switchTab(tab) {
             ['dashboard', 'pedidos', 'inventario', 'reportes'].forEach(t => {
@@ -293,7 +295,7 @@
                 box.innerHTML += `
                     <div onclick="seleccionarProductoDeBusqueda('${p.id}')" class="p-2 hover:bg-indigo-50 cursor-pointer text-xs border-b flex justify-between">
                         <span><strong>[${p.referencia}]</strong> ${p.nombre}</span>
-                        <span class="text-indigo-600 font-bold">Stock: ${p.stock} | $${p.precio_venta}</span>
+                        <span class="text-indigo-600 font-bold">Stock: ${p.stock} | Detal: $${p.precio_detal || p.precio_venta} | Mayor: $${p.precio_mayorista || 0}</span>
                     </div>
                 `;
             });
@@ -303,12 +305,22 @@
         function seleccionarProductoDeBusqueda(id) {
             const prod = listaProductosInventario.find(p => p.id === id);
             if (prod) {
-                productoSeleccionadoId = prod.id;
+                productoSeleccionadoObj = prod;
                 document.getElementById('buscador-productos').value = `${prod.referencia} - ${prod.nombre}`;
                 document.getElementById('item-nombre-libre').value = prod.nombre;
-                document.getElementById('item-precio').value = prod.precio_venta;
+                actualizarPrecioSeleccionado();
                 document.getElementById('item-descuenta').checked = true;
                 document.getElementById('sugerencias-box').classList.add('hidden');
+            }
+        }
+
+        function actualizarPrecioSeleccionado() {
+            if (!productoSeleccionadoObj) return;
+            const tipoTarifa = document.getElementById('item-tipo-precio').value;
+            if (tipoTarifa === 'mayorista') {
+                document.getElementById('item-precio').value = productoSeleccionadoObj.precio_mayorista || 0;
+            } else {
+                document.getElementById('item-precio').value = productoSeleccionadoObj.precio_detal || productoSeleccionadoObj.precio_venta || 0;
             }
         }
 
@@ -324,14 +336,14 @@
             }
 
             carritoItems.push({
-                producto_id: productoSeleccionadoId,
+                producto_id: productoSeleccionadoObj ? productoSeleccionadoObj.id : null,
                 nombre_producto: nombreLibre,
                 cantidad,
                 precio_unitario: precio,
                 descuenta_stock: descuenta
             });
 
-            productoSeleccionadoId = null;
+            productoSeleccionadoObj = null;
             document.getElementById('buscador-productos').value = '';
             document.getElementById('item-nombre-libre').value = '';
             document.getElementById('item-precio').value = '';
@@ -358,7 +370,7 @@
             });
         }
 
-        // GUARDAR PEDIDO CORREGIDO
+        // GUARDAR PEDIDO
         document.getElementById('form-pedido').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (carritoItems.length === 0) {
@@ -377,7 +389,6 @@
             let estadoPago = pagoInicial >= totalPedido ? 'Pagado' : (pagoInicial > 0 ? 'Parcial' : 'Pendiente');
             let refPedido = 'PED-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            // Insertar cliente de forma segura
             let { data: cliente, error: errCliente } = await supabaseClient.from('clientes').insert([{ nombre: clienteNombre }]).select().single();
             if (errCliente) {
                 alert("Error al guardar cliente: " + errCliente.message);
@@ -536,7 +547,6 @@
             cargarDatos();
         }
 
-        // DEVOLUCIÓN DE ANTICIPOS / DEPÓSITOS
         async function gestionarDevolucionDeposito(pedidoId, depositoActual) {
             if (depositoActual <= 0) {
                 alert("No hay garantía o anticipo registrado para devolver.");
@@ -578,16 +588,26 @@
             document.getElementById('modal-pagos').classList.add('hidden');
         }
 
-        // REGISTRAR PRODUCTO
+        // REGISTRAR PRODUCTO CON AMBAS TARIFAS
         document.getElementById('form-producto').addEventListener('submit', async (e) => {
             e.preventDefault();
             const nombre = document.getElementById('prod-nombre').value.trim();
             const stock = parseInt(document.getElementById('prod-stock').value);
-            const precio_venta = parseFloat(document.getElementById('prod-precio').value);
+            const precio_detal = parseFloat(document.getElementById('prod-precio-detal').value);
+            const precio_mayorista = parseFloat(document.getElementById('prod-precio-mayorista').value);
             const costo = parseFloat(document.getElementById('prod-costo').value) || 0;
             const referencia = 'REF-' + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            const { error } = await supabaseClient.from('productos').insert([{ referencia, nombre, stock, precio_venta, costo }]);
+            const { error } = await supabaseClient.from('productos').insert([{ 
+                referencia, 
+                nombre, 
+                stock, 
+                precio_detal, 
+                precio_mayorista,
+                precio_venta: precio_detal, 
+                costo 
+            }]);
+
             if (error) {
                 alert("Error al guardar producto: " + error.message);
                 return;
@@ -597,7 +617,6 @@
             cargarDatos();
         });
 
-        // SUBIR / AUMENTAR STOCK (LLEGADAS)
         async function sumarStockProducto(id, stockActual) {
             const cantidadStr = prompt("¿Cuántas unidades adicionales llegaron para sumar al stock?");
             if (!cantidadStr) return;
@@ -630,13 +649,17 @@
                 if (p.stock === 0) agotados++;
                 if (query && !p.nombre.toLowerCase().includes(query) && !p.referencia.toLowerCase().includes(query)) return;
 
+                let pDetal = p.precio_detal || p.precio_venta || 0;
+                let pMayor = p.precio_mayorista || 0;
+
                 if (tbody) {
                     tbody.innerHTML += `
                         <tr class="border-b">
                             <td class="p-3 font-mono text-xs text-indigo-600">${p.referencia}</td>
                             <td class="p-3">${p.nombre}</td>
-                            <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600 text-red-600' : ''}">${p.stock}</td>
-                            <td class="p-3">$${Number(p.precio_venta).toLocaleString()}</td>
+                            <td class="p-3 font-bold ${p.stock === 0 ? 'text-red-600' : ''}">${p.stock}</td>
+                            <td class="p-3">$${Number(pDetal).toLocaleString()}</td>
+                            <td class="p-3 text-emerald-700 font-bold">$${Number(pMayor).toLocaleString()}</td>
                             <td class="p-3">
                                 <button onclick="sumarStockProducto('${p.id}', ${p.stock})" class="text-xs bg-emerald-600 text-white px-3 py-1 rounded-lg hover:bg-emerald-700">➕ Agregar Stock</button>
                             </td>
@@ -649,7 +672,8 @@
                             <td class="p-2 font-mono">${p.referencia}</td>
                             <td class="p-2">${p.nombre}</td>
                             <td class="p-2">${p.stock}</td>
-                            <td class="p-2">$${Number(p.precio_venta).toLocaleString()}</td>
+                            <td class="p-2">$${Number(pDetal).toLocaleString()}</td>
+                            <td class="p-2">$${Number(pMayor).toLocaleString()}</td>
                         </tr>
                     `;
                 }
