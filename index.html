@@ -613,6 +613,7 @@
         let flujoCajaCache = [];
         let detallesPedidosCache = {};
         let deudasMensualesCache = [];
+        let productoSeleccionadoCache = null;
         let chartDiarioInstance = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -1224,7 +1225,7 @@
 
             // 1. Guardar o validar cliente
             if(!cliId) {
-                const { data: cIns, err: cErr } = await supabaseClient.from('clientes').insert([{
+                const { data: cIns } = await supabaseClient.from('clientes').insert([{
                     nombre, telefono, direccion, email: emailCc
                 }]).select();
                 if(cIns && cIns.length > 0) cliId = cIns[0].id;
@@ -1240,8 +1241,11 @@
             let tipoOp = document.getElementById('ped-tipo').value;
             let metodoPago = document.getElementById('ped-metodo').value;
 
-            // 2. Guardar Pedido
+            // 2. Guardar Pedido (INCLUYENDO referencia_pedido para evitar el error de Supabase)
+            const referenciaGenerada = 'CUP-' + Math.floor(1000 + Math.random() * 9000);
+
             const { data: pIns, error: pErr } = await supabaseClient.from('pedidos').insert([{
+                referencia_pedido: referenciaGenerada,
                 cliente_id: cliId,
                 tipo_operacion: tipoOp,
                 total: total,
