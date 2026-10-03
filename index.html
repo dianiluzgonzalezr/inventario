@@ -848,7 +848,8 @@
             sel.innerHTML = '<option value="">-- Seleccionar pedido para abonar/pagar --</option>';
             pedidosCache.forEach(p => {
                 if(p.estado !== 'Cancelado') {
-                    sel.innerHTML += `<option value="${p.id}">Ref: ${p.id.slice(0,6)} - Total: $${Number(p.total).toLocaleString()} - Saldo: $${(Number(p.total)-Number(p.pagado)).toLocaleString()}</option>`;
+                    let cli = clientesCache.find(c => c.id === p.cliente_id) || { nombre: 'Cliente General' };
+                    sel.innerHTML += `<option value="${p.id}">${cli.nombre} - Ref: ${p.id.slice(0,6)} - Total: $${Number(p.total).toLocaleString()} - Saldo: $${(Number(p.total)-Number(p.pagado)).toLocaleString()}</option>`;
                 }
             });
         }
