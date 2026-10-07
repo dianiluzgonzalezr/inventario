@@ -54,28 +54,28 @@
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
                         <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Ventas del Mes</h3>
-                        <p id="stat-ventas-mes" class="text-xl sm:text-2xl font-black text-indigo-600 mt-1">$0</p>
+                        <p id="stat-ventas-mes" class="text-xl sm:text-2xl font-black text-indigo-600 mt-1">$0.00</p>
                     </div>
                     <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 font-bold text-lg">💵</div>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
                         <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Cuentas por Cobrar</h3>
-                        <p id="stat-por-cobrar" class="text-xl sm:text-2xl font-black text-amber-600 mt-1">$0</p>
+                        <p id="stat-por-cobrar" class="text-xl sm:text-2xl font-black text-amber-600 mt-1">$0.00</p>
                     </div>
                     <div class="p-2.5 bg-amber-50 rounded-xl text-amber-600 font-bold text-lg">⏳</div>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
                         <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Saldo Efectivo</h3>
-                        <p id="stat-saldo-efectivo" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1">$0</p>
+                        <p id="stat-saldo-efectivo" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1">$0.00</p>
                     </div>
                     <div class="p-2.5 bg-emerald-50 rounded-xl text-emerald-600 font-bold text-lg">💵</div>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
                     <div>
                         <h3 class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase">Nequi / Bancos</h3>
-                        <p id="stat-saldo-bancos" class="text-xl sm:text-2xl font-black text-blue-600 mt-1">$0</p>
+                        <p id="stat-saldo-bancos" class="text-xl sm:text-2xl font-black text-blue-600 mt-1">$0.00</p>
                     </div>
                     <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600 font-bold text-lg">📱</div>
                 </div>
@@ -93,7 +93,7 @@
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
                         <a id="btn-enviar-correo-deudas" href="#" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl font-bold text-xs whitespace-nowrap shadow flex items-center justify-center gap-1 w-full sm:w-auto transition">
-                            📧 Enviar Reporte a DAVIDDEINER956@GMAIL.COM
+                            📧 Enviar Reporte
                         </a>
                         <button onclick="switchTab('contabilidad')" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-2 rounded-xl font-bold text-xs whitespace-nowrap shadow w-full sm:w-auto transition">
                             Ver Deudas
@@ -213,7 +213,7 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-2 items-center">
                             <input type="text" id="item-nombre" placeholder="Nombre del producto / ítem" class="p-2.5 border rounded-xl bg-white text-xs sm:col-span-2">
-                            <input type="number" id="item-precio" placeholder="Precio Unitario ($)" class="p-2.5 border rounded-xl bg-amber-50 font-bold text-indigo-700 text-xs">
+                            <input type="number" step="any" id="item-precio" placeholder="Precio Unitario ($)" class="p-2.5 border rounded-xl bg-amber-50 font-bold text-indigo-700 text-xs">
                             <div class="flex items-center gap-2">
                                 <input type="number" id="item-cantidad" value="1" min="1" class="p-2.5 border rounded-xl w-16 text-xs text-center bg-white">
                                 <button type="button" onclick="agregarItemPedidoAdmin()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2.5 rounded-xl text-xs font-bold w-full shadow transition">+ Agregar</button>
@@ -238,15 +238,15 @@
                     <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 border-t pt-3">
                         <div>
                             <label class="text-[11px] font-semibold text-slate-500">Costo Producción ($)</label>
-                            <input type="number" id="ped-costo-manual" value="0" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
+                            <input type="number" step="any" id="ped-costo-manual" value="0" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
                             <label class="text-[11px] font-semibold text-slate-500">Domicilio / Envío ($)</label>
-                            <input type="number" id="ped-domicilio" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
+                            <input type="number" step="any" id="ped-domicilio" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-xs mt-1 bg-slate-50">
                         </div>
                         <div>
                             <label class="text-[11px] font-semibold text-slate-500">Anticipo / Abono ($)</label>
-                            <input type="number" id="ped-anticipo" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-xs mt-1 font-bold text-emerald-600 bg-slate-50">
+                            <input type="number" step="any" id="ped-anticipo" value="0" oninput="calcularTotalAdmin()" class="p-2.5 border rounded-xl w-full text-xs mt-1 font-bold text-emerald-600 bg-slate-50">
                         </div>
                         <div>
                             <label class="text-[11px] font-semibold text-slate-500">Método de Pago</label>
@@ -270,8 +270,8 @@
 
                     <div class="flex flex-col sm:flex-row justify-between items-center bg-indigo-50 p-4 rounded-xl gap-3">
                         <div>
-                            <p class="text-xs text-indigo-700 font-semibold">TOTAL PEDIDO: <span id="lbl-total-admin" class="text-lg font-black">$0</span></p>
-                            <p class="text-xs text-amber-700 font-semibold">SALDO PENDIENTE: <span id="lbl-saldo-admin" class="text-sm font-bold">$0</span></p>
+                            <p class="text-xs text-indigo-700 font-semibold">TOTAL PEDIDO: <span id="lbl-total-admin" class="text-lg font-black">$0.00</span></p>
+                            <p class="text-xs text-amber-700 font-semibold">SALDO PENDIENTE: <span id="lbl-saldo-admin" class="text-sm font-bold">$0.00</span></p>
                         </div>
                         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold shadow transition w-full sm:w-auto text-xs">💾 Guardar Pedido Definitivo</button>
                     </div>
@@ -339,11 +339,11 @@
                     </div>
                     <div>
                         <label class="font-semibold text-slate-500">Precio Detal ($) *</label>
-                        <input type="number" id="prod-detal" placeholder="0" required class="p-2.5 border rounded-xl w-full mt-1 font-bold text-indigo-700 bg-slate-50">
+                        <input type="number" step="any" id="prod-detal" placeholder="0.00" required class="p-2.5 border rounded-xl w-full mt-1 font-bold text-indigo-700 bg-slate-50">
                     </div>
                     <div>
                         <label class="font-semibold text-slate-500">Precio Mayorista ($) *</label>
-                        <input type="number" id="prod-mayor" placeholder="0" required class="p-2.5 border rounded-xl w-full mt-1 font-bold text-amber-700 bg-slate-50">
+                        <input type="number" step="any" id="prod-mayor" placeholder="0.00" required class="p-2.5 border rounded-xl w-full mt-1 font-bold text-amber-700 bg-slate-50">
                     </div>
                     <div class="flex items-end gap-2 pt-1 sm:pt-0">
                         <button type="submit" id="btn-guardar-prod" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-xl font-bold w-full transition shadow">💾 Guardar Catálogo</button>
@@ -407,7 +407,7 @@
                             <p class="text-[10px] text-indigo-600">Al seleccionar un pedido, se marcará automáticamente como abonado o pagado en el sistema.</p>
                         </div>
 
-                        <!-- SECCIÓN PARA RELACIONAR DEUDA ACTIVA (NUEVO) -->
+                        <!-- SECCIÓN PARA RELACIONAR DEUDA ACTIVA -->
                         <div id="seccion-relacionar-deuda" class="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-2 hidden">
                             <label class="font-bold text-amber-900">🔗 Relacionar con Deuda Activa (Opcional)</label>
                             <select id="caja-deuda-relacionada" onchange="autocompletarMontoDeuda()" class="p-2 border rounded-xl w-full bg-white font-semibold">
@@ -437,7 +437,7 @@
                         </div>
                         <div>
                             <label class="font-semibold text-slate-500">Valor ($) *</label>
-                            <input type="number" id="caja-valor" placeholder="0" required class="p-2.5 border rounded-xl w-full font-bold text-indigo-700 bg-slate-50 mt-1">
+                            <input type="number" step="any" id="caja-valor" placeholder="0.00" required class="p-2.5 border rounded-xl w-full font-bold text-indigo-700 bg-slate-50 mt-1">
                         </div>
                         <div>
                             <label class="font-semibold text-slate-500">Descripción opcional</label>
@@ -447,7 +447,7 @@
                     </form>
                 </div>
 
-                <!-- REGISTRO DE DEUDAS MENSUALES (SIN CAMPO DE MÉTODO DE PAGO) -->
+                <!-- REGISTRO DE DEUDAS MENSUALES -->
                 <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-base sm:text-lg font-bold mb-3 text-amber-700">📌 Registrar Deuda / Obligación Activa</h2>
                     <form id="form-deuda-mensual" class="space-y-3 text-xs">
@@ -455,7 +455,7 @@
                         <div class="grid grid-cols-2 gap-2">
                             <div>
                                 <label class="font-semibold text-slate-500">Monto a Pagar ($)</label>
-                                <input type="number" id="deuda-monto" placeholder="0" required class="p-2.5 border rounded-xl w-full font-bold text-amber-700 bg-slate-50 mt-1">
+                                <input type="number" step="any" id="deuda-monto" placeholder="0.00" required class="p-2.5 border rounded-xl w-full font-bold text-amber-700 bg-slate-50 mt-1">
                             </div>
                             <div>
                                 <label class="font-semibold text-slate-500">Día de Pago (Cada mes)</label>
@@ -471,9 +471,18 @@
                 <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <h2 class="text-base sm:text-lg font-bold text-slate-800">📊 Balances de Caja & Descarga</h2>
                     <div class="space-y-3 text-xs">
-                        <div class="flex justify-between border-b pb-2"><span>Saldo Efectivo Actual:</span> <span id="bal-efectivo" class="font-bold text-emerald-600 text-sm">$0</span></div>
-                        <div class="flex justify-between border-b pb-2"><span>Saldo Nequi / Bancos:</span> <span id="bal-bancos" class="font-bold text-blue-600 text-sm">$0</span></div>
-                        <div class="flex justify-between border-b pb-2"><span>Impuesto 4x1000 Acumulado:</span> <span id="bal-4x1000" class="font-bold text-red-600">$0</span></div>
+                        <div class="flex justify-between border-b pb-2"><span>Saldo Efectivo Actual:</span> <span id="bal-efectivo" class="font-bold text-emerald-600 text-sm">$0.00</span></div>
+                        <div class="flex justify-between border-b pb-2"><span>Saldo Nequi / Bancos:</span> <span id="bal-bancos" class="font-bold text-blue-600 text-sm">$0.00</span></div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <div class="flex items-center gap-1">
+                                <span>Impuesto 4x1000 Acumulado:</span>
+                                <div class="flex items-center gap-1 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">
+                                    <label for="input-tasa-4x1000" class="font-semibold text-slate-500">Tasa:</label>
+                                    <input type="number" step="any" id="input-tasa-4x1000" value="0.004" onchange="cargarContabilidad()" class="w-16 p-0.5 border rounded bg-white text-center font-bold text-slate-700">
+                                </div>
+                            </div>
+                            <span id="bal-4x1000" class="font-bold text-red-600">$0.00</span>
+                        </div>
                     </div>
                     <div class="pt-2">
                         <button onclick="descargarMovimientosMes()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold w-full text-xs shadow transition">📥 Descargar Movimientos de Caja (CSV)</button>
@@ -541,10 +550,10 @@
                 </div>
                 <div id="vista-pdf-consolidado" class="space-y-6">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs border-b pb-4">
-                        <div><strong>Ventas del Mes:</strong> <br><span id="rep-ventas" class="text-sm font-bold text-indigo-600">$0</span></div>
-                        <div><strong>Cuentas por Cobrar:</strong> <br><span id="rep-cobrar" class="text-sm font-bold text-amber-600">$0</span></div>
-                        <div><strong>Caja Efectivo:</strong> <br><span id="rep-efectivo" class="text-sm font-bold text-emerald-600">$0</span></div>
-                        <div><strong>Caja Bancos:</strong> <br><span id="rep-bancos" class="text-sm font-bold text-blue-600">$0</span></div>
+                        <div><strong>Ventas del Mes:</strong> <br><span id="rep-ventas" class="text-sm font-bold text-indigo-600">$0.00</span></div>
+                        <div><strong>Cuentas por Cobrar:</strong> <br><span id="rep-cobrar" class="text-sm font-bold text-amber-600">$0.00</span></div>
+                        <div><strong>Caja Efectivo:</strong> <br><span id="rep-efectivo" class="text-sm font-bold text-emerald-600">$0.00</span></div>
+                        <div><strong>Caja Bancos:</strong> <br><span id="rep-bancos" class="text-sm font-bold text-blue-600">$0.00</span></div>
                     </div>
                     <div>
                         <h3 class="font-bold text-xs text-slate-700 mb-2 uppercase">Estado de Inventario (Supabase)</h3>
@@ -615,6 +624,10 @@
         let deudasMensualesCache = [];
         let productoSeleccionadoCache = null;
         let chartDiarioInstance = null;
+
+        function fmtMoney(m) {
+            return Number(m || 0).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const hoyStr = new Date().toISOString().split('T')[0];
@@ -711,7 +724,7 @@
                     listaStr += `<p class="text-red-700 font-bold mt-1">🚨 VENCIDAS:</p>`;
                     correoCuerpo += "--- 🚨 VENCIDAS ---\n";
                     deudasVencidas.forEach(d => {
-                        let txt = `• ${d.concepto} ($${Number(d.monto).toLocaleString()}) - Día ${d.dia_pago}`;
+                        let txt = `• ${d.concepto} ($${fmtMoney(d.monto)}) - Día ${d.dia_pago}`;
                         listaStr += `<span class="text-red-600 font-semibold block pl-2">${txt}</span>`;
                         correoCuerpo += `${txt}\n`;
                     });
@@ -721,7 +734,7 @@
                     listaStr += `<p class="text-amber-700 font-bold mt-2">⚠️ PRÓXIMAS (en 5 días o menos):</p>`;
                     correoCuerpo += "\n--- ⚠️ PRÓXIMAS A VENCER ---\n";
                     deudasProximas.forEach(d => {
-                        let txt = `• ${d.concepto} ($${Number(d.monto).toLocaleString()}) - Día ${d.dia_pago}`;
+                        let txt = `• ${d.concepto} ($${fmtMoney(d.monto)}) - Día ${d.dia_pago}`;
                         listaStr += `<span class="text-amber-700 font-semibold block pl-2">${txt}</span>`;
                         correoCuerpo += `${txt}\n`;
                     });
@@ -809,7 +822,7 @@
                     tbody.innerHTML += `
                         <tr class="border-b">
                             <td class="p-2.5 font-bold text-slate-800">${d.concepto}</td>
-                            <td class="p-2.5 font-black text-amber-700">$${Number(d.monto || 0).toLocaleString()}</td>
+                            <td class="p-2.5 font-black text-amber-700">$${fmtMoney(d.monto)}</td>
                             <td class="p-2.5">Día ${d.dia_pago}</td>
                             <td class="p-2.5"><button onclick="eliminarDeudaMensual('${d.id}')" class="text-red-600 font-bold">🗑️</button></td>
                         </tr>
@@ -849,7 +862,7 @@
             pedidosCache.forEach(p => {
                 if(p.estado !== 'Cancelado') {
                     let cli = clientesCache.find(c => c.id === p.cliente_id) || { nombre: 'Cliente General' };
-                    sel.innerHTML += `<option value="${p.id}">${cli.nombre} - Ref: ${p.id.slice(0,6)} - Total: $${Number(p.total).toLocaleString()} - Saldo: $${(Number(p.total)-Number(p.pagado)).toLocaleString()}</option>`;
+                    sel.innerHTML += `<option value="${p.id}">${cli.nombre} - Ref: ${p.id.slice(0,6)} - Total: $${fmtMoney(p.total)} - Saldo: $${fmtMoney(Number(p.total)-Number(p.pagado))}</option>`;
                 }
             });
         }
@@ -860,7 +873,7 @@
             const p = pedidosCache.find(x => x.id === id);
             if(p) {
                 let saldo = Number(p.total) - Number(p.pagado);
-                document.getElementById('caja-valor').value = saldo;
+                document.getElementById('caja-valor').value = saldo.toFixed(2);
                 document.getElementById('caja-concepto').value = 'Abono/Pago a Pedido Ref: ' + p.id.slice(0,6);
             }
         }
@@ -870,7 +883,7 @@
             if(!sel) return;
             sel.innerHTML = '<option value="">-- Seleccionar deuda a pagar --</option>';
             deudasMensualesCache.forEach(d => {
-                sel.innerHTML += `<option value="${d.id}">${d.concepto} - Monto: $${Number(d.monto).toLocaleString()}</option>`;
+                sel.innerHTML += `<option value="${d.id}">${d.concepto} - Monto: $${fmtMoney(d.monto)}</option>`;
             });
         }
 
@@ -879,7 +892,7 @@
             if(!id) return;
             const d = deudasMensualesCache.find(x => x.id === id);
             if(d) {
-                document.getElementById('caja-valor').value = d.monto;
+                document.getElementById('caja-valor').value = Number(d.monto).toFixed(2);
                 document.getElementById('caja-concepto').value = 'Pago de Obligación: ' + d.concepto;
             }
         }
@@ -895,6 +908,8 @@
                 let filtro = document.getElementById('filtro-metodo-caja')?.value || 'todos';
                 let b = (document.getElementById('buscador-caja')?.value || '').toLowerCase();
                 
+                let tasa4x1000 = parseFloat(document.getElementById('input-tasa-4x1000')?.value) || 0.004;
+                
                 let filtrados = flujoCajaCache.filter(m => {
                     let okMetodo = filtro === 'todos' || m.metodo_pago === filtro;
                     let okBusq = !b || (m.concepto||'').toLowerCase().includes(b) || (m.tercero||'').toLowerCase().includes(b);
@@ -905,19 +920,9 @@
                 filtrados.forEach(m => {
                     let v = Number(m.valor || 0);
                     if(m.tipo === 'INGRESO') {
-                        if(m.metodo_pago === 'Efectivo') {
-                            ef += v;
-                        } else {
-                            bco += v;
-                        }
+                        if(m.metodo_pago === 'Efectivo') ef += v; else bco += v;
                     } else {
-                        if(m.metodo_pago === 'Efectivo') {
-                            ef -= v;
-                        } else {
-                            let imp = v * 0.004;
-                            bco -= (v + imp); // Se resta del saldo el egreso más el 4x1000 acumulado del movimiento
-                            ret4x1000 += imp;
-                        }
+                        if(m.metodo_pago === 'Efectivo') ef -= v; else { bco -= v; ret4x1000 += (v * tasa4x1000); }
                     }
                     
                     if(tbody) {
@@ -927,18 +932,18 @@
                                 <td class="p-2 font-bold ${m.tipo==='INGRESO'?'text-emerald-600':'text-red-600'}">${m.tipo}</td>
                                 <td class="p-2">${m.concepto} ${m.tercero ? `(${m.tercero})`:''}</td>
                                 <td class="p-2">${m.metodo_pago}</td>
-                                <td class="p-2 font-black">$${v.toLocaleString()}</td>
-                                <td class="p-2 text-red-500">${m.tipo==='EGRESO' && m.metodo_pago!=='Efectivo' ? `-$${(v*0.004).toLocaleString()}` : '$0'}</td>
+                                <td class="p-2 font-black">$${fmtMoney(v)}</td>
+                                <td class="p-2 text-red-500">${m.tipo==='EGRESO' && m.metodo_pago!=='Efectivo' ? `-$${fmtMoney(v * tasa4x1000)}` : '$0.00'}</td>
                             </tr>
                         `;
                     }
                 });
                 
-                document.getElementById('bal-efectivo').innerText = `$${ef.toLocaleString()}`;
-                document.getElementById('bal-bancos').innerText = `$${bco.toLocaleString()}`;
-                document.getElementById('bal-4x1000').innerText = `-$${ret4x1000.toLocaleString()}`;
-                document.getElementById('stat-saldo-efectivo').innerText = `$${ef.toLocaleString()}`;
-                document.getElementById('stat-saldo-bancos').innerText = `$${bco.toLocaleString()}`;
+                document.getElementById('bal-efectivo').innerText = `$${fmtMoney(ef)}`;
+                document.getElementById('bal-bancos').innerText = `$${fmtMoney(bco)}`;
+                document.getElementById('bal-4x1000').innerText = `-$${fmtMoney(ret4x1000)}`;
+                document.getElementById('stat-saldo-efectivo').innerText = `$${fmtMoney(ef)}`;
+                document.getElementById('stat-saldo-bancos').innerText = `$${fmtMoney(bco)}`;
 
                 renderizarGraficoDiario();
             } catch(e) { console.error(e); }
@@ -1009,7 +1014,7 @@
                         <td class="p-2.5 font-bold text-indigo-900">${p.referencia || 'REF'} <br><span class="text-[10px] font-normal text-slate-400">${p.origen_compra || 'Colombia'}</span></td>
                         <td class="p-2.5"><strong>${p.nombre}</strong><br><span class="text-[10px] text-indigo-600">${p.mundo || ''}</span></td>
                         <td class="p-2.5">${stockStr}</td>
-                        <td class="p-2.5">Detal: $${Number(p.precio_detal||0).toLocaleString()}<br>Mayor: $${Number(p.precio_mayorista||0).toLocaleString()}</td>
+                        <td class="p-2.5">Detal: $${fmtMoney(p.precio_detal)}<br>Mayor: $${fmtMoney(p.precio_mayorista)}</td>
                         <td class="p-2.5 flex gap-2">
                             <button onclick='prepararEdicionProd(${JSON.stringify(p)})' class="bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-slate-700 font-bold">✏️</button>
                             <button onclick="eliminarProducto('${p.id}')" class="bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-red-600 font-bold">🗑️</button>
@@ -1140,7 +1145,7 @@
                 box.innerHTML += `
                     <div onclick='seleccionarProdParaItem(${JSON.stringify(p)})' class="p-2 hover:bg-indigo-50 cursor-pointer border-b text-xs flex justify-between">
                         <span><strong>${p.nombre}</strong> (${p.mundo})</span>
-                        <span class="text-indigo-600 font-bold">$${Number(p.precio_detal||0).toLocaleString()}</span>
+                        <span class="text-indigo-600 font-bold">$${fmtMoney(p.precio_detal)}</span>
                     </div>
                 `;
             });
@@ -1201,8 +1206,8 @@
                     <tr class="border-b">
                         <td class="p-2 font-bold">${item.nombre_producto}</td>
                         <td class="p-2">${item.cantidad}</td>
-                        <td class="p-2">$${item.precio_unitario.toLocaleString()}</td>
-                        <td class="p-2 font-black">$${item.subtotal.toLocaleString()}</td>
+                        <td class="p-2">$${fmtMoney(item.precio_unitario)}</td>
+                        <td class="p-2 font-black">$${fmtMoney(item.subtotal)}</td>
                         <td class="p-2"><button type="button" onclick="carritoAdmin.splice(${idx},1);renderizarCarritoAdmin();" class="text-red-600 font-bold">🗑️</button></td>
                     </tr>
                 `;
@@ -1217,8 +1222,8 @@
             let anticipo = parseFloat(document.getElementById('ped-anticipo').value) || 0;
             let saldo = total - anticipo;
 
-            document.getElementById('lbl-total-admin').innerText = `$${total.toLocaleString()}`;
-            document.getElementById('lbl-saldo-admin').innerText = `$${saldo.toLocaleString()}`;
+            document.getElementById('lbl-total-admin').innerText = `$${fmtMoney(total)}`;
+            document.getElementById('lbl-saldo-admin').innerText = `$${fmtMoney(saldo)}`;
         }
 
         document.getElementById('form-pedido-admin')?.addEventListener('submit', async (e) => {
@@ -1234,7 +1239,6 @@
             const emailCc = document.getElementById('cli-email-cc').value.trim();
             let cliId = document.getElementById('cli-id-seleccionado').value;
 
-            // 1. Guardar o validar cliente
             if(!cliId) {
                 const { data: cIns } = await supabaseClient.from('clientes').insert([{
                     nombre, telefono, direccion, email: emailCc
@@ -1252,7 +1256,6 @@
             let tipoOp = document.getElementById('ped-tipo').value;
             let metodoPago = document.getElementById('ped-metodo').value;
 
-            // 2. Guardar Pedido (INCLUYENDO referencia_pedido para evitar el error de Supabase)
             const referenciaGenerada = 'CUP-' + Math.floor(1000 + Math.random() * 9000);
 
             const { data: pIns, error: pErr } = await supabaseClient.from('pedidos').insert([{
@@ -1276,7 +1279,6 @@
 
             let pedidoId = pIns[0].id;
 
-            // 3. Guardar Detalles de Pedido y descontar stock opcional
             for(let item of carritoAdmin) {
                 await supabaseClient.from('detalle_pedido').insert([{
                     pedido_id: pedidoId,
@@ -1295,7 +1297,6 @@
                 }
             }
 
-            // 4. Si hay anticipo, registrar ingreso inicial en Flujo de Caja
             if(pagado > 0) {
                 await supabaseClient.from('flujo_caja').insert([{
                     fecha: new Date().toISOString().split('T')[0],
@@ -1354,7 +1355,7 @@
                         <td class="p-2.5 font-bold text-indigo-900">${p.id.slice(0,6)}<br><span class="text-[10px] font-normal text-slate-400">Entrega: ${p.fecha_entrega||'N/A'}</span></td>
                         <td class="p-2.5"><strong>${cli.nombre}</strong><br><span class="text-[10px] text-slate-500">📞 ${cli.telefono||'Sin telf'}</span></td>
                         <td class="p-2.5">${p.tipo_operacion}<br><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${badgeEstado}">${p.estado}</span></td>
-                        <td class="p-2.5">Total: <strong>$${total.toLocaleString()}</strong><br><span class="text-amber-600 font-bold">Saldo: $${saldo.toLocaleString()}</span></td>
+                        <td class="p-2.5">Total: <strong>$${fmtMoney(total)}</strong><br><span class="text-amber-600 font-bold">Saldo: $${fmtMoney(saldo)}</span></td>
                         <td class="p-2.5 flex gap-1">
                             <button onclick="cambiarEstadoPedido('${p.id}', 'Entregado')" class="bg-emerald-50 hover:bg-emerald-100 p-1.5 rounded text-emerald-700 font-bold text-[10px]">Entregar</button>
                             <button onclick="cambiarEstadoPedido('${p.id}', 'Cancelado')" class="bg-red-50 hover:bg-red-100 p-1.5 rounded text-red-700 font-bold text-[10px]">Cancelar</button>
@@ -1368,8 +1369,8 @@
                 }
             });
 
-            document.getElementById('stat-ventas-mes').innerText = `$${ventasMes.toLocaleString()}`;
-            document.getElementById('stat-por-cobrar').innerText = `$${porCobrar.toLocaleString()}`;
+            document.getElementById('stat-ventas-mes').innerText = `$${fmtMoney(ventasMes)}`;
+            document.getElementById('stat-por-cobrar').innerText = `$${fmtMoney(porCobrar)}`;
         }
 
         async function cambiarEstadoPedido(id, nuevoEstado) {
@@ -1406,8 +1407,8 @@
                         <div class="p-2.5 bg-indigo-50/50 rounded-xl mb-2 border border-indigo-100">
                             <strong>${c.nombre}</strong> (📞 ${c.telefono || 'Sin Tel'})<br>
                             <span class="text-slate-600 font-semibold">Pedidos:</span> ${totalPedidos} | 
-                            <span class="text-indigo-700 font-bold">Ha comprado: $${totalComprado.toLocaleString()}</span> | 
-                            <span class="text-red-600 font-black">Debe: $${totalDeuda.toLocaleString()}</span>
+                            <span class="text-indigo-700 font-bold">Ha comprado: $${fmtMoney(totalComprado)}</span> | 
+                            <span class="text-red-600 font-black">Debe: $${fmtMoney(totalDeuda)}</span>
                         </div>
                     `;
                 });
@@ -1420,7 +1421,7 @@
                     html += `
                         <div class="p-2.5 bg-slate-50 rounded-xl mb-2 border border-slate-200">
                             <strong>[${p.referencia || 'REF'}] ${p.nombre}</strong><br>
-                            <span class="text-emerald-700">Stock Actual:</span> <strong>${stockActual}</strong> | Detal: $${Number(p.precio_detal||0).toLocaleString()}
+                            <span class="text-emerald-700">Stock Actual:</span> <strong>${stockActual}</strong> | Detal: $${fmtMoney(p.precio_detal)}
                         </div>
                     `;
                 });
@@ -1445,20 +1446,20 @@
                 let tbody = document.getElementById('tabla-reporte-inv');
                 tbody.innerHTML = '';
                 productosCache.forEach(p => {
-                    tbody.innerHTML += `<tr><td>${p.referencia||''}</td><td>${p.nombre}</td><td>${p.origen_compra||''}</td><td>${p.stock||0}</td><td>$${Number(p.precio_detal||0).toLocaleString()}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${p.referencia||''}</td><td>${p.nombre}</td><td>${p.origen_compra||''}</td><td>${p.stock||0}</td><td>$${fmtMoney(p.precio_detal)}</td></tr>`;
                 });
             } else if(tipo === 'detallado') {
                 let tbody = document.getElementById('tabla-reporte-pedidos-detallado');
                 tbody.innerHTML = '';
                 pedidosCache.forEach(p => {
                     let cli = clientesCache.find(c => c.id === p.cliente_id) || {};
-                    tbody.innerHTML += `<tr><td>${p.id.slice(0,6)}<br>${p.fecha_entrega||''}</td><td>${cli.nombre||''}</td><td>${p.tipo_operacion}</td><td>Total: $${Number(p.total).toLocaleString()}</td><td>Saldo: $${(Number(p.total)-Number(p.pagado)).toLocaleString()}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${p.id.slice(0,6)}<br>${p.fecha_entrega||''}</td><td>${cli.nombre||''}</td><td>${p.tipo_operacion}</td><td>Total: $${fmtMoney(p.total)}</td><td>Saldo: $${fmtMoney(Number(p.total)-Number(p.pagado))}</td></tr>`;
                 });
             } else if(tipo === 'deudas') {
                 let tbody = document.getElementById('tabla-reporte-deudas-pdf');
                 tbody.innerHTML = '';
                 deudasMensualesCache.forEach(d => {
-                    tbody.innerHTML += `<tr><td>${d.concepto}</td><td>$${Number(d.monto).toLocaleString()}</td><td>Día ${d.dia_pago}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${d.concepto}</td><td>$${fmtMoney(d.monto)}</td><td>Día ${d.dia_pago}</td></tr>`;
                 });
             }
         }
