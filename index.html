@@ -905,9 +905,19 @@
                 filtrados.forEach(m => {
                     let v = Number(m.valor || 0);
                     if(m.tipo === 'INGRESO') {
-                        if(m.metodo_pago === 'Efectivo') ef += v; else bco += v;
+                        if(m.metodo_pago === 'Efectivo') {
+                            ef += v;
+                        } else {
+                            bco += v;
+                        }
                     } else {
-                        if(m.metodo_pago === 'Efectivo') ef -= v; else { bco -= v; ret4x1000 += (v * 0.004); }
+                        if(m.metodo_pago === 'Efectivo') {
+                            ef -= v;
+                        } else {
+                            let imp = v * 0.004;
+                            bco -= (v + imp); // Se resta del saldo el egreso más el 4x1000 acumulado del movimiento
+                            ret4x1000 += imp;
+                        }
                     }
                     
                     if(tbody) {
