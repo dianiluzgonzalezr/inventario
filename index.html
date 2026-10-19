@@ -1494,7 +1494,7 @@ async function guardarCambioSaldo() {
     const campo = document.getElementById('saldo-nuevo-valor');
     const mensaje = document.getElementById('saldo-mensaje-error');
 
-    const nuevoSaldo = Number(campo.value);
+    const nuevoSaldo = Number(campo.value); 
 
     if (campo.value.trim() === '' ||
         !Number.isFinite(nuevoSaldo) ||
