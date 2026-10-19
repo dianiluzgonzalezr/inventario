@@ -9,7 +9,7 @@
     const monthLabel = (ym) => new Date(Number(ym.slice(0, 4)), Number(ym.slice(5, 7)) - 1, 1)
         .toLocaleDateString('es-CO', { month: 'long', year: 'numeric' });
     function sumsByMonth(movements) {
-        const result = {};
+        const result = {}; 
         (movements || []).forEach((m) => {
             if (!m.fecha || !/^\d{4}-\d{2}-\d{2}/.test(m.fecha) || !['INGRESO', 'EGRESO'].includes(m.tipo)) return;
             const key = m.fecha.slice(0, 7);
